@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  server-migrate:
+    build:
+      context: .
+    volumes:
+      - ./dist:/usr/src/app/migrations:delegated
+    environment:
+      - DATABASE=mysql://root:secret@host.docker.internal:3306/serlo?query
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

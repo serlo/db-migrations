@@ -1,4 +1,6 @@
-## Package for setting up DB migrations
+## DB migrations
+
+particularly for the legacy database
 
 ### Steps to add a new migration
 
@@ -13,20 +15,24 @@
   when you want to migrate edtr-io plugins
 
 2. You need to build a migration via running
-   `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `packages/migrations`
+   `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src`
    directory. This creates a new file in `dist`. Both files in `dist` and `src`
    need to be added in the PR.
-3. Update the version of the `serlo.org` server at
+<!-- TODO: in conception still in the new infrastructure.
+   3. Update the version of the `serlo.org` server at
    `packages/public/server/package.json`. Deploy this version with the changes
-   in the `migrations` package and the database migrations should take effect.
+   in the `migrations` package and the database migrations should take effect. -->
 
 ### How to test a new migration
 
-In the root of this repository you can run `yarn migrate` to locally run all
-migrations. You can check the changes afterwards via `yarn mysql`. With
-`yarn mysql:rollback` or `yarn mysql:import-anonymous-data` you can reset your
-changes.
+In `serlo/local-dev-env` or `serlo/database-layer` you will find instructions on
+how to run a local serlo database with dummy data.
 
-Of course you can also test your migrations in the `staging` enviornment by
+In the root of this repository you can run `yarn migrate` to locally run all
+migrations. You can check the changes afterwards using `yarn mysql` in the other repo.
+With `yarn mysql:rollback` or `yarn mysql:import-anonymous-data` you can reset your
+changes there.
+
+<!-- Of course you can also test your migrations in the `staging` enviornment by
 deploying the new server version. Note that each night the database in `staging`
-is reseted.
+is reset. -->

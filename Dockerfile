@@ -1,7 +1,6 @@
 FROM node:16-alpine as dependencies
 WORKDIR /usr/src/app
-COPY .yarn .yarn
-COPY .yarnrc.yml .
+# COPY .yarn .yarn
 COPY package.json .
 COPY yarn.lock .
 RUN yarn --silent
