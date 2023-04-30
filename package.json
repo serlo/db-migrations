@@ -5,7 +5,10 @@
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
   "scripts": {
+    "_prettier": "prettier . '!dist/**/*'",
     "build": "ts-node scripts/build",
+    "format:prettier": "yarn _prettier --write",
+    "lint:prettier": "yarn _prettier --check",
     "migrate": "docker-compose run --rm server-migrate",
     "migrate:up": "yarn migrate up"
   },
@@ -19,6 +22,7 @@
     "@types/node": "^16.11.7",
     "@types/ramda": "^0.28.1",
     "@vercel/ncc": "^0.33.3",
+    "prettier": "^2.8.8",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.2"
   },
