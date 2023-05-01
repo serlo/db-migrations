@@ -20,6 +20,7 @@
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
 import * as R from 'ramda'
+
 import { createEdtrIoMigration, replacePluginState } from './utils'
 
 createEdtrIoMigration({

@@ -1,0 +1,25 @@
+name: JavaScript
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - run: yarn --immutable --immutable-cache
+      - run: yarn lint:prettier
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - run: yarn --immutable --immutable-cache
+      - run: yarn test

@@ -1,0 +1,9 @@
+name: Docker
+on:
+  pull_request:
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker build . -t serlo-org-migrate:latest
