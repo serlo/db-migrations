@@ -4,7 +4,7 @@ on:
     branches:
       - main
 jobs:
-  deploy:
+  push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,4 +17,4 @@ jobs:
           service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
       - run: gcloud auth configure-docker
       - run: yarn --immutable --immutable-cache
-      - run: yarn push-images
+      - run: yarn push-image
