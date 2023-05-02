@@ -1,0 +1,20 @@
+name: Image
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: '372.0.0'
+          service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
+      - run: gcloud auth configure-docker
+      - run: yarn --immutable --immutable-cache
+      - run: yarn push-images
