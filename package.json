@@ -11,6 +11,7 @@
     "lint:prettier": "yarn _prettier --check",
     "migrate": "docker-compose run --rm server-migrate",
     "migrate:up": "yarn migrate up",
+    "new": "./scripts/touch_file.sh",
     "push-image": "ts-node scripts/push-image",
     "test": "jest"
   },
