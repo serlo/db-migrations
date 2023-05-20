@@ -73,9 +73,6 @@ typings/
 .serverless
 /out/
 
-# Bundled code
-dist
-
 # Secrets
 *.secret.*
 
