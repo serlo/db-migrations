@@ -19,7 +19,6 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-// @ts-ignore FIXME
 import build from '@vercel/ncc'
 import * as fs from 'fs'
 import * as path from 'path'

@@ -1,8 +1,17 @@
-## DB migrations
+# DB migrations
 
 particularly for the legacy database
 
-### Steps to add a new migration
+## Prerequisites
+
+- Node
+- Yarn
+- Docker and Docker Compose
+
+Note: you make need to install cmake module in your machine (like
+`sudo apt install cmake`).
+
+## Steps to add a new migration
 
 1. Go to [`src`](./src) and add a new file. Its name need to be
    `YYYYMMDDHHMMSS-xyz.ts` (The prefix of the number for the date when you have
@@ -22,7 +31,7 @@ new file in `dist`. Both files in `dist` and `src` need to be added in the PR.
    `packages/public/server/package.json`. Deploy this version with the changes
    in the `migrations` package and the database migrations should take effect. -->
 
-### How to test a new migration
+## How to test a new migration
 
 In `serlo/local-dev-env` or `serlo/database-layer` you will find instructions on
 how to run a local serlo database with dummy data.
