@@ -1467,6 +1467,11 @@ db-migrate-mysql@^2.2.0:
     moment "^2.28.0"
     mysql2 "^2.1.0"
 
+db-migrate-plugin-typescript@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/db-migrate-plugin-typescript/-/db-migrate-plugin-typescript-2.0.0.tgz#1fe18b7522d22b03fa0c7f0de5430dde49b0794a"
+  integrity sha512-I3vWzpXvftOUjC/aPPxTbfW7m0iCacHvB6hcFnvyzWOtERpJtFglRvSqbV1qrAzxyRTtzTmdKFaPZWIpXA70fQ==
+
 db-migrate-shared@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/db-migrate-shared/-/db-migrate-shared-1.2.0.tgz#6125be1b3a5e661229fc75d50c85f6c3ffadbede"
