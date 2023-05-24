@@ -10,7 +10,7 @@
     "format:prettier": "yarn _prettier --write",
     "lint:prettier": "yarn _prettier --check",
     "migrate": "docker-compose run --rm server-migrate",
-    "migrate:ts": "yarn db-migrate -m src/ up",
+    "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo?query yarn db-migrate -m src/ up",
     "migrate:up": "yarn migrate up",
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node scripts/push-image",
