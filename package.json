@@ -7,6 +7,7 @@
   "scripts": {
     "_prettier": "prettier . '!dist/**/*'",
     "build": "ts-node scripts/build",
+    "delete-last-migration": "docker exec $(docker ps -qf 'name=mysql') mysql  --password=secret --database=serlo  --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "format:prettier": "yarn _prettier --write",
     "lint:prettier": "yarn _prettier --check",
     "migrate": "docker-compose run --rm server-migrate",
