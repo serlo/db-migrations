@@ -38,6 +38,15 @@ function convertTable(html: string): Plugin {
 
   const table = dom[0].children.filter((child) => child.type === 'tag')[0]
   if (!table || table.name !== 'table') {
+    const child = dom[0].children.filter((child) => child.type === 'text')[0]
+    if (child.type === 'text') {
+      // some data are like '| Tables | Are | Cool', they are classified as text
+      // TODO: Check if this solution is ok, maybe legacyTable is better...
+      return {
+        plugin: 'text',
+        state: child.data,
+      }
+    }
     throw new Error('table is not defined')
   }
 
