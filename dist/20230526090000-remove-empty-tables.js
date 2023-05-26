@@ -17904,15 +17904,30 @@ const utils_1 = __nccwpck_require__(6252);
 (0, utils_1.createMigration)(exports, {
     up: (db) => tslib_1.__awaiter(void 0, void 0, void 0, function* () {
         yield db.runSql(`
-        UPDATE entity_revision_field
-            SET value = replace(value,'{"plugin":"table","state":""},','')
-            WHERE value like '%{"plugin":"table","state":""},%' 
+      UPDATE entity_revision_field
+        SET value = replace(value,'{"plugin":"table","state":""},','')
+        WHERE value like '%{"plugin":"table","state":""},%' 
     `);
         // 10 are at the end of an array, so no trailing comma
         yield db.runSql(`
-        UPDATE entity_revision_field
-            SET value = replace(value,'{"plugin":"table","state":""}','')
-            WHERE value like '%{"plugin":"table","state":""}%' 
+      UPDATE entity_revision_field
+        SET value = replace(value,'{"plugin":"table","state":""}','')
+        WHERE value like '%{"plugin":"table","state":""}%'
+    `);
+        yield db.runSql(String.raw `
+      UPDATE entity_revision_field
+        SET value = replace(value,'{"plugin":"table","state":"\\n"},','')
+        WHERE value like '%{"plugin":"table","state":"\\n"},%' ESCAPE '|'
+    `);
+        yield db.runSql(`
+      UPDATE page_revision
+        SET content = replace(content,'{"plugin":"table","state":""},','')
+        WHERE content like '%{"plugin":"table","state":""},%'
+    `);
+        yield db.runSql(`
+      UPDATE page_revision
+        SET content = replace(content,'{"plugin":"table","state":""}','')
+        WHERE content like '%{"plugin":"table","state":""}%'
     `);
     }),
 });
@@ -18092,39 +18107,9 @@ function changeAllRevisions({ revisions, updateRevision, migrateState, }) {
                 // state of legacy markdown editor
                 continue;
             }
-            console.log('Updating revision', revision.revisionId);
-            // Tables are cool
-            if ([
-                146843, 147195, 147196, 147197, 147198, 147199, 147200, 149208, 160485,
-                160486,
-            ].includes(revision.revisionId))
-                continue;
-            // <table>
-            if ([
-                160485, 160486, 160613, 198957, 228483, 228485, 228515, 231358, 232752,
-                250509, 250523, 251757, 251762,
-            ].includes(revision.revisionId))
-                continue;
-            // child.type text
-            if ([
-                165190, 167792, 167795, 167797, 167798, 167801, 167807, 167808, 167815,
-                168074, 171901, 234024, 267435, 186367, 190729,
-            ].includes(revision.revisionId))
-                continue;
-            // ||
-            if ([170611, 178296, 178458, 178479, 178480, 187842].includes(revision.revisionId))
-                continue;
-            // Aufzahlungszeichen
-            if ([180030, 186605].includes(revision.revisionId))
-                continue;
-            // undefined
-            if ([188217, 188292, 190516, 190784, 191176, 193814].includes(revision.revisionId))
-                continue;
             const newState = JSON.stringify(migrateState(oldState));
             if (newState !== revision.content) {
                 yield updateRevision(newState, revision);
-                console.log({ newState });
-                console.log(revision.content);
                 console.log('Updated revision', revision.revisionId);
             }
         }

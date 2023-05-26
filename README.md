@@ -26,6 +26,8 @@ Note: you make need to install cmake module in your machine (like
 2. You need to build a migration via running
 `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
 new file in `dist`. Both files in `dist` and `src` need to be added in the PR.
+_Notice that any changes in other directories that are imported by the file will
+be built together!_
 <!-- TODO: in conception still in the new infrastructure.
    3. Update the version of the `serlo.org` server at
    `packages/public/server/package.json`. Deploy this version with the changes
