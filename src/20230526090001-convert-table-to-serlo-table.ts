@@ -21,6 +21,7 @@ createEdtrIoMigration({
 interface LegacyNode {
   type: string
   name: string
+  next: LegacyNode
   attribs: {
     class?: string
     href?: string
@@ -36,8 +37,33 @@ interface LegacyNode {
 function convertTable(html: string): Plugin {
   const dom = parseDOM(html) as unknown as LegacyNode[]
 
-  const table = dom[0].children.filter((child) => child.type === 'tag')[0]
+  let table = dom[0].children.filter((child) => child.type === 'tag')[0]
+
+  if (dom[0].next?.name == 'table') {
+    table = dom[0].next
+  }
+
   if (!table || table.name !== 'table') {
+    // FIXME: don't seem right...
+    if (table && table.name === 'code') {
+      return {
+        plugin: 'text',
+        state: table.data,
+      }
+    }
+
+    if (
+      table &&
+      table.name === 'span' &&
+      (table.attribs.class?.includes('mathInline') ||
+        table.attribs.class?.includes('math'))
+    ) {
+      return {
+        plugin: 'text',
+        state: convertContentNode(table),
+      }
+    }
+
     const child = dom[0].children.filter((child) => child.type === 'text')[0]
     if (child.type === 'text') {
       // some data are like '| Tables | Are | Cool', they are classified as text
@@ -91,10 +117,12 @@ function convertCellContent(cell: LegacyNode) {
     throw 'unknown state'
   }
   const contentNodes = cell.children[0].children
-
-  const converted = contentNodes.map(convertContentNode)
+  // TODO: naming
+  const converted = contentNodes
+    ? { children: contentNodes.map(convertContentNode) }
+    : {}
   // console.log([{ type: 'p', children: [converted] }])
-  return [{ plugin: 'text', state: [{ type: 'p', children: converted }] }]
+  return [{ plugin: 'text', state: [{ type: 'p', ...converted }] }]
 }
 
 function convertContentNode(node: LegacyNode) {
