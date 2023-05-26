@@ -112,8 +112,10 @@ function convertContentNode(node: LegacyNode) {
         console.log('mathInline: unexpected state, skipping')
         return { text: '' }
       }
-      const mathContent = node.children[0].children[0].data?.replace(/%%/, '') ?? ''
-      // not working as expected?!
+
+      // TODO: before it was ...children[0].children[0]... ask if it can be so
+      const mathContent = node.children[0].data?.replace(/%%/, '') ?? ''
+
       return {
         type: 'math',
         src: mathContent,
@@ -130,5 +132,6 @@ function convertContentNode(node: LegacyNode) {
   console.log(node.type)
   console.log(node)
 
+  // FIXME
   return { text: 'test' }
 }
