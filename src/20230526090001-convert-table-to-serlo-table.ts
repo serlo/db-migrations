@@ -78,7 +78,7 @@ function convertTable(html: string): Plugin {
 
 function convertCellContent(cell: LegacyNode) {
   if (cell.children.length === 0) return []
-  if (cell.children.length > 1 || cell.children[0].name !== 'p') {
+  if (cell.children.length > 1) {
     throw 'unknown state'
   }
   const contentNodes = cell.children[0].children
@@ -112,8 +112,7 @@ function convertContentNode(node: LegacyNode) {
         console.log('mathInline: unexpected state, skipping')
         return { text: '' }
       }
-      const mathContent =
-        node.children[0].children[0].data?.replace(/%%/, '') ?? ''
+      const mathContent = node.children[0].children[0].data?.replace(/%%/, '') ?? ''
       // not working as expected?!
       return {
         type: 'math',
@@ -124,7 +123,6 @@ function convertContentNode(node: LegacyNode) {
     }
     console.log('unsupported tag')
     console.log(node.name)
-    console.log(node)
     return []
   }
 
