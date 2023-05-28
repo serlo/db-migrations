@@ -4,16 +4,16 @@ particularly for the legacy database
 
 ## Prerequisites
 
-- Node
-- Yarn
+- node v18
+- yarn >3
 - Docker and Docker Compose
 
-Note: you make need to install cmake module in your machine (like
-`sudo apt install cmake`).
+Note: Also make sure you have `cmake` installed on your machine
+(e.g. `sudo apt install cmake`).
 
 ## Steps to add a new migration
 
-1. Go to [`src`](./src) and add a new file. Its name need to be
+1. Go to [`src`](./src) and add a new file. It's name needs to be
    `YYYYMMDDHHMMSS-xyz.ts` (The prefix of the number for the date when you have
    added the file are important). It is a good idea to copy and paste one of the
    current migration as a template for the new one. Example:
@@ -23,7 +23,7 @@ Note: you make need to install cmake module in your machine (like
 - [`src/20210923231900-add-transformation-target-to-equations.ts`](./src/20210923231900-add-transformation-target-to-equations.ts)
   when you want to migrate edtr-io plugins
 
-2. You need to build a migration via running
+2. You need to build a migration by running
 `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
 new file in `dist`. Both files in `dist` and `src` need to be added in the PR.
 _Notice that any changes in other directories that are imported by the file will
