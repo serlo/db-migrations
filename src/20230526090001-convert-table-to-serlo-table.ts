@@ -129,13 +129,47 @@ function convertHTMLtoState(
 type Col = EdtrPluginSerloTable['state']['rows'][0]['columns'][0]
 
 function convertCellContent(cell: LegacyNode) {
-  if (cell.children.length === 0) return { plugin: 'text' }
-  if (cell.children.length > 1 || cell.children[0].name !== 'p') {
-    console.log('unexpected state, cell will be empty')
+  const cellChildren = cell.children
+
+  if (cellChildren.length === 0) return { plugin: 'text' }
+
+  if (cellChildren.length > 1) {
+    console.log('unexpected: cell has more than one child, cell will be empty')
+    // console.log(cell.children)
     return { plugin: 'text' }
   }
-  const contentNodes = cell.children[0].children
-  const converted = contentNodes.map(convertContentNode)
+
+  const onlyChild = cellChildren[0]
+
+  if (!['p', 'h4', 'ul', 'ol', 'pre'].includes(onlyChild.name)) {
+    console.log('unexpected state, cell will be empty')
+    // console.log(onlyChild)
+    // console.log(cell.children.length)
+    console.log(onlyChild.name)
+    return { plugin: 'text' }
+  }
+
+  const filteredChildren = onlyChild.children.filter((child) => {
+    const text = child.data?.replace(/\r?\n|\r$/, '').trim()
+    return child.type === 'text' &&
+      (text === '\\n' ||
+        text === '-' ||
+        text === '*' ||
+        text === '–' ||
+        text === '#' ||
+        text === '')
+      ? false
+      : true
+  })
+
+  if (filteredChildren.length === 0) return { plugin: 'text' }
+
+  if (filteredChildren.length === 1 && filteredChildren[0].name === 'li') {
+    const liConverted = filteredChildren[0].children.map(convertContentNode)
+    return { plugin: 'text', state: [{ type: 'p', children: liConverted }] }
+  }
+
+  const converted = filteredChildren.map(convertContentNode)
 
   if (
     converted.length === 1 &&
@@ -145,7 +179,6 @@ function convertCellContent(cell: LegacyNode) {
   ) {
     return converted[0]
   }
-
   return { plugin: 'text', state: [{ type: 'p', children: converted }] }
 }
 
@@ -157,16 +190,21 @@ function convertContentNode(
   if (node.type === 'text') return { text: node.data ?? '' }
 
   if (node.type === 'tag') {
-    // console.log(node.name)
     if (node.name === 'br') {
       return { text: ' ' }
     }
 
     if (node.name === 'strong') {
+      if (node.children[0].type !== 'text') {
+        return convertContentNode(node.children[0])
+      }
       return { text: node.children[0].data ?? '', strong: true }
     }
 
     if (node.name === 'em') {
+      if (node.children[0].type !== 'text') {
+        return convertContentNode(node.children[0])
+      }
       return { text: node.children[0].data ?? '', em: true }
     }
 
@@ -174,10 +212,17 @@ function convertContentNode(
       if (
         node.children[0].data?.includes('%') ||
         node.children[0].data?.includes('$$')
-      )
+      ) {
         console.log(
-          'content: table has link with formula that will not be converted! check manually'
+          'content: link with formula that will not be converted! check manually'
         )
+      }
+      if (node.children[0].type !== 'text') {
+        console.log(
+          'content: link with unexpected content, content will be deleted!'
+        )
+        return { text: '' }
+      }
       return {
         type: 'a',
         href: node.attribs.href,
@@ -236,8 +281,9 @@ function convertContentNode(
         console.log('content: math has unexpected state, content will be empty')
         return { text: '' }
       }
+      const text = node.children[0].data.replace(/\r?\n|\r$/, '').trim()
       return {
-        text: node.children[0].data,
+        text: text,
         code: true,
       }
     }
@@ -261,8 +307,7 @@ function convertContentNode(
   }
 
   console.log('content: unsupported type, content will be empty')
-  const type = node.type
-  console.log({ type })
+  console.log(node.type)
   // console.log(node)
 
   return { text: '' }
