@@ -8,8 +8,8 @@ particularly for the legacy database
 - yarn >3
 - Docker and Docker Compose
 
-Note: Also make sure you have `cmake` installed on your machine
-(e.g. `sudo apt install cmake`).
+Note: Also make sure you have `cmake` installed on your machine (e.g.
+`sudo apt install cmake`).
 
 ## Steps to add a new migration
 
