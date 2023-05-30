@@ -62,9 +62,11 @@ export function createMigration(
 export function createEdtrIoMigration({
   exports,
   migrateState,
+  dryRun,
 }: {
   exports: any
   migrateState: (state: any) => any
+  dryRun?: boolean
 }) {
   createMigration(exports, {
     up: async (db) => {
@@ -82,6 +84,7 @@ export function createEdtrIoMigration({
             revision.id
           )
         },
+        dryRun,
       })
 
       await changeAllRevisions({
@@ -107,10 +110,12 @@ async function changeAllRevisions({
   revisions,
   updateRevision,
   migrateState,
+  dryRun,
 }: {
   revisions: Revision[]
   updateRevision: (newContent: string, revision: Revision) => Promise<void>
   migrateState: (state: any) => any
+  dryRun?: boolean
 }) {
   for (const revision of revisions) {
     let oldState
@@ -129,9 +134,12 @@ async function changeAllRevisions({
     const newState = JSON.stringify(migrateState(oldState))
 
     if (newState !== revision.content) {
-      await updateRevision(newState, revision)
-
-      console.log('Updated revision', revision.revisionId)
+      if (dryRun) {
+        console.log('Revision: ', revision.revisionId, ' done.')
+      } else {
+        await updateRevision(newState, revision)
+        console.log('Updated revision', revision.revisionId)
+      }
     }
   }
 }
