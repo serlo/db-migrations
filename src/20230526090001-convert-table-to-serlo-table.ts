@@ -3,6 +3,8 @@ import { converter } from '@serlo/markdown'
 import { parseDOM } from 'htmlparser2'
 import { createEdtrIoMigration, replacePlugins, Plugin } from './utils'
 
+const dryRun = false
+
 createEdtrIoMigration({
   exports,
   migrateState: replacePlugins({
@@ -10,12 +12,15 @@ createEdtrIoMigration({
       if (typeof plugin.state !== 'string') {
         throw new Error('plugin state is not a string')
       }
-      const serloTable = convertTable(plugin as EdtrPluginTable) ?? plugin
+      const serloTable = convertTable(plugin as EdtrPluginTable)
 
-      return { plugin: 'table', state: plugin.state + ' ' }
+      if (!serloTable) console.log('could not convert this table!!')
+
+      if (dryRun) return { plugin: 'table', state: plugin.state + ' ' }
+      return serloTable ?? plugin
     },
   }),
-  dryRun: true,
+  dryRun,
 })
 
 export function convertTable(
@@ -32,7 +37,7 @@ function convertHTMLtoState(
   const dom = parseDOM(html) as unknown as LegacyNode[]
   // console.log(dom)
 
-  const table = dom[0].children.filter((child) => child.type === 'tag')[0]
+  const table = dom[0]?.children.filter((child) => child.type === 'tag')[0]
   if (!table) {
     console.log('Invalid table, replacing with empty text plugin!')
     return { plugin: 'text' } as EdtrPluginText
@@ -150,35 +155,29 @@ function convertCellContent(cell: LegacyNode) {
   }
 
   const filteredChildren = onlyChild.children.filter((child) => {
-    const text = child.data?.replace(/\r?\n|\r$/, '').trim()
+    const text = child.data?.replace(/\r?\n|\r$/, '')
     return child.type === 'text' &&
-      (text === '\\n' ||
-        text === '-' ||
-        text === '*' ||
-        text === '–' ||
-        text === '#' ||
-        text === '')
+      (text === '\\n' || text === '*' || text === '#' || text === '')
       ? false
       : true
   })
 
   if (filteredChildren.length === 0) return { plugin: 'text' }
 
-  if (filteredChildren.length === 1 && filteredChildren[0].name === 'li') {
+  const liElement = filteredChildren.find((child) => child.name === 'li')
+  if (liElement) {
     const liConverted = filteredChildren[0].children.map(convertContentNode)
     return { plugin: 'text', state: [{ type: 'p', children: liConverted }] }
   }
 
   const converted = filteredChildren.map(convertContentNode)
 
-  if (
-    converted.length === 1 &&
-    converted[0].hasOwnProperty('plugin') &&
-    //@ts-expect-error ooo
-    converted[0].plugin === 'image'
-  ) {
-    return converted[0]
-  }
+  const convertedImg = converted.find(
+    // @ts-expect-error
+    (obj) => obj.hasOwnProperty('plugin') && obj.plugin === 'image'
+  )
+  if (convertedImg) return convertedImg
+
   return { plugin: 'text', state: [{ type: 'p', children: converted }] }
 }
 
@@ -239,7 +238,7 @@ function convertContentNode(
         console.log(
           'content: mathInline has unexpected state, content will be empty'
         )
-        return { text: '' }
+        return { text: ' ' }
       }
 
       const mathContent =
