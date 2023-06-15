@@ -7,16 +7,24 @@
   "scripts": {
     "_prettier": "prettier . '!dist/**/*'",
     "build": "ts-node scripts/build",
+    "list-migrations": "docker exec $(docker ps -qf 'name=mysql') mysql --password=secret --database=serlo --execute 'SELECT * FROM migrations'",
+    "delete-last-migration": "docker exec $(docker ps -qf 'name=mysql') mysql --password=secret --database=serlo --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "format:prettier": "yarn _prettier --write",
     "lint:prettier": "yarn _prettier --check",
+    "m": "yarn migrate:ts",
     "migrate": "docker-compose run --rm server-migrate",
+    "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m src/ up",
     "migrate:up": "yarn migrate up",
+    "new": "./scripts/touch_file.sh",
     "push-image": "ts-node scripts/push-image",
     "test": "jest"
   },
   "dependencies": {
+    "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "db-migrate": "^0.11.13",
     "db-migrate-mysql": "^2.2.0",
+    "db-migrate-plugin-typescript": "^2.0.0",
+    "htmlparser2": "^9.0.0",
     "ramda": "^0.29.0",
     "tslib": "^2.3.1"
   },

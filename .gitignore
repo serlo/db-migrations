@@ -1,3 +1,6 @@
+# development
+tmp
+
 # Logs
 logs
 *.log
@@ -72,9 +75,6 @@ typings/
 # Serverless directories
 .serverless
 /out/
-
-# Bundled code
-dist
 
 # Secrets
 *.secret.*
