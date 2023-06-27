@@ -11,7 +11,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - uses: google-github-actions/setup-gcloud@v0
+      - uses: google-github-actions/setup-gcloud@v1
         with:
           version: '372.0.0'
           service_account_key: ${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}
