@@ -1,0 +1,27 @@
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
+
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: 'npm'
+    directory: 'src/legacy-editor-to-editor'
+    schedule:
+      interval: 'weekly'
+
+  - package-ecosystem: 'docker'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    # we may not want to switch MySQL major version without good reason
+    # the version should also be the same as in staging and production
+    ignore:
+      - dependency-name: 'mysql'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
