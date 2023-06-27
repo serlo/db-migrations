@@ -1,5 +1,6 @@
 name: Image
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -19,4 +20,4 @@ jobs:
           version: '372.0.0'
       - run: gcloud auth configure-docker
       - run: yarn --immutable --immutable-cache
-      - run: yarn push-image
+#      - run: yarn push-image
