@@ -1,4 +1,4 @@
-FROM node:18-alpine as dependencies
+FROM node:20-alpine as dependencies
 WORKDIR /usr/src/app
 # COPY .yarn .yarn
 COPY package.json .
