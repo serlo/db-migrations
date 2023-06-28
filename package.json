@@ -31,7 +31,7 @@
   "devDependencies": {
     "@edtr-io/plugin-text": "^3.0.2",
     "@types/jest": "^29.5.2",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.3.2",
     "@types/ramda": "^0.29.1",
     "@types/react": "^18.2.6",
     "@types/semver": "^7.3.13",
