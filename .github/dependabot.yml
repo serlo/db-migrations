@@ -15,10 +15,9 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    # we may not want to switch MySQL major version without good reason
-    # the version should also be the same as in staging and production
+    # we may not want to switch NodeJS major version without good reason
     ignore:
-      - dependency-name: 'mysql'
+      - dependency-name: 'node'
         update-types: ['version-update:semver-major']
 
   - package-ecosystem: 'github-actions'
