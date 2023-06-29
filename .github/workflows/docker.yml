@@ -15,5 +15,10 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: false
+          load: true
           file: ./Dockerfile
           tags: api-db-migration:PR-${{ env.PR_NUMBER }}
+      - name: Test for node in the api-db-migration image
+        run:
+          docker run --entrypoint='' --rm api-db-migration:PR-${{ env.PR_NUMBER
+          }} node --version
