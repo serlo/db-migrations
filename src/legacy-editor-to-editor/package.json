@@ -28,7 +28,7 @@
     "slate-html-serializer": "^0.8.13",
     "styled-components": "^5.3.5",
     "tslib": "^2.4.0",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/ramda": "^0.29.2",
