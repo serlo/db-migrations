@@ -32,7 +32,7 @@
     "@edtr-io/plugin-text": "^3.0.2",
     "@types/jest": "^29.5.2",
     "@types/node": "^18.0.0",
-    "@types/ramda": "^0.29.2",
+    "@types/ramda": "^0.29.3",
     "@types/react": "^18.2.6",
     "@types/semver": "^7.3.13",
     "@types/uuid": "^9.0.2",
