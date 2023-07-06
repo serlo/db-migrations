@@ -3,7 +3,7 @@ WORKDIR /usr/src/app
 # COPY .yarn .yarn
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --silent
+RUN yarn --immutable
 
 FROM dependencies
 COPY dist migrations
