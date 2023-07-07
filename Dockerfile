@@ -1,9 +1,10 @@
-FROM node:18-alpine as dependencies
+FROM node:18-alpine AS dependencies
 WORKDIR /usr/src/app
-# COPY .yarn .yarn
+COPY .yarn .yarn
+COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
-RUN yarn --silent
+RUN yarn --immutable --immutable-cache --check-cache --silent
 
 FROM dependencies
 COPY dist migrations
