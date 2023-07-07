@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          cache: 'yarn'
       - run: yarn --immutable --immutable-cache
       - run: yarn lint:prettier
   test:
@@ -22,5 +23,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.x
+          cache: 'yarn'
       - run: yarn --immutable --immutable-cache
       - run: yarn test
