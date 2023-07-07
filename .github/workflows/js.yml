@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn lint:prettier
   test:
     runs-on: ubuntu-latest
@@ -24,5 +24,5 @@ jobs:
         with:
           node-version: 18.x
           cache: 'yarn'
-      - run: yarn --immutable --immutable-cache
+      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn test
