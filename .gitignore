@@ -82,9 +82,6 @@ typings/
 # Docker Compose override file
 docker-compose.override.yml
 
-# asdf-vm configuration file
-.tool-versions
-
 # Yarn
 .yarn/*
 !.yarn/cache
