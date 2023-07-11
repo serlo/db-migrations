@@ -171,8 +171,8 @@ const cases: {
           plugin: 'text',
           state: serializer.serialize(
             htmlToSlate(
-              '<p>This was created with <strong>Splish</strong> editor.</p><p></p><ul><li><p>foo</p></li><li><p>bar</p></li></ul>'
-            )
+              '<p>This was created with <strong>Splish</strong> editor.</p><p></p><ul><li><p>foo</p></li><li><p>bar</p></li></ul>',
+            ),
           ),
         },
       ],
@@ -186,7 +186,7 @@ cases.forEach((testcase) => {
       expect(
         convertSplishToEdtrIO(testcase.splish),
         'to equal',
-        testcase.edtrIO
+        testcase.edtrIO,
       )
     })
   })

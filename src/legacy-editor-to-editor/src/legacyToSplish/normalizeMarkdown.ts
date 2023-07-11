@@ -25,11 +25,11 @@ const spoilerRegEx = new RegExp(/^\/\/\/ (.*)\n([\s\S]*?)(\n|\r)+\/\/\//m)
 const injectionRegEx = new RegExp(/>\[(.*)\]\(((?!ggt\/).*)\)/)
 const geogebraInjectionRegEx = new RegExp(/>\[(.*)\]\(ggt\/(.*)\)/)
 const linkRegEx = new RegExp(
-  /[^!>]\[(([^[()\]]*?(\[.*?\]\(.*?\))?)*?)\]\((.*?)\)/
+  /[^!>]\[(([^[()\]]*?(\[.*?\]\(.*?\))?)*?)\]\((.*?)\)/,
 )
 const imagesRegEx = new RegExp(/!\[(.*?)\]\((.*?)( "(.*)?")?\)/)
 const linkedImagesRegEx = new RegExp(
-  /\[!\[(.*?)\]\((.*?)( "(.*)?")?\)\]\((.*?)\)/
+  /\[!\[(.*?)\]\((.*?)( "(.*)?")?\)\]\((.*?)\)/,
 )
 const tableRegEx = new RegExp(/(^|\n)(((\|[^|\r\n]*)+\|( |\t)*(\r?\n|\r)?)+)/)
 
@@ -40,7 +40,7 @@ const tableRegEx = new RegExp(/(^|\n)(((\|[^|\r\n]*)+\|( |\t)*(\r?\n|\r)?)+)/)
  *  3. Lookahead: Match is finished, when two linebreaks, end of line or injection
  */
 const blockquoteRegEx = new RegExp(
-  /((((\A|\n+)(?!>\[.*?\]\(.*?\))>[\s\S]+?)(?=(\r?\n\r?\n\w)|$|(>\[.*?\]\(.*?\))))+)/m
+  /((((\A|\n+)(?!>\[.*?\]\(.*?\))>[\s\S]+?)(?=(\r?\n\r?\n\w)|$|(>\[.*?\]\(.*?\))))+)/m,
 )
 
 const extractCode = (normalizedObj: NormalizedObject) =>
@@ -51,7 +51,7 @@ const extractCode = (normalizedObj: NormalizedObject) =>
       language: match[2].trim(),
       src: match[3],
     }),
-    normalizedObj
+    normalizedObj,
   )
 const extractSpoilers = (normalizedObj: NormalizedObject) =>
   extract(
@@ -61,7 +61,7 @@ const extractSpoilers = (normalizedObj: NormalizedObject) =>
       title: match[1],
       content: normalizeMarkdown(match[2]),
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const extractTable = (normalizedObj: NormalizedObject) =>
@@ -71,7 +71,7 @@ const extractTable = (normalizedObj: NormalizedObject) =>
       name: 'table',
       src: match[0],
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const extractInjections = (normalizedObj: NormalizedObject) =>
@@ -82,7 +82,7 @@ const extractInjections = (normalizedObj: NormalizedObject) =>
       description: match[1],
       src: match[2],
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const extractGeogebra = (normalizedObj: NormalizedObject) =>
@@ -93,7 +93,7 @@ const extractGeogebra = (normalizedObj: NormalizedObject) =>
       description: match[1],
       src: match[2],
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const extractLinkedImages = (normalizedObj: NormalizedObject) =>
@@ -106,7 +106,7 @@ const extractLinkedImages = (normalizedObj: NormalizedObject) =>
       title: match[4],
       href: match[5],
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const extractImages = (normalizedObj: NormalizedObject) =>
@@ -118,7 +118,7 @@ const extractImages = (normalizedObj: NormalizedObject) =>
       src: match[2],
       title: match[4],
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const extractBlockquote = (normalizedObj: NormalizedObject) =>
@@ -128,7 +128,7 @@ const extractBlockquote = (normalizedObj: NormalizedObject) =>
       name: 'blockquote',
       content: normalizeMarkdown(match[1].replace(/(^|\n)>/g, '$1')),
     }),
-    normalizedObj
+    normalizedObj,
   )
 
 const normalizeMarkdown = (markdown: string) => {
@@ -151,7 +151,7 @@ const normalizeMarkdown = (markdown: string) => {
 const extract = (
   regex: RegExp,
   createElement: (match: RegExpExecArray) => Element,
-  { normalized, elements }: NormalizedObject
+  { normalized, elements }: NormalizedObject,
 ) => {
   let match = regex.exec(normalized)
   while (match !== null) {

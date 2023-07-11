@@ -237,7 +237,7 @@ const cases: {
                                         {
                                           cells: [
                                             expectSplishSlate(
-                                              '<p>markdowntext</p>'
+                                              '<p>markdowntext</p>',
                                             ),
                                           ],
                                         },
@@ -309,7 +309,7 @@ const cases: {
                                         {
                                           cells: [
                                             expectSplishSlate(
-                                              '<p>markdowntext with image</p>'
+                                              '<p>markdowntext with image</p>',
                                             ),
                                           ],
                                         },
@@ -573,7 +573,7 @@ const cases: {
                                         {
                                           cells: [
                                             expectSplishSlate(
-                                              '<p>ipsum dolor</p><p>sit amet</p>'
+                                              '<p>ipsum dolor</p><p>sit amet</p>',
                                             ),
                                           ],
                                         },
@@ -590,7 +590,7 @@ const cases: {
                     {
                       cells: [
                         expectSplishSlate(
-                          '<p>consectetur -&gt; not a quote</p>'
+                          '<p>consectetur -&gt; not a quote</p>',
                         ),
                       ],
                     },

@@ -54,8 +54,8 @@ export function replacePluginState(transformations: {
 function updatePlugins(
   updatePlugin: (
     plugin: Plugin,
-    applyChangeToChildren: Transformation
-  ) => Plugin | undefined
+    applyChangeToChildren: Transformation,
+  ) => Plugin | undefined,
 ): Transformation {
   function applyChangeToChildren(value: unknown): unknown {
     if (isPlugin(value)) {

@@ -22,7 +22,7 @@ declare module 'slate' {
     [key: string]: any
 
     static create(
-      properties: Immutable.Map<string, any> | { [key: string]: any }
+      properties: Immutable.Map<string, any> | { [key: string]: any },
     ): Data
 
     static fromJSON(object: { [key: string]: any }): Data
@@ -130,7 +130,7 @@ declare module 'slate' {
     static create(properties?: ValueProperties | ValueJSON | Value): Value
 
     static createProperties(
-      attrs: ValueProperties | ValueJSON | Value
+      attrs: ValueProperties | ValueJSON | Value,
     ): ValueProperties
 
     static fromJSON(properties: ValueProperties | ValueJSON): Value
@@ -152,7 +152,7 @@ declare module 'slate' {
     }): ValueJSON
 
     addAnnotation(
-      annotation: Annotation | AnnotationProperties | AnnotationJSON
+      annotation: Annotation | AnnotationProperties | AnnotationJSON,
     ): Value
 
     addMark(path: Path, mark: MarkProperties | MarkJSON | Mark | string): Value
@@ -166,16 +166,16 @@ declare module 'slate' {
     moveNode(
       path: Immutable.List<number>,
       newPath: Immutable.List<number>,
-      newIndex?: number
+      newIndex?: number,
     ): Value
 
     removeAnnotation(
-      annotation: Annotation | AnnotationProperties | AnnotationJSON
+      annotation: Annotation | AnnotationProperties | AnnotationJSON,
     ): Value
 
     removeMark(
       path: Path,
-      mark: MarkProperties | MarkJSON | Mark | string
+      mark: MarkProperties | MarkJSON | Mark | string,
     ): Value
 
     removeNode(path: Path): Value
@@ -184,7 +184,7 @@ declare module 'slate' {
 
     setAnnotation(
       properties: AnnotationProperties | AnnotationJSON | Annotation,
-      newProperties: AnnotationProperties | AnnotationJSON | Annotation
+      newProperties: AnnotationProperties | AnnotationJSON | Annotation,
     ): Value
 
     setNode(path: Path, properties: NodeProperties): Value
@@ -192,13 +192,13 @@ declare module 'slate' {
     setMark(
       path: Path,
       properties: MarkProperties,
-      newProperties: MarkProperties
+      newProperties: MarkProperties,
     ): Value
 
     setProperties(properties: ValueProperties): Value
 
     setSelection(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType | string
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType | string,
     ): Value
 
     splitNode(path: Path, position: number, properties: NodeProperties): Value
@@ -231,15 +231,15 @@ declare module 'slate' {
         | DocumentJSON
         | Document
         | Array<NodeJSON | NodeProperties | Node>
-        | Immutable.List<NodeJSON | NodeProperties | Node>
+        | Immutable.List<NodeJSON | NodeProperties | Node>,
     ): Document
 
     static fromJSON(
-      properties: DocumentJSON | DocumentProperties | Document
+      properties: DocumentJSON | DocumentProperties | Document,
     ): Document
 
     static fromJS(
-      properties: DocumentJSON | DocumentProperties | Document
+      properties: DocumentJSON | DocumentProperties | Document,
     ): Document
 
     static isDocument(maybeDocument: any): maybeDocument is Document
@@ -270,13 +270,13 @@ declare module 'slate' {
     nodes: Immutable.List<Block | Text | Inline>
 
     static create(
-      properties: BlockProperties | BlockJSON | Block | string
+      properties: BlockProperties | BlockJSON | Block | string,
     ): Block
 
     static createList(
       array?:
         | Array<BlockProperties | BlockJSON | Block | string>
-        | Immutable.List<BlockProperties | BlockJSON | Block | string>
+        | Immutable.List<BlockProperties | BlockJSON | Block | string>,
     ): Immutable.List<Block>
 
     static fromJSON(properties: BlockJSON | BlockProperties | Block): Block
@@ -286,7 +286,7 @@ declare module 'slate' {
     static isBlock(maybeBlock: any): maybeBlock is Block
 
     static isBlockList(
-      maybeBlockList: any
+      maybeBlockList: any,
     ): maybeBlockList is Immutable.List<Block>
 
     toJSON(): BlockJSON
@@ -315,13 +315,13 @@ declare module 'slate' {
     nodes: Immutable.List<Inline | Text>
 
     static create(
-      properties: InlineProperties | InlineJSON | Inline | string
+      properties: InlineProperties | InlineJSON | Inline | string,
     ): Inline
 
     static createList(
       elements?:
         | Immutable.List<InlineProperties | InlineJSON | Inline | string>
-        | Array<InlineProperties | InlineJSON | Inline | string>
+        | Array<InlineProperties | InlineJSON | Inline | string>,
     ): Immutable.List<Inline>
 
     static fromJSON(properties: InlineProperties | InlineJSON | Inline): Inline
@@ -331,7 +331,7 @@ declare module 'slate' {
     static isInline(maybeInline: any): maybeInline is Inline
 
     static isInlineList(
-      maybeInlineList: any
+      maybeInlineList: any,
     ): maybeInlineList is Immutable.List<Inline>
 
     toJSON(): InlineJSON
@@ -372,7 +372,7 @@ declare module 'slate' {
     static createList(
       elements?:
         | Array<TextProperties | TextJSON | Text | string>
-        | Immutable.List<TextProperties | TextJSON | Text | string>
+        | Immutable.List<TextProperties | TextJSON | Text | string>,
     ): Immutable.List<Text>
 
     static fromJSON(properties: TextJSON | TextProperties | Text): Text
@@ -392,14 +392,14 @@ declare module 'slate' {
     addMarks(
       marks:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Text
 
     getKeysToPathsTable(): { [key: string]: number[] }
 
     getLeaves(
       annotations: Immutable.Map<string, Annotation>,
-      decorations?: Decoration[] | Immutable.List<Decoration>
+      decorations?: Decoration[] | Immutable.List<Decoration>,
     ): Immutable.List<Leaf>
 
     getFirstText(): Text | null
@@ -411,7 +411,7 @@ declare module 'slate' {
     getNode(path: Path): Node | null
 
     getPath(
-      key: Immutable.List<number> | string | Node
+      key: Immutable.List<number> | string | Node,
     ): Immutable.List<number> | null
 
     hasNode(path: Path): boolean
@@ -428,7 +428,7 @@ declare module 'slate' {
 
     setMark(
       properties: MarkProperties | MarkJSON | Mark | string,
-      newProperties: MarkProperties
+      newProperties: MarkProperties,
     ): Text
 
     splitText(index: number): Text[]
@@ -463,13 +463,13 @@ declare module 'slate' {
 
     static splitLeaves(
       leaves: Immutable.List<Leaf>,
-      offset: number
+      offset: number,
     ): Array<Immutable.List<Leaf>>
 
     static createList(
       attrs?:
         | Array<LeafProperties | LeafJSON | Leaf>
-        | Immutable.List<LeafProperties | LeafJSON | Leaf>
+        | Immutable.List<LeafProperties | LeafJSON | Leaf>,
     ): Immutable.List<Leaf>
 
     static fromJSON(properties: LeafJSON | LeafProperties): Leaf
@@ -517,11 +517,11 @@ declare module 'slate' {
     function createList(
       elements?:
         | Array<Node | NodeJSON | NodeProperties>
-        | Immutable.List<Node | NodeJSON | NodeProperties>
+        | Immutable.List<Node | NodeJSON | NodeProperties>,
     ): Immutable.List<Node>
 
     function createProperties(
-      attrs?: Block | Inline | string | { type?: string; data?: object }
+      attrs?: Block | Inline | string | { type?: string; data?: object },
     ): NodeProperties
 
     function fromJSON(value: { [key: string]: any }): NodeJSON
@@ -531,7 +531,7 @@ declare module 'slate' {
     function isNode(maybeNode: any): maybeNode is Node
 
     function isNodeList(
-      maybeNodeList: any
+      maybeNodeList: any,
     ): maybeNodeList is Immutable.List<Node>
   }
 
@@ -558,7 +558,7 @@ declare module 'slate' {
     static isNodeList(maybeNodeList: any): maybeNodeList is Immutable.List<Node>
 
     static createProperties(
-      attrs: NodeProperties | string | Node
+      attrs: NodeProperties | string | Node,
     ): NodeProperties
 
     static fromJSON(value: NodeJSON | NodeProperties | Node): Node
@@ -574,49 +574,49 @@ declare module 'slate' {
         onlyLeaves?: boolean
         onlyRoots?: boolean
         onlyTypes?: string[]
-      }
+      },
     ): Iterable<[Block, Immutable.List<number>]>
 
     createAnnotation(
-      properties: AnnotationProperties | AnnotationJSON | Annotation
+      properties: AnnotationProperties | AnnotationJSON | Annotation,
     ): Annotation
 
     createDecoration(
-      properties: DecorationProperties | DecorationJSON | Decoration
+      properties: DecorationProperties | DecorationJSON | Decoration,
     ): Decoration
 
     createIterable(
-      options?: IterableOptions
+      options?: IterableOptions,
     ): Iterable<[Node, Immutable.List<number>]>
 
     createPoint(properties: PointProperties | PointJSON | Point): Point
 
     createRange(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Range
 
     createSelection(
-      properties: SelectionProperties | SelectionJSON | Selection | Range
+      properties: SelectionProperties | SelectionJSON | Selection | Range,
     ): Selection
 
     descendants(
-      options?: IterableOptions
+      options?: IterableOptions,
     ): Iterable<[Node, Immutable.List<number>]>
 
     filterDescendants(
-      predicate?: (node: Node, path: Immutable.List<number>) => boolean
+      predicate?: (node: Node, path: Immutable.List<number>) => boolean,
     ): Immutable.List<Node>
 
     findDescendants(
-      predicate?: (node: Node, path: Immutable.List<number>) => boolean
+      predicate?: (node: Node, path: Immutable.List<number>) => boolean,
     ): Node | null
 
     forEachDescendant(
-      predicate?: (node: Node, path: Immutable.List<number>) => boolean
+      predicate?: (node: Node, path: Immutable.List<number>) => boolean,
     ): void
 
     getActiveMarksAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.Set<Mark>
 
     getAncestors(path: Path): Immutable.List<Node> | null
@@ -629,7 +629,7 @@ declare module 'slate' {
 
     getClosest(
       path: Path,
-      predicate: (node: Node, path: Immutable.List<number>) => boolean
+      predicate: (node: Node, path: Immutable.List<number>) => boolean,
     ): Node | null
 
     getClosestBlock(path: Path): Block | null
@@ -647,18 +647,18 @@ declare module 'slate' {
     getDescendant(path: Path): Node | null
 
     getDescendantsAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.List<Node>
 
     getFirstText(): Text | null
 
     getFragmentAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Document
 
     getFurthest(
       path: Path,
-      predicate?: (node: Node, path: Immutable.List<number>) => boolean
+      predicate?: (node: Node, path: Immutable.List<number>) => boolean,
     ): Node | null
 
     getFurthestBlock(path: Path): Block | null
@@ -672,11 +672,11 @@ declare module 'slate' {
     getInlinesByType(type: string): Immutable.List<Inline>
 
     getInsertMarksAtPoint(
-      point: PointProperties | PointJSON | Point
+      point: PointProperties | PointJSON | Point,
     ): Immutable.Set<Mark>
 
     getInsertMarksAtRange(
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): Immutable.Set<Mark>
 
     getKeysToPathsTable(): { [key: string]: number[] }
@@ -684,11 +684,11 @@ declare module 'slate' {
     getLastText(): Text | null
 
     getLeafBlocksAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.List<Block>
 
     getLeafInlinesAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.List<Inline>
 
     getNode(path: Path): Node | null
@@ -698,7 +698,7 @@ declare module 'slate' {
     getMarks(): Immutable.OrderedSet<Mark>
 
     getMarksAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.OrderedSet<Mark>
 
     getMarksByType(type: string): Immutable.OrderedSet<Mark>
@@ -714,13 +714,13 @@ declare module 'slate' {
     getOffset(path: Path): number
 
     getOffsetAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): number
 
     getParent(path: Path): Node | null
 
     getPath(
-      key: Immutable.List<number> | string | Node
+      key: Immutable.List<number> | string | Node,
     ): Immutable.List<number> | null
 
     getPreviousBlock(path: Path): Block | null
@@ -732,11 +732,11 @@ declare module 'slate' {
     getPreviousText(path: Path): Text | null
 
     getRootBlocksAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.List<Block>
 
     getRootInlinesAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.List<Inline>
 
     getText(): string
@@ -748,7 +748,7 @@ declare module 'slate' {
     getTexts(): Immutable.List<Text>
 
     getTextsAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Immutable.List<Text>
 
     hasBlockChildren(): boolean
@@ -768,7 +768,7 @@ declare module 'slate' {
         onlyLeaves?: boolean
         onlyRoots?: boolean
         onlyTypes?: string[]
-      }
+      },
     ): Iterable<[Inline, Immutable.List<number>]>
 
     insertNode(path: Path, node: Node): Node
@@ -781,27 +781,27 @@ declare module 'slate' {
 
     isInRange(
       path: Path,
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): boolean
 
     mapChildren(
       predicate?: (
         node: Node,
         index: number,
-        nodes: Immutable.List<Node>
-      ) => Node
+        nodes: Immutable.List<Node>,
+      ) => Node,
     ): Node
 
     mapDescendants(
       predicate?: (
         node: Node,
         index: number,
-        nodes: Immutable.List<Node>
-      ) => Node
+        nodes: Immutable.List<Node>,
+      ) => Node,
     ): Node | void
 
     marks(
-      options?: IterableOptions & { onlyTypes: string[] }
+      options?: IterableOptions & { onlyTypes: string[] },
     ): Iterable<[Mark, Node, Immutable.List<number>]>
 
     mergeNode(path: Path): Node
@@ -821,11 +821,11 @@ declare module 'slate' {
     replaceNode(path: Path, node: Node): Node
 
     resolveAnnotation(
-      annotation: Annotation | AnnotationProperties | AnnotationJSON
+      annotation: Annotation | AnnotationProperties | AnnotationJSON,
     ): Annotation
 
     resolveDecoration(
-      decoration: RangeType | RangeTypeProperties | RangeTypeJSON
+      decoration: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Decoration
 
     resolvePath(path: Path, index?: number): Immutable.List<number>
@@ -835,7 +835,7 @@ declare module 'slate' {
     resolveRange(range: RangeTypeProperties | RangeTypeJSON | RangeType): Range
 
     resolveSelection(
-      selection: Selection | SelectionProperties | SelectionJSON | Range
+      selection: Selection | SelectionProperties | SelectionJSON | Range,
     ): Selection
 
     setNode(path: Path, properties: NodeProperties): Node
@@ -843,12 +843,12 @@ declare module 'slate' {
     setMark(
       path: Path,
       properties: MarkProperties,
-      newProperties: MarkProperties
+      newProperties: MarkProperties,
     ): Node
 
     siblings(
       path: Path,
-      options?: IterableOptions
+      options?: IterableOptions,
     ): Iterable<[Node, Immutable.List<number>]>
 
     splitNode(path: Path, position: number, properties: NodeProperties): Node
@@ -862,24 +862,24 @@ declare module 'slate' {
      */
 
     getBlocksAtRange(
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): Immutable.List<Block>
 
     getBlocksAtRangeAsArray(range: RangeProperties | RangeJSON | Range): Block[]
 
     getInlinesAtRange(
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): Immutable.List<Inline>
 
     getInlinesAtRangeAsArray(
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): Inline[]
 
     getNextTextAndPath(path: Path): Text | null
 
     getNextDeepMatchingNodeAndPath(
       path: Immutable.List<number>,
-      iterator?: () => boolean
+      iterator?: () => boolean,
     ): null | [Node, Immutable.List<number>]
 
     getPreviousTextAndPath(path: Path): Text | null
@@ -888,86 +888,86 @@ declare module 'slate' {
       iterator: (
         node: Node,
         path: Immutable.List<number>,
-        nodes: Immutable.List<Node>
+        nodes: Immutable.List<Node>,
       ) => boolean,
-      pathToThisNode: Immutable.List<number>
+      pathToThisNode: Immutable.List<number>,
     ): [Node, Immutable.List<number>] | null
 
     getPreviousMatchingNodeAndPath(
       path: Immutable.List<number>,
-      iterator?: (node: Node) => boolean
+      iterator?: (node: Node) => boolean,
     ): [Node, Immutable.List<number>] | null
 
     getPreviousDeepMatchingNodeAndPath(
       path: Immutable.List<number>,
-      iterator?: (node: Node) => boolean
+      iterator?: (node: Node) => boolean,
     ): [Node, Immutable.List<number>] | null
 
     findLastDescendantAndPath(
       iterator: (
         node: Node,
         path: Immutable.List<number>,
-        nodes: Immutable.List<Node>
+        nodes: Immutable.List<Node>,
       ) => boolean,
-      pathToThisNode: Immutable.List<number>
+      pathToThisNode: Immutable.List<number>,
     ): [Node, Immutable.List<number>] | null
 
     findDescendantAndPath(
       iterator: (
         node: Node,
         path: Immutable.List<number>,
-        nodes: Immutable.List<Node>
+        nodes: Immutable.List<Node>,
       ) => boolean,
       path?: Immutable.List<number>,
-      findLast?: boolean
+      findLast?: boolean,
     ): [Node, Immutable.List<number>] | null
 
     forEachDescendantWithPath(
       iterator: (
         node: Node,
         path: Immutable.List<number>,
-        nodes: Immutable.List<Node>
+        nodes: Immutable.List<Node>,
       ) => boolean,
       path?: Immutable.List<number>,
-      findLast?: boolean
+      findLast?: boolean,
     ): boolean
 
     getNextMatchingNodeAndPath(
       path: Immutable.List<number>,
-      iterator?: (node: Node) => boolean
+      iterator?: (node: Node) => boolean,
     ): [Node, Immutable.List<number>] | null
 
     getSelectionIndexes(
       range: RangeType,
-      isSelected?: boolean
+      isSelected?: boolean,
     ): { start: number; end: number } | boolean | null
 
     getTextsBetweenPositionsAsArray(
       startPath: Path,
-      endPath: Path
+      endPath: Path,
     ): Array<Node | null>
 
     getOrderedMarksBetweenPositions(
       startPath: Path,
       startOffset: number,
       endPath: Path,
-      endOffset: number
+      endOffset: number,
     ): Immutable.OrderedSet<Mark>
 
     getTextsBetweenPathPositionsAsArray(
       startPath: Immutable.List<number>,
-      endPath: Immutable.List<number>
+      endPath: Immutable.List<number>,
     ): Array<Node | null>
 
     getFurthestAncestor(path: Path): Node | null
 
     getLeafBlocksAtRangeAsArray(
-      range: Range | RangeProperties | RangeJSON
+      range: Range | RangeProperties | RangeJSON,
     ): Block[]
 
     getLeafBlocksBetweenPathPositionsAsArray(
       startPath: Immutable.List<number>,
-      endPath: Immutable.List<number>
+      endPath: Immutable.List<number>,
     ): Block[]
 
     getBlocksAsArray(): Block[]
@@ -981,13 +981,13 @@ declare module 'slate' {
     getInlinesByTypeAsArray(type: string): Inline[]
 
     getLeafInlinesAtRangeAsArray(
-      range: Range | RangeProperties | RangeJSON
+      range: Range | RangeProperties | RangeJSON,
     ): Inline[]
 
     getOrderedMarks(): Immutable.OrderedSet<Mark>
 
     getOrderedMarksAtRange(
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): Immutable.OrderedSet<Mark>
 
     getOrderedMarksByType(type: string): Immutable.OrderedSet<Mark>
@@ -997,7 +997,7 @@ declare module 'slate' {
     getMarksAsArray(): Mark[]
 
     getRootInlinesAtRangeAsArray(
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): Inline[]
 
     getTextsAsArray(): Text[]
@@ -1010,7 +1010,7 @@ declare module 'slate' {
 
     isNodeInRange(
       path: Path,
-      range: RangeProperties | RangeJSON | Range
+      range: RangeProperties | RangeJSON | Range,
     ): boolean
 
     /**
@@ -1052,11 +1052,11 @@ declare module 'slate' {
     static createSet(
       element?:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Immutable.Set<Mark>
 
     static createProperties(
-      attrs: Partial<MarkProperties | MarkJSON | Mark | string>
+      attrs: Partial<MarkProperties | MarkJSON | Mark | string>,
     ): MarkProperties
 
     static fromJSON(properties: MarkProperties | MarkJSON | Mark): Mark
@@ -1098,11 +1098,11 @@ declare module 'slate' {
     readonly isBlurred: boolean
 
     static create(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Selection
 
     static createProperties(
-      attrs: RangeTypeProperties | RangeTypeJSON | RangeType | string
+      attrs: RangeTypeProperties | RangeTypeJSON | RangeType | string,
     ): SelectionProperties
 
     static fromJSON(properties: RangeTypeProperties | RangeTypeJSON): Selection
@@ -1120,7 +1120,7 @@ declare module 'slate' {
     setMarks(marks: Immutable.Set<Mark>): Selection
 
     setProperties(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType | string
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType | string,
     ): Selection
   }
 
@@ -1142,17 +1142,17 @@ declare module 'slate' {
     focus: Point
 
     static create(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Range
 
     static createList(
       elements?:
         | Array<RangeTypeProperties | RangeTypeJSON | RangeType>
-        | Immutable.List<RangeTypeProperties | RangeTypeJSON | RangeType>
+        | Immutable.List<RangeTypeProperties | RangeTypeJSON | RangeType>,
     ): Immutable.List<Range>
 
     static createProperties(
-      attrs: RangeTypeProperties | RangeTypeJSON | RangeType
+      attrs: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): RangeProperties
 
     static fromJSON(properties: RangeTypeJSON): Range
@@ -1190,30 +1190,30 @@ declare module 'slate' {
     data: Data
 
     static create(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Decoration
 
     static createList(
       elements?:
         | Array<RangeTypeProperties | RangeTypeJSON | RangeType>
-        | Immutable.List<RangeTypeProperties | RangeTypeJSON | RangeType>
+        | Immutable.List<RangeTypeProperties | RangeTypeJSON | RangeType>,
     ): Immutable.List<Decoration>
 
     static createProperties(
-      attrs: RangeTypeProperties | RangeTypeJSON | RangeType
+      attrs: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): DecorationProperties
 
     static fromJSON(
-      properties: DecorationJSON & { mark?: MarkJSON }
+      properties: DecorationJSON & { mark?: MarkJSON },
     ): Decoration
     static fromJSON(
-      properties: DecorationJSON & { mark?: MarkJSON }
+      properties: DecorationJSON & { mark?: MarkJSON },
     ): Decoration
 
     static isDecoration(maybeDecoration: any): maybeDecoration is Decoration
 
     setProperties(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Decoration
 
     toJSON(): DecorationJSON
@@ -1248,21 +1248,21 @@ declare module 'slate' {
     focus: Point
 
     static create(
-      properties: Annotation | AnnotationProperties | AnnotationJSON
+      properties: Annotation | AnnotationProperties | AnnotationJSON,
     ): Annotation
 
     static createMap(
       elements?:
         | { [key: string]: Annotation | AnnotationProperties | AnnotationJSON }
-        | Immutable.Map<string, Annotation>
+        | Immutable.Map<string, Annotation>,
     ): Immutable.Map<string, Annotation>
 
     static createProperties(
-      attrs: AnnotationProperties | AnnotationJSON | Annotation
+      attrs: AnnotationProperties | AnnotationJSON | Annotation,
     ): AnnotationProperties
 
     static fromJSON(
-      properties: AnnotationProperties | AnnotationJSON
+      properties: AnnotationProperties | AnnotationJSON,
     ): Annotation
 
     static fromJS(properties: AnnotationProperties | AnnotationJSON): Annotation
@@ -1274,7 +1274,7 @@ declare module 'slate' {
     toJS(): AnnotationJSON
 
     setProperties(
-      properties: AnnotationProperties | AnnotationJSON | Annotation
+      properties: AnnotationProperties | AnnotationJSON | Annotation,
     ): Annotation
   }
 
@@ -1314,7 +1314,7 @@ declare module 'slate' {
 
     moveAnchorTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): RangeType
 
     moveAnchorToStartOfNode(node: Node): RangeType
@@ -1327,7 +1327,7 @@ declare module 'slate' {
 
     moveEndTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): RangeType
 
     moveEndToStartOfNode(node: Node): RangeType
@@ -1340,7 +1340,7 @@ declare module 'slate' {
 
     moveFocusTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): RangeType
 
     moveFocusToStartOfNode(node: Node): RangeType
@@ -1353,7 +1353,7 @@ declare module 'slate' {
 
     moveStartTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): RangeType
 
     moveStartToStartOfNode(node: Node): RangeType
@@ -1395,7 +1395,7 @@ declare module 'slate' {
     setStart(point: Point): RangeType
 
     setProperties(
-      properties: RangeTypeProperties | RangeTypeJSON | RangeType
+      properties: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): RangeType
 
     toJSON(): RangeTypeJSON
@@ -1430,7 +1430,7 @@ declare module 'slate' {
     static create(properties: PointProperties | PointJSON | Point): Point
 
     static createProperties(
-      properties: PointProperties | PointJSON | Point
+      properties: PointProperties | PointJSON | Point,
     ): Point
 
     static fromJSON(properties: PointJSON | PointProperties): Point
@@ -1468,7 +1468,7 @@ declare module 'slate' {
 
     moveTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): this
 
     moveToStartOfNode(node: Node): this
@@ -1561,7 +1561,7 @@ declare module 'slate' {
     type: string
 
     static create(
-      attrs?: Operation | OperationProperties | OperationJSON
+      attrs?: Operation | OperationProperties | OperationJSON,
     ): Operation
 
     static createList():
@@ -1575,7 +1575,7 @@ declare module 'slate' {
     static isOperation(maybeOperation: any): maybeOperation is Operation
 
     static isOperationList(
-      maybeOperationList: any
+      maybeOperationList: any,
     ): maybeOperationList is Immutable.List<Operation>
 
     toJSON(): OperationJSON
@@ -1749,14 +1749,14 @@ declare module 'slate' {
      */
     function compare(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): number | null
 
     /**
      * Create a path from `attrs`.
      */
     function create(
-      attrs: Immutable.List<number> | number[]
+      attrs: Immutable.List<number> | number[],
     ): Immutable.List<number>
 
     /**
@@ -1765,7 +1765,7 @@ declare module 'slate' {
     function crop(
       a: Immutable.List<number>,
       b: Immutable.List<number>,
-      size?: number
+      size?: number,
     ): Array<Immutable.List<number>>
 
     /**
@@ -1774,7 +1774,7 @@ declare module 'slate' {
     function decrement(
       path: Immutable.List<number>,
       n?: number,
-      index?: number
+      index?: number,
     ): Immutable.List<number>
 
     /**
@@ -1788,7 +1788,7 @@ declare module 'slate' {
     function increment(
       path: Immutable.List<number>,
       n?: number,
-      index?: number
+      index?: number,
     ): Immutable.List<number>
 
     /**
@@ -1796,7 +1796,7 @@ declare module 'slate' {
      */
     function isAbove(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
@@ -1804,7 +1804,7 @@ declare module 'slate' {
      */
     function isAfter(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
@@ -1812,7 +1812,7 @@ declare module 'slate' {
      */
     function isBefore(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
@@ -1820,7 +1820,7 @@ declare module 'slate' {
      */
     function isEqual(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
@@ -1829,14 +1829,14 @@ declare module 'slate' {
      */
     function isOlder(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
      * Is an `any` object a path?
      */
     function isPath(
-      maybePath: any
+      maybePath: any,
     ): maybePath is Immutable.List<number> | number[]
 
     /**
@@ -1844,7 +1844,7 @@ declare module 'slate' {
      */
     function isSibling(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
@@ -1853,7 +1853,7 @@ declare module 'slate' {
      */
     function isYounger(
       path: Immutable.List<number>,
-      target: Immutable.List<number>
+      target: Immutable.List<number>,
     ): boolean
 
     /**
@@ -1861,7 +1861,7 @@ declare module 'slate' {
      */
     function lift(
       path: Immutable.List<number>,
-      n?: number
+      n?: number,
     ): Immutable.List<number>
 
     /**
@@ -1869,7 +1869,7 @@ declare module 'slate' {
      */
     function drop(
       path: Immutable.List<number>,
-      n?: number
+      n?: number,
     ): Immutable.List<number>
 
     /**
@@ -1887,7 +1887,7 @@ declare module 'slate' {
      */
     function relate(
       a: Immutable.List<number>,
-      b: Immutable.List<number>
+      b: Immutable.List<number>,
     ): Immutable.List<number>
 
     /**
@@ -1895,7 +1895,7 @@ declare module 'slate' {
      */
     function transform(
       path: Immutable.List<number>,
-      operation: Operation | OperationJSON | OperationProperties
+      operation: Operation | OperationJSON | OperationProperties,
     ): Immutable.List<Immutable.List<number>>
   }
 
@@ -1916,7 +1916,7 @@ declare module 'slate' {
     normalizeNode?: (
       node: Node,
       editor: Editor,
-      next: () => void
+      next: () => void,
     ) => ((editor: Editor) => void) | void
     onChange?: (editor: Editor, next: () => void) => void
     onCommand?: (command: Command, editor: Editor, next: () => void) => void
@@ -1925,7 +1925,7 @@ declare module 'slate' {
     validateNode?: (
       node: Node,
       editor: Editor,
-      next: () => void
+      next: () => void,
     ) => SlateError | void
 
     commands?: { [name: string]: CommandFunc }
@@ -1989,7 +1989,7 @@ declare module 'slate' {
     addMarks(
       mark:
         | Set<string | MarkProperties | MarkJSON | Mark>
-        | Array<string | MarkProperties | MarkJSON | Mark>
+        | Array<string | MarkProperties | MarkJSON | Mark>,
     ): Editor
 
     delete(): Editor
@@ -2003,7 +2003,7 @@ declare module 'slate' {
     insertFragment(fragment: Document): Editor
 
     insertInline(
-      inline: string | Inline | InlineProperties | InlineJSON
+      inline: string | Inline | InlineProperties | InlineJSON,
     ): Editor
 
     insertText(text: string): Editor
@@ -2020,23 +2020,23 @@ declare module 'slate' {
 
     replaceMark(
       mark: string | MarkProperties | MarkJSON | Mark,
-      newMark: string | MarkProperties | MarkJSON | Mark
+      newMark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     toggleMark(mark: string | MarkProperties | MarkJSON | Mark): Editor
 
     unwrapBlock(
-      properties: string | Block | BlockProperties | BlockJSON
+      properties: string | Block | BlockProperties | BlockJSON,
     ): Editor
 
     unwrapInline(
-      properties: string | Inline | InlineProperties | InlineJSON
+      properties: string | Inline | InlineProperties | InlineJSON,
     ): Editor
 
     wrapBlock(properties: string | Block | BlockProperties | BlockJSON): Editor
 
     wrapInline(
-      properties: string | Inline | InlineProperties | InlineJSON
+      properties: string | Inline | InlineProperties | InlineJSON,
     ): Editor
 
     wrapText(prefix: string, suffix?: string): Editor
@@ -2059,7 +2059,7 @@ declare module 'slate' {
 
     moveAnchorTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Editor
 
     moveAnchorToEndOfBlock(): Editor
@@ -2112,7 +2112,7 @@ declare module 'slate' {
 
     moveEndTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Editor
 
     moveEndToEndOfBlock(): Editor
@@ -2169,7 +2169,7 @@ declare module 'slate' {
 
     moveFocusTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Editor
 
     moveFocusToEndOfBlock(): Editor
@@ -2226,7 +2226,7 @@ declare module 'slate' {
 
     moveStartTo(
       path: string | number | Immutable.List<number>,
-      n?: number
+      n?: number,
     ): Editor
 
     moveStartToEndOfBlock(): Editor
@@ -2283,7 +2283,7 @@ declare module 'slate' {
 
     moveTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Editor
 
     moveToAnchor(): Editor
@@ -2348,7 +2348,7 @@ declare module 'slate' {
 
     select(
       properties: string | RangeTypeProperties | RangeTypeJSON | RangeType,
-      options?: { snapshot?: boolean }
+      options?: { snapshot?: boolean },
     ): Editor
 
     setAnchor(point: Point): void
@@ -2361,154 +2361,154 @@ declare module 'slate' {
 
     addMarkAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      mark: string | MarkProperties | Mark
+      mark: string | MarkProperties | Mark,
     ): Editor
 
     addMarksAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
       marks:
         | Array<string | MarkProperties | MarkJSON | Mark>
-        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>
+        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>,
     ): Editor
 
     deleteAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteCharBackward(): Editor
 
     deleteCharBackwardAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteLineBackward(): Editor
 
     deleteLineBackwardAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteWordBackward(): Editor
 
     deleteWordBackwardAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteBackwardAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      n?: number
+      n?: number,
     ): Editor
 
     deleteCharForward(): Editor
 
     deleteCharForwardAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteLineForward(): Editor
 
     deleteLineForwardAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteWordForwardAtRange(
-      range: RangeTypeProperties | RangeTypeJSON | RangeType
+      range: RangeTypeProperties | RangeTypeJSON | RangeType,
     ): Editor
 
     deleteWordForward(): Editor
 
     deleteForwardAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      n?: number
+      n?: number,
     ): Editor
 
     insertBlockAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      block: string | Block | BlockProperties | BlockJSON
+      block: string | Block | BlockProperties | BlockJSON,
     ): Editor
 
     insertFragmentAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      fragment: Document
+      fragment: Document,
     ): Editor
 
     insertInlineAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      inline: Inline | InlineProperties | InlineJSON
+      inline: Inline | InlineProperties | InlineJSON,
     ): Editor
 
     insertTextAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      text: string
+      text: string,
     ): Editor
 
     setBlocksAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      properties: string | Block | BlockProperties | BlockJSON
+      properties: string | Block | BlockProperties | BlockJSON,
     ): Editor
 
     setInlinesAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      properties: string | Inline | InlineProperties | InlineJSON
+      properties: string | Inline | InlineProperties | InlineJSON,
     ): Editor
 
     splitBlockAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      height?: number
+      height?: number,
     ): Editor
 
     splitInlineAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      height?: number
+      height?: number,
     ): Editor
 
     removeMarkAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      mark: string | MarkProperties | MarkJSON | Mark
+      mark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     toggleMarkAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      mark: string | MarkProperties | MarkJSON | Mark
+      mark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     unwrapBlockAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      properties: string | Block | BlockProperties | BlockJSON
+      properties: string | Block | BlockProperties | BlockJSON,
     ): Editor
 
     unwrapInlineAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      properties: string | Inline | InlineProperties | InlineJSON
+      properties: string | Inline | InlineProperties | InlineJSON,
     ): Editor
 
     wrapBlockAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      properties: string | Block | BlockProperties | BlockJSON
+      properties: string | Block | BlockProperties | BlockJSON,
     ): Editor
 
     wrapInlineAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
-      properties: string | Inline | InlineProperties | InlineJSON
+      properties: string | Inline | InlineProperties | InlineJSON,
     ): Editor
 
     wrapTextAtRange(
       range: RangeTypeProperties | RangeTypeJSON | RangeType,
       prefix: string,
-      suffix?: string
+      suffix?: string,
     ): Editor
 
     addMarkByKey(
       key: string,
       offset: number,
       length: number,
-      mark: string | MarkProperties | MarkJSON | Mark
+      mark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     addMarkByPath(
       path: Immutable.List<number>,
       offset: number,
       length: number,
-      mark: string | MarkProperties | MarkJSON | Mark
+      mark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     addMarksByPath(
@@ -2517,19 +2517,19 @@ declare module 'slate' {
       length: number,
       marks:
         | Array<string | MarkProperties | MarkJSON | Mark>
-        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>
+        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>,
     ): Editor
 
     insertNodeByKey(
       key: string,
       index: number,
-      node: Block | Document | Inline | Text
+      node: Block | Document | Inline | Text,
     ): Editor
 
     insertNodeByPath(
       path: Immutable.List<number>,
       index: number,
-      node: Block | Document | Inline | Text
+      node: Block | Document | Inline | Text,
     ): Editor
 
     insertFragmentByKey(key: string, index: number, fragment: Document): Editor
@@ -2537,7 +2537,7 @@ declare module 'slate' {
     insertFragmentByPath(
       path: Immutable.List<number>,
       index: number,
-      fragment: Document
+      fragment: Document,
     ): Editor
 
     insertTextByKey(
@@ -2546,7 +2546,7 @@ declare module 'slate' {
       text: string,
       marks?:
         | Array<string | MarkProperties | MarkJSON | Mark>
-        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>
+        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>,
     ): Editor
 
     insertTextByPath(
@@ -2555,7 +2555,7 @@ declare module 'slate' {
       text: string,
       marks?:
         | Array<string | MarkProperties | MarkJSON | Mark>
-        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>
+        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>,
     ): Editor
 
     mergeNodeByKey(key: string): Editor
@@ -2567,21 +2567,21 @@ declare module 'slate' {
     moveNodeByPath(
       path: Immutable.List<number>,
       newPath: Immutable.List<number>,
-      newIndex: number
+      newIndex: number,
     ): Editor
 
     removeMarkByKey(
       key: string,
       offset: number,
       length: number,
-      mark: string | MarkProperties | MarkJSON | Mark
+      mark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     removeMarkByPath(
       path: Immutable.List<number>,
       offset: number,
       length: number,
-      mark: string | MarkProperties | MarkJSON | Mark
+      mark: string | MarkProperties | MarkJSON | Mark,
     ): Editor
 
     removeAllMarksByKey(key: string): Editor
@@ -2594,7 +2594,7 @@ declare module 'slate' {
       length: number,
       marks:
         | Array<string | MarkProperties | MarkJSON | Mark>
-        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>
+        | Immutable.Set<string | MarkProperties | MarkJSON | Mark>,
     ): Editor
 
     removeNodeByKey(key: string): Editor
@@ -2603,12 +2603,12 @@ declare module 'slate' {
 
     replaceNodeByKey(
       key: string,
-      node: Block | Document | Inline | Text
+      node: Block | Document | Inline | Text,
     ): Editor
 
     replaceNodeByPath(
       path: Immutable.List<number>,
-      newNode: Block | Document | Inline | Text
+      newNode: Block | Document | Inline | Text,
     ): Editor
 
     removeTextByKey(key: string, offset: number, length: number): Editor
@@ -2616,12 +2616,12 @@ declare module 'slate' {
     removeTextByPath(
       path: Immutable.List<number>,
       offset: number,
-      length: number
+      length: number,
     ): Editor
 
     replaceTextByKey(
       key: string,
-      node: Block | Document | Inline | Text
+      node: Block | Document | Inline | Text,
     ): Editor
 
     replaceTextByPath(
@@ -2629,7 +2629,7 @@ declare module 'slate' {
       offset: number,
       length: number,
       text: string,
-      marks?: Immutable.Set<Mark> | Mark[]
+      marks?: Immutable.Set<Mark> | Mark[],
     ): Editor
 
     setMarkByKey(
@@ -2641,7 +2641,7 @@ declare module 'slate' {
         | string
         | Partial<MarkProperties>
         | Partial<MarkJSON>
-        | Partial<Mark>
+        | Partial<Mark>,
     ): Editor
 
     setMarkByPath(
@@ -2653,17 +2653,17 @@ declare module 'slate' {
         | string
         | Partial<MarkProperties>
         | Partial<MarkJSON>
-        | Partial<Mark>
+        | Partial<Mark>,
     ): Editor
 
     setNodeByKey(
       key: string,
-      properties: string | BlockProperties | InlineProperties
+      properties: string | BlockProperties | InlineProperties,
     ): Editor
 
     setNodeByPath(
       path: Immutable.List<number>,
-      newProperties: string | NodeProperties
+      newProperties: string | NodeProperties,
     ): Editor
 
     setTextByKey(key: string, text: string, marks: Immutable.Set<Mark>): Editor
@@ -2671,19 +2671,19 @@ declare module 'slate' {
     setTextByPath(
       path: Immutable.List<number>,
       text: string,
-      marks: Immutable.Set<Mark>
+      marks: Immutable.Set<Mark>,
     ): Editor
 
     splitDescendantsByKey(
       key: string,
       textKey: string,
-      textOffset: number
+      textOffset: number,
     ): Editor
 
     splitDescendantsByPath(
       path: Immutable.List<number>,
       textPath: Immutable.List<number>,
-      textOffset: number
+      textOffset: number,
     ): Editor
 
     splitNodeByKey(key: string, offset: number): Editor
@@ -2691,17 +2691,17 @@ declare module 'slate' {
     splitNodeByPath(
       path: Immutable.List<number>,
       position: number,
-      options?: { target?: number }
+      options?: { target?: number },
     ): Editor
 
     unwrapInlineByKey(
       key: string,
-      properties: string | InlineProperties
+      properties: string | InlineProperties,
     ): Editor
 
     unwrapInlineByPath(
       path: Path,
-      properties: string | InlineProperties
+      properties: string | InlineProperties,
     ): Editor
 
     unwrapBlockByKey(key: string, properties: string | BlockProperties): Editor
@@ -2728,7 +2728,7 @@ declare module 'slate' {
 
     wrapNodeByPath(
       path: Immutable.List<number>,
-      parent: Block | Document | Inline | Text
+      parent: Block | Document | Inline | Text,
     ): Editor
 
     normalize(): Editor
@@ -2756,7 +2756,7 @@ declare module 'slate' {
     registerQuery(query: string): Editor
 
     applyOperation(
-      operation: Operation | OperationJSON | OperationProperties
+      operation: Operation | OperationJSON | OperationProperties,
     ): Editor
 
     run(key: string, ...args: any[]): Editor
@@ -2764,16 +2764,16 @@ declare module 'slate' {
     setData(data: Data): Editor
 
     addAnnotation(
-      annotation: AnnotationProperties | AnnotationJSON | Annotation
+      annotation: AnnotationProperties | AnnotationJSON | Annotation,
     ): Editor
 
     removeAnnotation(
-      annotation: AnnotationProperties | AnnotationJSON | Annotation
+      annotation: AnnotationProperties | AnnotationJSON | Annotation,
     ): Editor
 
     setAnnotation(
       annotation: Annotation,
-      newProperties: AnnotationProperties | AnnotationJSON | Annotation
+      newProperties: AnnotationProperties | AnnotationJSON | Annotation,
     ): Editor
   }
 
@@ -2787,7 +2787,7 @@ declare module 'slate' {
     addMarks(
       mark:
         | Set<MarkProperties | MarkJSON | Mark | string>
-        | Array<MarkProperties | MarkJSON | Mark | string>
+        | Array<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -2823,7 +2823,7 @@ declare module 'slate' {
      * If the selection is expanded, it will be deleted first.
      */
     insertInline(
-      inline: Inline | InlineProperties | InlineJSON | string
+      inline: Inline | InlineProperties | InlineJSON | string,
     ): Controller
 
     /**
@@ -2836,7 +2836,7 @@ declare module 'slate' {
      * Passing a string will set the blocks' type only.
      */
     setBlocks(
-      properties: Block | BlockProperties | BlockJSON | string
+      properties: Block | BlockProperties | BlockJSON | string,
     ): Controller
 
     /**
@@ -2844,7 +2844,7 @@ declare module 'slate' {
      * Passing a string will set the nodes' type only.
      */
     setInlines(
-      properties: Inline | InlineProperties | InlineProperties | string
+      properties: Inline | InlineProperties | InlineProperties | string,
     ): Controller
 
     /**
@@ -2871,7 +2871,7 @@ declare module 'slate' {
      */
     replaceMark(
       mark: MarkProperties | MarkJSON | Mark | string,
-      newMark: MarkProperties | MarkJSON | Mark | string
+      newMark: MarkProperties | MarkJSON | Mark | string,
     ): Controller
 
     /**
@@ -2884,28 +2884,28 @@ declare module 'slate' {
      * Unwrap all Block nodes in the current selection that match a type and/or data
      */
     unwrapBlock(
-      properties: BlockProperties | BlockJSON | Block | string
+      properties: BlockProperties | BlockJSON | Block | string,
     ): Controller
 
     /**
      * Unwrap all Inline nodes in the current selection that match a type and/or data
      */
     unwrapInline(
-      properties: InlineProperties | InlineJSON | Inline | string
+      properties: InlineProperties | InlineJSON | Inline | string,
     ): Controller
 
     /**
      * Wrap the Block nodes in the current selection with a new Block
      */
     wrapBlock(
-      properties: BlockProperties | BlockJSON | Block | string
+      properties: BlockProperties | BlockJSON | Block | string,
     ): Controller
 
     /**
      *  Wrap the Block nodes in the current selection with a new Inline
      */
     wrapInline(
-      properties: InlineProperties | InlineJSON | Inline | string
+      properties: InlineProperties | InlineJSON | Inline | string,
     ): Controller
 
     /**
@@ -2954,7 +2954,7 @@ declare module 'slate' {
      */
     moveAnchorTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Controller
 
     /**
@@ -3082,7 +3082,7 @@ declare module 'slate' {
      */
     moveEndTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Controller
 
     /**
@@ -3214,7 +3214,7 @@ declare module 'slate' {
      */
     moveFocusTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Controller
 
     /**
@@ -3346,7 +3346,7 @@ declare module 'slate' {
      */
     moveStartTo(
       path: string | number | Immutable.List<number>,
-      n?: number
+      n?: number,
     ): Controller
 
     /**
@@ -3478,7 +3478,7 @@ declare module 'slate' {
      */
     moveTo(
       path: string | number | Immutable.List<number>,
-      offset?: number
+      offset?: number,
     ): Controller
 
     /**
@@ -3630,7 +3630,7 @@ declare module 'slate' {
      */
     select(
       properties: RangeTypeProperties | RangeTypeJSON | RangeType | string,
-      options?: { snapshot?: boolean }
+      options?: { snapshot?: boolean },
     ): Controller
 
     setAnchor(point: Point): void
@@ -3649,21 +3649,21 @@ declare module 'slate' {
      */
     addMarkAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      mark: Mark | MarkProperties | string
+      mark: Mark | MarkProperties | string,
     ): Controller
 
     addMarksAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
       marks:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
      * Delete everything in the range
      */
     deleteAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
@@ -3675,7 +3675,7 @@ declare module 'slate' {
      * Delete backward until the char boundary at a range
      */
     deleteCharBackwardAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
@@ -3687,7 +3687,7 @@ declare module 'slate' {
      * Delete backward until the line boundary at a range
      */
     deleteLineBackwardAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
@@ -3699,7 +3699,7 @@ declare module 'slate' {
      * Delete backward until the word boundary at a range
      */
     deleteWordBackwardAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
@@ -3707,7 +3707,7 @@ declare module 'slate' {
      */
     deleteBackwardAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      n?: number
+      n?: number,
     ): Controller
 
     /**
@@ -3719,7 +3719,7 @@ declare module 'slate' {
      * Delete forward until the char boundary at a range
      */
     deleteCharForwardAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
@@ -3731,14 +3731,14 @@ declare module 'slate' {
      * Delete forward until the line boundary at a range
      */
     deleteLineForwardAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
      * Delete forward until the word boundary at a range
      */
     deleteWordForwardAtRange(
-      range: RangeType | RangeTypeProperties | RangeTypeJSON
+      range: RangeType | RangeTypeProperties | RangeTypeJSON,
     ): Controller
 
     /**
@@ -3751,7 +3751,7 @@ declare module 'slate' {
      */
     deleteForwardAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      n?: number
+      n?: number,
     ): Controller
 
     /**
@@ -3760,7 +3760,7 @@ declare module 'slate' {
      */
     insertBlockAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      block: Block | BlockProperties | BlockJSON | string
+      block: Block | BlockProperties | BlockJSON | string,
     ): Controller
 
     /**
@@ -3768,7 +3768,7 @@ declare module 'slate' {
      */
     insertFragmentAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      fragment: Document
+      fragment: Document,
     ): Controller
 
     /**
@@ -3777,7 +3777,7 @@ declare module 'slate' {
      */
     insertInlineAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      inline: Inline | InlineJSON | InlineProperties
+      inline: Inline | InlineJSON | InlineProperties,
     ): Controller
 
     /**
@@ -3785,7 +3785,7 @@ declare module 'slate' {
      */
     insertTextAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      text: string
+      text: string,
     ): Controller
 
     /**
@@ -3794,7 +3794,7 @@ declare module 'slate' {
      */
     setBlocksAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      properties: Block | BlockJSON | BlockProperties | string
+      properties: Block | BlockJSON | BlockProperties | string,
     ): Controller
 
     /**
@@ -3803,7 +3803,7 @@ declare module 'slate' {
      */
     setInlinesAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      properties: InlineProperties | InlineJSON | Inline | string
+      properties: InlineProperties | InlineJSON | Inline | string,
     ): Controller
 
     /**
@@ -3811,7 +3811,7 @@ declare module 'slate' {
      */
     splitBlockAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      height?: number
+      height?: number,
     ): Controller
 
     /**
@@ -3819,7 +3819,7 @@ declare module 'slate' {
      */
     splitInlineAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      height?: number
+      height?: number,
     ): Controller
 
     /**
@@ -3828,7 +3828,7 @@ declare module 'slate' {
      */
     removeMarkAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      mark: Mark | MarkProperties | MarkJSON | string
+      mark: Mark | MarkProperties | MarkJSON | string,
     ): Controller
 
     /**
@@ -3837,7 +3837,7 @@ declare module 'slate' {
      */
     toggleMarkAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      mark: Mark | MarkProperties | MarkJSON | string
+      mark: Mark | MarkProperties | MarkJSON | string,
     ): Controller
 
     /**
@@ -3845,7 +3845,7 @@ declare module 'slate' {
      */
     unwrapBlockAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      properties: BlockProperties | BlockJSON | Block | string
+      properties: BlockProperties | BlockJSON | Block | string,
     ): Controller
 
     /**
@@ -3853,7 +3853,7 @@ declare module 'slate' {
      */
     unwrapInlineAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      properties: InlineProperties | InlineJSON | Inline | string
+      properties: InlineProperties | InlineJSON | Inline | string,
     ): Controller
 
     /**
@@ -3861,7 +3861,7 @@ declare module 'slate' {
      */
     wrapBlockAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      properties: BlockProperties | BlockJSON | Block | string
+      properties: BlockProperties | BlockJSON | Block | string,
     ): Controller
 
     /**
@@ -3869,7 +3869,7 @@ declare module 'slate' {
      */
     wrapInlineAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
-      properties: InlineProperties | InlineJSON | Inline | string
+      properties: InlineProperties | InlineJSON | Inline | string,
     ): Controller
 
     /**
@@ -3879,7 +3879,7 @@ declare module 'slate' {
     wrapTextAtRange(
       range: RangeType | RangeTypeProperties | RangeTypeJSON,
       prefix: string,
-      suffix?: string
+      suffix?: string,
     ): Controller
 
     // Node commands //
@@ -3890,7 +3890,7 @@ declare module 'slate' {
       key: string,
       offset: number,
       length: number,
-      mark: MarkProperties | MarkJSON | Mark | string
+      mark: MarkProperties | MarkJSON | Mark | string,
     ): Controller
 
     /**
@@ -3900,7 +3900,7 @@ declare module 'slate' {
       path: Immutable.List<number>,
       offset: number,
       length: number,
-      mark: MarkProperties | MarkJSON | Mark | string
+      mark: MarkProperties | MarkJSON | Mark | string,
     ): Controller
 
     addMarksByPath(
@@ -3909,7 +3909,7 @@ declare module 'slate' {
       length: number,
       marks:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -3923,7 +3923,7 @@ declare module 'slate' {
     insertNodeByPath(
       path: Immutable.List<number>,
       index: number,
-      node: Node
+      node: Node,
     ): Controller
 
     /**
@@ -3932,7 +3932,7 @@ declare module 'slate' {
     insertFragmentByKey(
       key: string,
       index: number,
-      fragment: Document
+      fragment: Document,
     ): Controller
 
     /**
@@ -3941,7 +3941,7 @@ declare module 'slate' {
     insertFragmentByPath(
       path: Immutable.List<number>,
       index: number,
-      fragment: Document
+      fragment: Document,
     ): Controller
 
     /**
@@ -3953,7 +3953,7 @@ declare module 'slate' {
       text: string,
       marks?:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -3965,7 +3965,7 @@ declare module 'slate' {
       text: string,
       marks?:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -3989,7 +3989,7 @@ declare module 'slate' {
     moveNodeByPath(
       path: Immutable.List<number>,
       newPath: Immutable.List<number>,
-      newIndex: number
+      newIndex: number,
     ): Controller
 
     /**
@@ -3999,7 +3999,7 @@ declare module 'slate' {
       key: string,
       offset: number,
       length: number,
-      mark: MarkProperties | MarkJSON | Mark | string
+      mark: MarkProperties | MarkJSON | Mark | string,
     ): Controller
 
     /**
@@ -4009,7 +4009,7 @@ declare module 'slate' {
       path: Immutable.List<number>,
       offset: number,
       length: number,
-      mark: MarkProperties | MarkJSON | Mark | string
+      mark: MarkProperties | MarkJSON | Mark | string,
     ): Controller
 
     /**
@@ -4028,7 +4028,7 @@ declare module 'slate' {
       length: number,
       marks:
         | Array<MarkProperties | MarkJSON | Mark | string>
-        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>
+        | Immutable.Set<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -4062,7 +4062,7 @@ declare module 'slate' {
     removeTextByPath(
       path: Immutable.List<number>,
       offset: number,
-      length: number
+      length: number,
     ): Controller
 
     /**
@@ -4081,7 +4081,7 @@ declare module 'slate' {
       offset: number,
       length: number,
       text: string,
-      marks?: Immutable.Set<Mark> | Mark[]
+      marks?: Immutable.Set<Mark> | Mark[],
     ): Controller
 
     /**
@@ -4092,7 +4092,7 @@ declare module 'slate' {
       offset: number,
       length: number,
       properties: MarkProperties | MarkJSON | Mark | string,
-      newProperties: Partial<MarkProperties | MarkJSON | Mark | string>
+      newProperties: Partial<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -4103,7 +4103,7 @@ declare module 'slate' {
       offset: number,
       length: number,
       properties: MarkProperties | MarkJSON | Mark | string,
-      newProperties: Partial<MarkProperties | MarkJSON | Mark | string>
+      newProperties: Partial<MarkProperties | MarkJSON | Mark | string>,
     ): Controller
 
     /**
@@ -4111,7 +4111,7 @@ declare module 'slate' {
      */
     setNodeByKey(
       key: string,
-      properties: BlockProperties | InlineProperties | string
+      properties: BlockProperties | InlineProperties | string,
     ): Controller
 
     /**
@@ -4119,7 +4119,7 @@ declare module 'slate' {
      */
     setNodeByPath(
       path: Immutable.List<number>,
-      newProperties: NodeProperties | InlineProperties | string
+      newProperties: NodeProperties | InlineProperties | string,
     ): Controller
 
     /**
@@ -4128,7 +4128,7 @@ declare module 'slate' {
     setTextByKey(
       key: string,
       text: string,
-      marks: Immutable.Set<Mark>
+      marks: Immutable.Set<Mark>,
     ): Controller
 
     /**
@@ -4137,7 +4137,7 @@ declare module 'slate' {
     setTextByPath(
       path: Immutable.List<number>,
       text: string,
-      marks: Immutable.Set<Mark>
+      marks: Immutable.Set<Mark>,
     ): Controller
 
     /**
@@ -4146,7 +4146,7 @@ declare module 'slate' {
     splitDescendantsByKey(
       key: string,
       textKey: string,
-      textOffset: number
+      textOffset: number,
     ): Controller
 
     /**
@@ -4155,7 +4155,7 @@ declare module 'slate' {
     splitDescendantsByPath(
       path: Immutable.List<number>,
       textPath: Immutable.List<number>,
-      textOffset: number
+      textOffset: number,
     ): Controller
 
     /**
@@ -4169,7 +4169,7 @@ declare module 'slate' {
     splitNodeByPath(
       path: Immutable.List<number>,
       position: number,
-      options?: { target?: number }
+      options?: { target?: number },
     ): Controller
 
     /**
@@ -4177,7 +4177,7 @@ declare module 'slate' {
      */
     unwrapInlineByKey(
       key: string,
-      properties: InlineProperties | string
+      properties: InlineProperties | string,
     ): Controller
 
     /**
@@ -4185,7 +4185,7 @@ declare module 'slate' {
      */
     unwrapInlineByPath(
       path: Path,
-      properties: InlineProperties | string
+      properties: InlineProperties | string,
     ): Controller
 
     /**
@@ -4193,7 +4193,7 @@ declare module 'slate' {
      */
     unwrapBlockByKey(
       key: string,
-      properties: BlockProperties | string
+      properties: BlockProperties | string,
     ): Controller
 
     /**
@@ -4201,7 +4201,7 @@ declare module 'slate' {
      */
     unwrapBlockByPath(
       path: Path,
-      properties: BlockProperties | string
+      properties: BlockProperties | string,
     ): Controller
 
     /**
@@ -4232,7 +4232,7 @@ declare module 'slate' {
      */
     wrapInlineByKey(
       key: string,
-      properties: InlineProperties | string
+      properties: InlineProperties | string,
     ): Controller
 
     /**
@@ -4240,7 +4240,7 @@ declare module 'slate' {
      */
     wrapInlineByPath(
       path: Path,
-      properties: InlineProperties | string
+      properties: InlineProperties | string,
     ): Controller
 
     /**
@@ -4248,7 +4248,7 @@ declare module 'slate' {
      */
     wrapBlockByKey(
       key: string,
-      properties: BlockProperties | string
+      properties: BlockProperties | string,
     ): Controller
 
     /**
@@ -4256,7 +4256,7 @@ declare module 'slate' {
      */
     wrapBlockByPath(
       path: Immutable.List<number>,
-      block: Block | string
+      block: Block | string,
     ): Controller
 
     /**
@@ -4338,7 +4338,7 @@ declare module 'slate' {
      * Apply an `operation` to the controller, updating its value.
      */
     applyOperation(
-      operation: Operation | OperationJSON | OperationProperties
+      operation: Operation | OperationJSON | OperationProperties,
     ): Controller
 
     /**
@@ -4356,14 +4356,14 @@ declare module 'slate' {
      * Add annotation
      */
     addAnnotation(
-      annotation: Annotation | AnnotationProperties | AnnotationJSON
+      annotation: Annotation | AnnotationProperties | AnnotationJSON,
     ): Controller
 
     /**
      * Remove annotation
      */
     removeAnnotation(
-      annotation: Annotation | AnnotationProperties | AnnotationJSON
+      annotation: Annotation | AnnotationProperties | AnnotationJSON,
     ): Controller
 
     /**
@@ -4371,7 +4371,7 @@ declare module 'slate' {
      */
     setAnnotation(
       annotation: Annotation,
-      newProperties: AnnotationProperties | AnnotationJSON | Annotation
+      newProperties: AnnotationProperties | AnnotationJSON | Annotation,
     ): Controller
   }
 

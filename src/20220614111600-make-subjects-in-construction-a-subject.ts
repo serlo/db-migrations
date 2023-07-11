@@ -27,7 +27,7 @@ createMigration(exports, {
 
     await db.runSql('UPDATE term_taxonomy SET parent_id = 3 WHERE id = 106081')
     await db.runSql(
-      'UPDATE term_taxonomy SET taxonomy_id = 3 WHERE id = 106081'
+      'UPDATE term_taxonomy SET taxonomy_id = 3 WHERE id = 106081',
     )
 
     await db.runSql('UPDATE term_taxonomy SET taxonomy_id = 4 WHERE id = 41107')

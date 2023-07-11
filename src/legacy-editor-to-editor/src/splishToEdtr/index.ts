@@ -68,7 +68,7 @@ function convertCell(cell: Cell): (LayoutPlugin | OtherPlugin)[] {
     return R.reduce(
       (plugins, row) => R.concat(plugins, convertRow(row)),
       [] as (LayoutPlugin | OtherPlugin)[],
-      cell.rows
+      cell.rows,
     )
   }
 }

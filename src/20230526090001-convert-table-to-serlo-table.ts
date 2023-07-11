@@ -24,14 +24,14 @@ createEdtrIoMigration({
 })
 
 export function convertTable(
-  legacyState: EdtrPluginTable
+  legacyState: EdtrPluginTable,
 ): ReturnType<typeof convertHTMLtoState> {
   const html = converter.makeHtml(legacyState.state)
   return convertHTMLtoState(html)
 }
 
 function convertHTMLtoState(
-  html: string
+  html: string,
 ): EdtrPluginSerloTable | EdtrPluginText | undefined {
   // eslint-disable-next-line import/no-deprecated
   const dom = parseDOM(html) as unknown as LegacyNode[]
@@ -98,7 +98,7 @@ function convertHTMLtoState(
   })
 
   const hasEmptyHeaderRow = convertedRows[0].columns.every(
-    (cell) => !(cell.content as object).hasOwnProperty('state')
+    (cell) => !(cell.content as object).hasOwnProperty('state'),
   )
 
   // remove empty headers
@@ -106,7 +106,7 @@ function convertHTMLtoState(
 
   const colLength = trimmedRows.reduce(
     (acc, { columns }) => Math.max(columns.length, acc),
-    0
+    0,
   )
 
   const finalRows = trimmedRows.map(({ columns }) => {
@@ -174,7 +174,7 @@ function convertCellContent(cell: LegacyNode) {
 
   const convertedImg = converted.find(
     // @ts-expect-error
-    (obj) => obj.hasOwnProperty('plugin') && obj.plugin === 'image'
+    (obj) => obj.hasOwnProperty('plugin') && obj.plugin === 'image',
   )
   if (convertedImg) return convertedImg
 
@@ -182,7 +182,7 @@ function convertCellContent(cell: LegacyNode) {
 }
 
 function convertContentNode(
-  node: LegacyNode
+  node: LegacyNode,
 ): SlateTextElement | SlateBlockElement | [] | EdtrPluginImage {
   //handle code? 0: {text: "Test", code: true}
 
@@ -213,12 +213,12 @@ function convertContentNode(
         node.children[0].data?.includes('$$')
       ) {
         console.log(
-          'content: link with formula that will not be converted! check manually'
+          'content: link with formula that will not be converted! check manually',
         )
       }
       if (node.children[0].type !== 'text') {
         console.log(
-          'content: link with unexpected content, content will be deleted!'
+          'content: link with unexpected content, content will be deleted!',
         )
         return { text: '' }
       }
@@ -236,7 +236,7 @@ function convertContentNode(
       ) {
         // console.log(node.children)
         console.log(
-          'content: mathInline has unexpected state, content will be empty'
+          'content: mathInline has unexpected state, content will be empty',
         )
         return { text: ' ' }
       }
