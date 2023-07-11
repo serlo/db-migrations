@@ -59,6 +59,6 @@ async function exec() {
     code,
     {
       encoding: 'utf-8',
-    }
+    },
   )
 }

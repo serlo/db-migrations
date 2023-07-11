@@ -69,12 +69,12 @@ export const expect = <In, Out>(input: In, method: string, output: Out) => {
   expectInstance(
     ignoreIrrelevantKeys(input),
     method,
-    ignoreIrrelevantKeys(output)
+    ignoreIrrelevantKeys(output),
   )
 }
 
 export const expectSplishSlate = (
-  html: string
+  html: string,
 ): ContentCell<SplishTextState> => ({
   content: {
     plugin: { name: Plugin.Text, version: '0.0.0' },

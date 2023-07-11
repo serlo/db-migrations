@@ -27,11 +27,11 @@ const renderMarkdown = (input: string) => {
   return html
     .replace(
       /<span class="mathInline">%%(.*?)%%<\/span>/gm,
-      '<katexinline>$1</katexinline>'
+      '<katexinline>$1</katexinline>',
     )
     .replace(
       /<span class="math">\$\$(.*?)\$\$<\/span>/gm,
-      '<katexblock>$1</katexblock>'
+      '<katexblock>$1</katexblock>',
     )
     .replace(/\r?\n/gm, '')
 }

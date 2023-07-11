@@ -49,22 +49,22 @@ createMigration(exports, {
 
 async function createSubject(
   db: Database,
-  { instance, name }: { instance: number; name: string }
+  { instance, name }: { instance: number; name: string },
 ) {
   const subjectTaxonomy = (
     await db.runSql<[{ id: number }]>(
       `SELECT taxonomy.id FROM taxonomy JOIN type ON taxonomy.type_id = type.id WHERE type.name="subject" AND taxonomy.instance_id = ?`,
-      instance
+      instance,
     )
   )[0].id
   await db.runSql(
-    `INSERT INTO uuid(trashed, discriminator) VALUES (0, "taxonomyTerm")`
+    `INSERT INTO uuid(trashed, discriminator) VALUES (0, "taxonomyTerm")`,
   )
   const taxonomyTerm = await getLastInsertedId(db)
   await db.runSql(
     `INSERT INTO term(instance_id, name) VALUES (?, ?)`,
     instance,
-    name
+    name,
   )
   const term = await getLastInsertedId(db)
   await db.runSql(
@@ -72,13 +72,13 @@ async function createSubject(
     taxonomyTerm,
     subjectTaxonomy,
     term,
-    subjectTaxonomy
+    subjectTaxonomy,
   )
 }
 
 async function removeSubject(
   db: Database,
-  { instance, name }: { instance: number; name: string }
+  { instance, name }: { instance: number; name: string },
 ) {
   const parent = (
     await db.runSql<[{ id: number }]>(
@@ -88,7 +88,7 @@ async function removeSubject(
           WHERE taxonomy.instance_id = ?
             AND type.name = "subject"
       `,
-      instance
+      instance,
     )
   )[0].id
   await db.runSql(
@@ -100,7 +100,7 @@ async function removeSubject(
        )
     `,
     name,
-    parent
+    parent,
   )
   await db.runSql(
     `
@@ -114,7 +114,7 @@ async function removeSubject(
         AND parent_id IS NULL
     `,
     name,
-    instance
+    instance,
   )
   await clearDeadUuids(db)
 }

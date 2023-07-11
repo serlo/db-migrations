@@ -51,7 +51,7 @@ const cases: {
                     {
                       cells: [
                         expectSplishSlate(
-                          '<h1 id="helloworld">Hello world</h1>'
+                          '<h1 id="helloworld">Hello world</h1>',
                         ),
                       ],
                     },
@@ -70,7 +70,7 @@ const cases: {
         {
           plugin: 'text',
           state: serializer.serialize(
-            htmlToSlate('<h1 id="helloworld">Hello world</h1>')
+            htmlToSlate('<h1 id="helloworld">Hello world</h1>'),
           ),
         },
       ],
@@ -114,7 +114,7 @@ const cases: {
                     {
                       cells: [
                         expectSplishSlate(
-                          '<h2 id="loremipsum">Lorem ipsum</h2>'
+                          '<h2 id="loremipsum">Lorem ipsum</h2>',
                         ),
                       ],
                     },
@@ -130,7 +130,7 @@ const cases: {
                     {
                       cells: [
                         expectSplishSlate(
-                          '<p>dolor <strong>sit</strong> amet.</p>'
+                          '<p>dolor <strong>sit</strong> amet.</p>',
                         ),
                       ],
                     },
@@ -184,7 +184,7 @@ const cases: {
         {
           plugin: 'text',
           state: serializer.serialize(
-            htmlToSlate('<h2 id="loremipsum">Lorem ipsum</h2>')
+            htmlToSlate('<h2 id="loremipsum">Lorem ipsum</h2>'),
           ),
         },
         {
@@ -197,7 +197,7 @@ const cases: {
                   {
                     plugin: 'text',
                     state: serializer.serialize(
-                      htmlToSlate('<p>dolor <strong>sit</strong> amet.</p>')
+                      htmlToSlate('<p>dolor <strong>sit</strong> amet.</p>'),
                     ),
                   },
                 ],
@@ -211,7 +211,7 @@ const cases: {
                   {
                     plugin: 'text',
                     state: serializer.serialize(
-                      htmlToSlate('<p>consecetur</p>')
+                      htmlToSlate('<p>consecetur</p>'),
                     ),
                   },
                 ],
@@ -242,12 +242,12 @@ cases.forEach((testcase) => {
       expect(
         convertLegacyToSplish(testcase.legacy, 'someID'),
         'to equal',
-        testcase.splish
+        testcase.splish,
       )
       expect(
         convertSplishToEdtrIO(testcase.splish),
         'to equal',
-        testcase.edtrIO
+        testcase.edtrIO,
       )
       expect(convert(testcase.legacy), 'to equal', testcase.edtrIO)
     })

@@ -30,7 +30,7 @@ export function createMigration(
   }: {
     up: (db: Database) => Promise<void>
     down?: (db: Database) => Promise<void>
-  }
+  },
 ) {
   exports._meta = {
     version: 1,
@@ -81,7 +81,7 @@ export function createEdtrIoMigration({
           await db.runSql(
             `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
             newContent,
-            revision.id
+            revision.id,
           )
         },
         dryRun,
@@ -98,7 +98,7 @@ export function createEdtrIoMigration({
           await db.runSql(
             `UPDATE page_revision SET content = ? WHERE id = ?`,
             newContent,
-            revision.id
+            revision.id,
           )
         },
       })

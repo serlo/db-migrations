@@ -44,7 +44,7 @@ createMigration(exports, {
         await db.runSql(
           `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
           newState,
-          field.id
+          field.id,
         )
         console.log('Updated revision', field.revision)
       }
@@ -70,7 +70,7 @@ function migrateState(document: { plugin: string; state: any }): {
   switch (document.plugin) {
     case 'equations':
       return migrateEquationsState(
-        document.state as unknown as LegacyEquationsPluginState
+        document.state as unknown as LegacyEquationsPluginState,
       )
     // Layout plugins
     case 'blockquote':
@@ -294,7 +294,7 @@ function extractTransformOrExplanationFromText(textState: {
         src
           .replace(/^\\left\|/, '')
           .replace(/\\right\.$/, '')
-          .trim()
+          .trim(),
       )
     }
   }

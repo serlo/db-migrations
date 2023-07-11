@@ -53,7 +53,7 @@ createMigration(exports, {
         await db.runSql(
           `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
           convertedState,
-          field.id
+          field.id,
         )
         await processResults(remainingResults)
       }
@@ -86,7 +86,7 @@ createMigration(exports, {
         await db.runSql(
           `UPDATE page_revision SET content = ? WHERE id = ?`,
           convertedState,
-          field.id
+          field.id,
         )
         await processResults(remainingResults)
       }
@@ -116,7 +116,7 @@ createMigration(exports, {
         await db.runSql(
           `UPDATE term_taxonomy SET description = ? WHERE id = ?`,
           convertedState,
-          field.id
+          field.id,
         )
         await processResults(remainingResults)
       }
@@ -146,7 +146,7 @@ createMigration(exports, {
         await db.runSql(
           `UPDATE user SET description = ? WHERE id = ?`,
           convertedState,
-          field.id
+          field.id,
         )
         await processResults(remainingResults)
       }

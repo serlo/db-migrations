@@ -40,7 +40,7 @@ createMigration(exports, {
       await db.runSql(
         `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
         JSON.stringify(migrateState(state)),
-        field.id
+        field.id,
       )
       await processResults(remainingResults)
     }

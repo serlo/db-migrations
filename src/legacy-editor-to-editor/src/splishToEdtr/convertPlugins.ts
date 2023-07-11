@@ -85,7 +85,7 @@ export function convertPlugin(cell: ContentCell): OtherPlugin {
         return {
           plugin: 'text',
           state: serializer.serialize(
-            htmlToSlate(textState.importFromHtml || '')
+            htmlToSlate(textState.importFromHtml || ''),
           ),
         }
       }

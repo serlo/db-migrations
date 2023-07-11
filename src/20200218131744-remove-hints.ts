@@ -28,7 +28,7 @@ import { createMigration } from './utils'
 createMigration(exports, {
   up: async (db) => {
     const results = await db.runSql<{ id: number }[]>(
-      `SELECT id FROM type WHERE name = 'text-hint'`
+      `SELECT id FROM type WHERE name = 'text-hint'`,
     )
 
     if (results.length !== 1) {
@@ -38,7 +38,7 @@ createMigration(exports, {
     const { id } = results[0]
     await db.runSql(
       `DELETE FROM uuid WHERE id = ANY (SELECT id FROM entity WHERE type_id = ?)`,
-      id
+      id,
     )
   },
 })

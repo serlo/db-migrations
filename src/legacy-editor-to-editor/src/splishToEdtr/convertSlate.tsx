@@ -68,7 +68,7 @@ export function convertOldSlate(value: ValueJSON) {
   return htmlToSlate(
     serializer.serialize(Value.fromJSON(value), {
       render: true,
-    })
+    }),
   )
 }
 export function htmlToSlate(html: string) {
@@ -257,7 +257,7 @@ const headingSerializer: Rule = {
           {
             node: obj,
           },
-          children
+          children,
         )
       }
     }
