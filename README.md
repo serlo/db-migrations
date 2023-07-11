@@ -4,8 +4,9 @@ particularly for the legacy database
 
 ## Prerequisites
 
-- node v18
-- yarn >3
+- [Node.js](https://nodejs.org/) and [yarn cli](https://yarnpkg.com/cli/)
+  versions from [.tool-versions](.tool-versions)
+  - You may use [asdf](https://asdf-vm.com/) for the installation.
 - Docker and Docker Compose
 
 Note: Also make sure you have `cmake` installed on your machine (e.g.
