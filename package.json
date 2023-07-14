@@ -18,7 +18,7 @@
     "migrate:up": "yarn migrate up",
     "new": "./scripts/touch_file.sh",
     "push-image": "NODE_OPTIONS='--experimental-specifier-resolution=node' ts-node scripts/push-image",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@edtr-io/plugin-text": "^3.0.2",
+    "@jest/types": "^29.6.1",
     "@types/jest": "^29.5.3",
     "@types/node": "^18.16.19",
     "@types/ramda": "^0.29.3",

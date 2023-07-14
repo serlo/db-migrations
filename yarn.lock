@@ -1258,6 +1258,7 @@ __metadata:
   resolution: "@serlo/server-migrate@workspace:."
   dependencies:
     "@edtr-io/plugin-text": ^3.0.2
+    "@jest/types": ^29.6.1
     "@serlo/markdown": Entkenntnis/tmp-serlo-markdown
     "@types/jest": ^29.5.3
     "@types/node": ^18.16.19
