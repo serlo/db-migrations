@@ -14,7 +14,7 @@
     "list-migrations": "docker exec $(docker ps -qf 'name=mysql') mysql --password=secret --database=serlo --execute 'SELECT * FROM migrations'",
     "m": "yarn migrate:ts",
     "migrate": "docker-compose run --rm server-migrate",
-    "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m src/ up",
+    "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo node --experimental-vm-modules node_modules/db-migrate/index.js -m src/ up",
     "migrate:up": "yarn migrate up",
     "new": "./scripts/touch_file.sh",
     "push-image": "NODE_OPTIONS='--experimental-specifier-resolution=node' ts-node scripts/push-image",
