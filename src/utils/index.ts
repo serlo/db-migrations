@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-export * from './clear-dead-uuids'
-export * from './create-migration'
-export * from './database'
-export * from './edtr-io'
+export * from "./clear-dead-uuids";
+export * from "./create-migration";
+export * from "./database";
+export * from "./edtr-io";

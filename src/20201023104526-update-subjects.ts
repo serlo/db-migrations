@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
 
-import { clearDeadUuids, createMigration, Database } from './utils'
+import { clearDeadUuids, createMigration, Database } from "./utils";
 
 /**
  * Removes some unused subjects and creates new subjects
@@ -30,22 +30,22 @@ createMigration(exports, {
   up: async (db) => {
     await removeSubject(db, {
       instance: 1,
-      name: 'Betriebswirtschaftslehre mit Rechnungswesen',
-    })
-    await removeSubject(db, { instance: 1, name: 'Deutsch als Fremdsprache' })
-    await removeSubject(db, { instance: 1, name: 'Musik' })
-    await createSubject(db, { instance: 1, name: 'Lerntipps' })
+      name: "Betriebswirtschaftslehre mit Rechnungswesen",
+    });
+    await removeSubject(db, { instance: 1, name: "Deutsch als Fremdsprache" });
+    await removeSubject(db, { instance: 1, name: "Musik" });
+    await createSubject(db, { instance: 1, name: "Lerntipps" });
   },
   down: async (db) => {
-    await removeSubject(db, { instance: 1, name: 'Lerntipps' })
-    await createSubject(db, { instance: 1, name: 'Musik' })
-    await createSubject(db, { instance: 1, name: 'Deutsch als Fremdsprache' })
+    await removeSubject(db, { instance: 1, name: "Lerntipps" });
+    await createSubject(db, { instance: 1, name: "Musik" });
+    await createSubject(db, { instance: 1, name: "Deutsch als Fremdsprache" });
     await createSubject(db, {
       instance: 1,
-      name: 'Betriebswirtschaftslehre mit Rechnungswesen',
-    })
+      name: "Betriebswirtschaftslehre mit Rechnungswesen",
+    });
   },
-})
+});
 
 async function createSubject(
   db: Database,
@@ -56,24 +56,24 @@ async function createSubject(
       `SELECT taxonomy.id FROM taxonomy JOIN type ON taxonomy.type_id = type.id WHERE type.name="subject" AND taxonomy.instance_id = ?`,
       instance,
     )
-  )[0].id
+  )[0].id;
   await db.runSql(
     `INSERT INTO uuid(trashed, discriminator) VALUES (0, "taxonomyTerm")`,
-  )
-  const taxonomyTerm = await getLastInsertedId(db)
+  );
+  const taxonomyTerm = await getLastInsertedId(db);
   await db.runSql(
     `INSERT INTO term(instance_id, name) VALUES (?, ?)`,
     instance,
     name,
-  )
-  const term = await getLastInsertedId(db)
+  );
+  const term = await getLastInsertedId(db);
   await db.runSql(
     `INSERT INTO term_taxonomy(id, taxonomy_id, term_id, parent_id) VALUES (?, ?, ?, ?);`,
     taxonomyTerm,
     subjectTaxonomy,
     term,
     subjectTaxonomy,
-  )
+  );
 }
 
 async function removeSubject(
@@ -90,7 +90,7 @@ async function removeSubject(
       `,
       instance,
     )
-  )[0].id
+  )[0].id;
   await db.runSql(
     `
       DELETE FROM uuid WHERE id = (
@@ -101,7 +101,7 @@ async function removeSubject(
     `,
     name,
     parent,
-  )
+  );
   await db.runSql(
     `
       DELETE FROM navigation_page
@@ -115,12 +115,12 @@ async function removeSubject(
     `,
     name,
     instance,
-  )
-  await clearDeadUuids(db)
+  );
+  await clearDeadUuids(db);
 }
 
 async function getLastInsertedId(db: Database): Promise<number> {
   return (
-    await db.runSql<[{ 'LAST_INSERT_ID()': number }]>(`SELECT LAST_INSERT_ID()`)
-  )[0]['LAST_INSERT_ID()']
+    await db.runSql<[{ "LAST_INSERT_ID()": number }]>(`SELECT LAST_INSERT_ID()`)
+  )[0]["LAST_INSERT_ID()"];
 }

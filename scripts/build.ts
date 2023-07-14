@@ -20,45 +20,45 @@
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
 // @ts-ignore FIXME
-import build from '@vercel/ncc'
-import * as fs from 'fs'
-import * as path from 'path'
-import * as util from 'util'
+import build from "@vercel/ncc";
+import * as fs from "fs";
+import * as path from "path";
+import * as util from "util";
 
-const root = path.join(__dirname, '..')
-const src = path.join(root, 'src')
-const dist = path.join(root, 'dist')
+const root = path.join(__dirname, "..");
+const src = path.join(root, "src");
+const dist = path.join(root, "dist");
 
 exec()
   .then(() => {
-    process.exit(0)
+    process.exit(0);
   })
   .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+    console.error(error);
+    process.exit(1);
+  });
 
 async function exec() {
   if (process.argv.length !== 3) {
-    throw new Error('Usage: yarn build src/foobar.ts')
+    throw new Error("Usage: yarn build src/foobar.ts");
   }
-  const file = process.argv[2]
-  const writeFile = util.promisify(fs.writeFile)
-  const stat = util.promisify(fs.stat)
-  const stats = await stat(file)
-  const absoluteFilePath = path.join(process.cwd(), file)
+  const file = process.argv[2];
+  const writeFile = util.promisify(fs.writeFile);
+  const stat = util.promisify(fs.stat);
+  const stats = await stat(file);
+  const absoluteFilePath = path.join(process.cwd(), file);
   if (!stats.isFile() || path.dirname(absoluteFilePath) !== src) {
-    throw new Error('File does not exist')
+    throw new Error("File does not exist");
   }
   const { code } = await build(absoluteFilePath, {
     cache: false,
     sourceMapRegister: false,
-  })
+  });
   await writeFile(
-    path.join(dist, `${path.basename(absoluteFilePath, '.ts')}.js`),
+    path.join(dist, `${path.basename(absoluteFilePath, ".ts")}.js`),
     code,
     {
-      encoding: 'utf-8',
+      encoding: "utf-8",
     },
-  )
+  );
 }

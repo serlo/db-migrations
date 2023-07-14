@@ -19,9 +19,9 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { convertSplishToEdtrIO } from './legacy-editor-to-editor'
+import { convertSplishToEdtrIO } from "./legacy-editor-to-editor";
 
-import { createMigration } from './utils'
+import { createMigration } from "./utils";
 
 /**
  * Migrates the remaining Splish Editor states to Edtr.io states
@@ -30,28 +30,28 @@ import { createMigration } from './utils'
 createMigration(exports, {
   up: async (db) => {
     interface Row {
-      id: number
-      value: string
+      id: number;
+      value: string;
     }
 
     async function processResults(results: Row[]) {
-      if (results.length === 0) return
+      if (results.length === 0) return;
 
-      const [field, ...remainingResults] = results
-      const state = JSON.parse(field.value)
-      let convertedState
+      const [field, ...remainingResults] = results;
+      const state = JSON.parse(field.value);
+      let convertedState;
       try {
-        convertedState = JSON.stringify(convertSplishToEdtrIO(state))
+        convertedState = JSON.stringify(convertSplishToEdtrIO(state));
       } catch (err) {
-        await processResults(remainingResults)
-        return
+        await processResults(remainingResults);
+        return;
       }
       await db.runSql(
         `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
         convertedState,
         field.id,
-      )
-      await processResults(remainingResults)
+      );
+      await processResults(remainingResults);
     }
 
     const results = await db.runSql<Row[]>(`
@@ -59,7 +59,7 @@ createMigration(exports, {
       FROM entity_revision_field erf
         LEFT JOIN entity_revision er ON erf.entity_revision_id = er.id
       WHERE erf.value LIKE '{"id":%@splish-me%'
-    `)
-    await processResults(results)
+    `);
+    await processResults(results);
   },
-})
+});

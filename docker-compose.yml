@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 services:
   server-migrate:
     build:
@@ -8,4 +8,4 @@ services:
     environment:
       - DATABASE=mysql://root:secret@host.docker.internal:3306/serlo?query
     extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - "host.docker.internal:host-gateway"

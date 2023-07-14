@@ -25,8 +25,8 @@
 // Definitions by: Brandon Shelton <https://github.com/YangusKhan>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.8
-declare module 'slate-html-serializer' {
-  import * as React from 'react'
+declare module "slate-html-serializer" {
+  import * as React from "react";
   import {
     BlockProperties,
     ValueJSON,
@@ -34,41 +34,41 @@ declare module 'slate-html-serializer' {
     Node as SlateNode,
     Mark,
     Leaf,
-  } from 'slate'
+  } from "slate";
 
   export interface Rule {
     deserialize?: (
       el: Element,
       next: (elements: Element[] | NodeList | Array<Node & ChildNode>) => any,
-    ) => any
-    serialize?: (obj: any, children: string) => React.ReactNode
+    ) => any;
+    serialize?: (obj: any, children: string) => React.ReactNode;
   }
 
   export interface HtmlOptions {
-    rules?: Rule[]
-    defaultBlock?: BlockProperties
-    parseHtml?: (html: string) => HTMLElement
+    rules?: Rule[];
+    defaultBlock?: BlockProperties;
+    parseHtml?: (html: string) => HTMLElement;
   }
 
   export default class Html {
-    constructor(options?: HtmlOptions)
+    constructor(options?: HtmlOptions);
 
-    deserialize(html: string, options: { toJSON: true }): ValueJSON
-    deserialize(html: string, options?: { toJSON?: false }): Value
+    deserialize(html: string, options: { toJSON: true }): ValueJSON;
+    deserialize(html: string, options?: { toJSON?: false }): Value;
 
-    serialize(value: Value, options?: { render?: true }): string
-    serialize(value: Value, options: { render: false }): Element[]
+    serialize(value: Value, options?: { render?: true }): string;
+    serialize(value: Value, options: { render: false }): Element[];
 
-    protected rules: Rule[]
-    protected defaultBlock: BlockProperties
-    protected parseHtml: (html: string) => HTMLElement
+    protected rules: Rule[];
+    protected defaultBlock: BlockProperties;
+    protected parseHtml: (html: string) => HTMLElement;
 
-    protected deserializeElements: (elements: HTMLElement[]) => SlateNode[]
-    protected deserializeElement: (element: HTMLElement) => any
-    protected deserializeMark: (mark: Mark) => SlateNode[]
+    protected deserializeElements: (elements: HTMLElement[]) => SlateNode[];
+    protected deserializeElement: (element: HTMLElement) => any;
+    protected deserializeMark: (mark: Mark) => SlateNode[];
 
-    protected serializeNode: (node: SlateNode) => string
-    protected serializeLeaf: (leaf: Leaf) => string
-    protected serializeString: (string: string) => string
+    protected serializeNode: (node: SlateNode) => string;
+    protected serializeLeaf: (leaf: Leaf) => string;
+    protected serializeString: (string: string) => string;
   }
 }

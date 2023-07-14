@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { createMigration } from './utils'
+import { createMigration } from "./utils";
 
 createMigration(exports, {
   up: async (db) => {
     await db.runSql(
       `UPDATE term_taxonomy SET parent_id = 106081 WHERE id = 41107;`,
-    )
+    );
   },
-})
+});
