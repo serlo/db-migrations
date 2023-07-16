@@ -3,19 +3,16 @@ on:
   push:
     branches:
       - main
+
 jobs:
   push:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          cache: 'yarn'
+      - uses: ./.github/actions/setup
       - uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
       - uses: google-github-actions/setup-gcloud@v1
       - run: gcloud auth configure-docker
-      - run: yarn --immutable --immutable-cache --check-cache
       - run: yarn push-image
