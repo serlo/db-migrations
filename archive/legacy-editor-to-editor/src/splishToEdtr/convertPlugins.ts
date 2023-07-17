@@ -32,7 +32,7 @@ import {
 } from '../legacyToSplish/createPlugin'
 import { convertOldSlate, htmlToSlate } from './convertSlate'
 import { ContentCell, OtherPlugin, Plugin } from './types'
-import { convertSplishToEdtrIO } from '..'
+import { convertSplishToEdtrIO } from '../index'
 
 export function convertPlugin(cell: ContentCell): OtherPlugin {
   const { plugin, state } = cell.content
