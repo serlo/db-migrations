@@ -9,3 +9,13 @@ services:
       - DATABASE=mysql://root:secret@host.docker.internal:3306/serlo?query
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+
+  # START: MySQL service
+  mysql:
+    build:
+      context: mysql/docker-container
+      dockerfile: Dockerfile
+    platform: linux/x86_64
+    ports:
+      - '3306:3306'
+  # END: MySQL service

@@ -15,8 +15,16 @@
     "migrate": "docker-compose run --rm server-migrate",
     "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m src/ up",
     "migrate:up": "yarn migrate up",
+    "mysql": "docker compose exec mysql serlo-mysql",
+    "mysql:dump": "ts-node --experimental-specifier-resolution=node mysql/scripts/mysql-dump",
+    "mysql:import-anonymous-data": "ts-node --experimental-specifier-resolution=node mysql/scripts/mysql-import-anonymous-data",
+    "mysql:rollback": "ts-node --experimental-specifier-resolution=node mysql/scripts/mysql-rollback",
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node scripts/push-image",
+    "start": "yarn start:docker",
+    "start:docker": "docker compose up mysql --detach",
+    "stop": "yarn stop:docker",
+    "stop:docker": "docker compose down",
     "test": "jest"
   },
   "dependencies": {
