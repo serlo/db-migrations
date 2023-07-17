@@ -6,20 +6,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
 
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:prettier
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
       - run: yarn test
 
   migrate_ts:
@@ -27,9 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
-      - run: yarn start
-      - run: ./mysql/scripts/wait-for-mysql.sh
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-mysql
       - run: yarn migrate:ts
       # With the following command we check that the migration
       # "20220625202000-convert-important-and-blockquote-to-box" was run
@@ -43,9 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
-      - run: yarn start
-      - run: ./mysql/scripts/wait-for-mysql.sh
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-mysql
       - run: yarn migrate:docker
       # With the following command we check that the migration
       # "20220625202000-convert-important-and-blockquote-to-box" was run
