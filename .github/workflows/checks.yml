@@ -37,3 +37,19 @@ jobs:
       - run:
           yarn mysql:list-migrations | grep
           20220625202000-convert-important-and-blockquote-to-box
+
+  migrate_docker:
+    name: Migrations succeed after running in docker container
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - run: yarn start
+      - run: ./mysql/scripts/wait-for-mysql.sh
+      - run: yarn migrate:docker
+      # With the following command we check that the migration
+      # "20220625202000-convert-important-and-blockquote-to-box" was run
+      # successfully
+      - run:
+          yarn mysql:list-migrations | grep
+          20220625202000-convert-important-and-blockquote-to-box
