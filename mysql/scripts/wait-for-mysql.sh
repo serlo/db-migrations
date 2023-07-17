@@ -16,6 +16,10 @@ main() {
 
     sleep 1
   done
+
+  # After we can successfully connect to MySQL we need to wait a little bit
+  # longer. Otherwise the GitHub workflows will break with a ConnectionError.
+  sleep 3
 }
 
 current_timestamp() {
