@@ -36,13 +36,17 @@ be built together!_
 
 ## How to test a new migration
 
-In `serlo/local-dev-env` or `serlo/database-layer` you will find instructions on
-how to run a local serlo database with dummy data.
+You can start a local version of the mysql database via `yarn start`. There are
+the following helper functions:
 
-In the root of this repository you can run `yarn migrate` to locally run all
-migrations. You can check the changes afterwards using `yarn mysql` in the other
-repo. With `yarn mysql:rollback` or `yarn mysql:import-anonymous-data` you can
-reset your changes there.
+- `yarn mysql` – Open a shell to MySQL
+- `yarn mysql:rollback` – Rollback database before any applied migrations
+- `yarn mysql:list-migrations` – List all migrations which have been already run
+- `yarn migrate:ts` – Run all migrations directly from `src` directory (no build
+  needed)
+- `yarn mysql:delete-last-migration` – Delete information that last migration
+  was already executed (will be thus executed the next time again)
+- `yarn mysql:import-anonymous-data` – Import last anonymized dump
 
 <!-- Of course you can also test your migrations in the `staging` enviornment by
 deploying the new server version. Note that each night the database in `staging`
