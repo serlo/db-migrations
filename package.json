@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@edtr-io/plugin-text": "^3.0.2",
-    "@types/jest": "^29.5.2",
+    "@types/jest": "^29.5.3",
     "@types/node": "^18.16.19",
     "@types/ramda": "^0.29.3",
     "@types/react": "^18.2.6",
