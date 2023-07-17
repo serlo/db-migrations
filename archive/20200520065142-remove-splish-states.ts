@@ -21,7 +21,7 @@
  */
 import { convertSplishToEdtrIO } from "./legacy-editor-to-editor";
 
-import { createMigration } from "./utils";
+import { createMigration } from "../src/utils";
 
 /**
  * Migrates the remaining Splish Editor states to Edtr.io states
