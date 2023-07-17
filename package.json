@@ -9,7 +9,6 @@
     "build": "ts-node scripts/build",
     "format:prettier": "yarn _prettier --write",
     "lint:prettier": "yarn _prettier --check",
-    "m": "yarn migrate:ts",
     "migrate:docker": "docker compose run --build --rm server-migrate",
     "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m src/ up",
     "mysql": "docker compose exec mysql serlo-mysql",
