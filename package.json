@@ -7,7 +7,9 @@
   "scripts": {
     "_prettier": "prettier . '!dist/**/*'",
     "build": "ts-node scripts/build",
+    "format": "yarn format:prettier",
     "format:prettier": "yarn _prettier --write",
+    "lint": "yarn lint:prettier",
     "lint:prettier": "yarn _prettier --check",
     "migrate:docker": "docker compose run --build --rm server-migrate",
     "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m src/ up",
