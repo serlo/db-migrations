@@ -44,6 +44,7 @@ the following helper functions:
 - `yarn mysql:list-migrations` – List all migrations which have been already run
 - `yarn migrate:ts` – Run all migrations directly from `src` directory (no build
   needed)
+- `yarn migrate:docker` – Build docker container and run migrations
 - `yarn mysql:delete-last-migration` – Delete information that last migration
   was already executed (will be thus executed the next time again)
 - `yarn mysql:import-anonymous-data` – Import last anonymized dump
