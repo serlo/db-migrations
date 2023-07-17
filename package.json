@@ -10,7 +10,7 @@
     "format:prettier": "yarn _prettier --write",
     "lint:prettier": "yarn _prettier --check",
     "m": "yarn migrate:ts",
-    "migrate": "docker-compose run --rm server-migrate",
+    "migrate": "docker compose run --build --rm server-migrate",
     "migrate:ts": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m src/ up",
     "migrate:up": "yarn migrate up",
     "mysql": "docker compose exec mysql serlo-mysql",
