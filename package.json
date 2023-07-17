@@ -11,6 +11,7 @@
     "delete-last-migration": "docker exec $(docker ps -qf 'name=mysql') mysql --password=secret --database=serlo --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "format:prettier": "yarn _prettier --write",
     "lint:prettier": "yarn _prettier --check",
+    "lint:tsc": "tsc --noEmit",
     "list-migrations": "docker exec $(docker ps -qf 'name=mysql') mysql --password=secret --database=serlo --execute 'SELECT * FROM migrations'",
     "m": "yarn migrate:ts",
     "migrate": "docker-compose run --rm server-migrate",
