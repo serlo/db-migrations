@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "author": "Serlo Education e.V.",
   "scripts": {
-    "_prettier": "prettier . '!dist/**/*'",
+    "_prettier": "prettier .",
     "build": "ts-node scripts/build",
     "delete-last-migration": "docker exec $(docker ps -qf 'name=mysql') mysql --password=secret --database=serlo --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "format:prettier": "yarn _prettier --write",
