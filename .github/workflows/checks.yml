@@ -21,3 +21,13 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/setup
       - run: yarn test
+
+  migrate_ts:
+    name: Migrations succeed after calling directly from `src`
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup
+      - run: yarn start
+      - run: ./mysql/scripts/wait-for-mysql.sh
+      - run: yarn migrate:ts
