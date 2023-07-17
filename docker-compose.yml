@@ -7,9 +7,7 @@ services:
     volumes:
       - ./dist:/usr/src/app/migrations:delegated,z
     environment:
-      - DATABASE=mysql://root:secret@host.docker.internal:3306/serlo?query
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+      - DATABASE=mysql://root:secret@mysql:3306/serlo
 
   # START: MySQL service
   mysql:
