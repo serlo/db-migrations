@@ -4,5 +4,5 @@ runs:
   steps:
     - run: docker compose up mysql --detach
       shell: bash
-    - run: ./mysql/scripts/wait-for-mysql.sh
+    - run: ./scripts/mysql/wait-for-mysql.sh
       shell: bash
