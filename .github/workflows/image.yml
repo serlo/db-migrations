@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-node
+      - uses: serlo/configure-repositories/actions/setup-node@main
       - uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
