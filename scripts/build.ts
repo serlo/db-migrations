@@ -48,7 +48,7 @@ async function exec() {
   const file = path.resolve(process.argv[2])
 
   if (!fs.statSync(file).isFile() || path.dirname(file) !== src) {
-    throw new Error('File does not exist')
+    throw new Error(`File ${file} does not exist`)
   }
 
   const basename = path.basename(file, '.ts')
