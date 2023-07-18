@@ -21,7 +21,7 @@
  */
 import { convertSplishToEdtrIO } from './legacy-editor-to-editor'
 
-import { createMigration } from './utils'
+import { createMigration } from '../src/utils'
 
 function migrateSplishToEdtrIo(serializedState: string): string {
   const state = JSON.parse(serializedState)
