@@ -6,13 +6,8 @@ services:
       context: .
     environment:
       - DATABASE=mysql://root:secret@mysql:3306/serlo
-
-  # START: MySQL service
   mysql:
-    build:
-      context: mysql/docker-container
-      dockerfile: Dockerfile
+    image: eu.gcr.io/serlo-shared/serlo-mysql-database:latest
     platform: linux/x86_64
     ports:
       - '3306:3306'
-  # END: MySQL service
