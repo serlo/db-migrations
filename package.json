@@ -27,7 +27,7 @@
     "start:docker": "docker compose up mysql --detach",
     "stop": "yarn stop:docker",
     "stop:docker": "docker compose down",
-    "test": "jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
