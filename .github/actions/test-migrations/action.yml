@@ -3,8 +3,8 @@ runs:
   using: composite
   steps:
     # With the following command we check that the migration
-    # "20220625202000-convert-important-and-blockquote-to-box" was run
+    # "20201023104526-update-subjects" was run
     # successfully
     - run: yarn mysql:list-migrations | grep
-        20220625202000-convert-important-and-blockquote-to-box
+        20201023104526-update-subjects
       shell: bash
