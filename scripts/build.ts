@@ -22,7 +22,6 @@
 import * as esbuild from 'esbuild'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as util from 'util'
 
 import { fileURLToPath } from 'url'
 
@@ -47,11 +46,12 @@ async function exec() {
   }
 
   const file = process.argv[2]
-  const stat = util.promisify(fs.stat)
-  const stats = await stat(file)
   const absoluteFilePath = path.join(process.cwd(), file)
 
-  if (!stats.isFile() || path.dirname(absoluteFilePath) !== src) {
+  if (
+    !fs.statSync(absoluteFilePath).isFile() ||
+    path.dirname(absoluteFilePath) !== src
+  ) {
     throw new Error('File does not exist')
   }
 
