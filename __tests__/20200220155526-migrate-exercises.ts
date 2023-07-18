@@ -19,124 +19,124 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { migrateState } from "../src/20200220155526-migrate-exercises";
+import { migrateState } from '../src/20200220155526-migrate-exercises'
 
-test("Simple real state", () => {
+test('Simple real state', () => {
   const state = {
-    plugin: "rows",
+    plugin: 'rows',
     state: [
       {
-        plugin: "text",
-        state: [{ type: "p", children: [{ text: "Einzelkindern" }] }],
+        plugin: 'text',
+        state: [{ type: 'p', children: [{ text: 'Einzelkindern' }] }],
       },
     ],
-  };
+  }
 
   expect(migrateState(state)).toEqual({
-    plugin: "exercise",
+    plugin: 'exercise',
     state: {
       content: {
-        plugin: "rows",
+        plugin: 'rows',
         state: [
           {
-            plugin: "text",
-            state: [{ type: "p", children: [{ text: "Einzelkindern" }] }],
+            plugin: 'text',
+            state: [{ type: 'p', children: [{ text: 'Einzelkindern' }] }],
           },
         ],
       },
       interactive: undefined,
     },
-  });
-});
+  })
+})
 
-test("Real state with sc-mc-exercise", () => {
+test('Real state with sc-mc-exercise', () => {
   const state = {
-    plugin: "rows",
+    plugin: 'rows',
     state: [
       {
-        plugin: "text",
+        plugin: 'text',
         state: [
           {
-            type: "p",
+            type: 'p',
             children: [
-              { text: "Wie berechnet man den FlÃ¤cheninhalt " },
+              { text: 'Wie berechnet man den FlÃ¤cheninhalt ' },
               {
-                type: "math",
-                src: "A",
+                type: 'math',
+                src: 'A',
                 inline: true,
-                children: [{ text: "A" }],
+                children: [{ text: 'A' }],
               },
-              { text: " von einem Kreis mit Radius " },
+              { text: ' von einem Kreis mit Radius ' },
               {
-                type: "math",
-                src: "r",
+                type: 'math',
+                src: 'r',
                 inline: true,
-                children: [{ text: "r" }],
+                children: [{ text: 'r' }],
               },
-              { text: "?" },
+              { text: '?' },
             ],
           },
         ],
       },
       {
-        plugin: "scMcExercise",
+        plugin: 'scMcExercise',
         state: {
           isSingleChoice: true,
           answers: [
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A=\\pi \\cdot r^2",
+                        type: 'math',
+                        src: 'A=\\pi \\cdot r^2',
                         inline: true,
-                        children: [{ text: "A=\\pi \\cdot r^2" }],
+                        children: [{ text: 'A=\\pi \\cdot r^2' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: true,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
-                  { type: "p", children: [{ text: "Richtig! Sehr gut!" }] },
+                  { type: 'p', children: [{ text: 'Richtig! Sehr gut!' }] },
                 ],
               },
             },
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A=\\pi^2 \\cdot r",
+                        type: 'math',
+                        src: 'A=\\pi^2 \\cdot r',
                         inline: true,
-                        children: [{ text: "A=\\pi^2 \\cdot r" }],
+                        children: [{ text: 'A=\\pi^2 \\cdot r' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: false,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "Fast! Aber leider trotzdem falsch. :(" },
+                      { text: 'Fast! Aber leider trotzdem falsch. :(' },
                     ],
                   },
                 ],
@@ -144,67 +144,67 @@ test("Real state with sc-mc-exercise", () => {
             },
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A=\\dfrac{r}{2}\\cdot \\pi",
+                        type: 'math',
+                        src: 'A=\\dfrac{r}{2}\\cdot \\pi',
                         inline: true,
-                        children: [{ text: "A=\\dfrac{r}{2}\\cdot \\pi" }],
+                        children: [{ text: 'A=\\dfrac{r}{2}\\cdot \\pi' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: false,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
-                  { type: "p", children: [{ text: "Das ist leider falsch." }] },
+                  { type: 'p', children: [{ text: 'Das ist leider falsch.' }] },
                 ],
               },
             },
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A = 2\\cdot \\pi \\cdot r",
+                        type: 'math',
+                        src: 'A = 2\\cdot \\pi \\cdot r',
                         inline: true,
-                        children: [{ text: "A = 2\\cdot \\pi \\cdot r" }],
+                        children: [{ text: 'A = 2\\cdot \\pi \\cdot r' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: false,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "Falsch. " },
+                      { text: 'Falsch. ' },
                       {
-                        type: "math",
-                        src: "U=2\\pi r",
+                        type: 'math',
+                        src: 'U=2\\pi r',
                         inline: true,
-                        children: [{ text: "U=2\\pi r" }],
+                        children: [{ text: 'U=2\\pi r' }],
                       },
-                      { text: " ist der " },
-                      { text: "Umfang", strong: true },
-                      { text: " von einem Kreis." },
+                      { text: ' ist der ' },
+                      { text: 'Umfang', strong: true },
+                      { text: ' von einem Kreis.' },
                     ],
                   },
                 ],
@@ -214,35 +214,35 @@ test("Real state with sc-mc-exercise", () => {
         },
       },
     ],
-  };
+  }
 
   expect(migrateState(state)).toEqual({
-    plugin: "exercise",
+    plugin: 'exercise',
     state: {
       content: {
-        plugin: "rows",
+        plugin: 'rows',
         state: [
           {
-            plugin: "text",
+            plugin: 'text',
             state: [
               {
-                type: "p",
+                type: 'p',
                 children: [
-                  { text: "Wie berechnet man den FlÃ¤cheninhalt " },
+                  { text: 'Wie berechnet man den FlÃ¤cheninhalt ' },
                   {
-                    type: "math",
-                    src: "A",
+                    type: 'math',
+                    src: 'A',
                     inline: true,
-                    children: [{ text: "A" }],
+                    children: [{ text: 'A' }],
                   },
-                  { text: " von einem Kreis mit Radius " },
+                  { text: ' von einem Kreis mit Radius ' },
                   {
-                    type: "math",
-                    src: "r",
+                    type: 'math',
+                    src: 'r',
                     inline: true,
-                    children: [{ text: "r" }],
+                    children: [{ text: 'r' }],
                   },
-                  { text: "?" },
+                  { text: '?' },
                 ],
               },
             ],
@@ -250,64 +250,64 @@ test("Real state with sc-mc-exercise", () => {
         ],
       },
       interactive: {
-        plugin: "scMcExercise",
+        plugin: 'scMcExercise',
         state: {
           isSingleChoice: true,
           answers: [
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A=\\pi \\cdot r^2",
+                        type: 'math',
+                        src: 'A=\\pi \\cdot r^2',
                         inline: true,
-                        children: [{ text: "A=\\pi \\cdot r^2" }],
+                        children: [{ text: 'A=\\pi \\cdot r^2' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: true,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
-                  { type: "p", children: [{ text: "Richtig! Sehr gut!" }] },
+                  { type: 'p', children: [{ text: 'Richtig! Sehr gut!' }] },
                 ],
               },
             },
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A=\\pi^2 \\cdot r",
+                        type: 'math',
+                        src: 'A=\\pi^2 \\cdot r',
                         inline: true,
-                        children: [{ text: "A=\\pi^2 \\cdot r" }],
+                        children: [{ text: 'A=\\pi^2 \\cdot r' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: false,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "Fast! Aber leider trotzdem falsch. :(" },
+                      { text: 'Fast! Aber leider trotzdem falsch. :(' },
                     ],
                   },
                 ],
@@ -315,67 +315,67 @@ test("Real state with sc-mc-exercise", () => {
             },
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A=\\dfrac{r}{2}\\cdot \\pi",
+                        type: 'math',
+                        src: 'A=\\dfrac{r}{2}\\cdot \\pi',
                         inline: true,
-                        children: [{ text: "A=\\dfrac{r}{2}\\cdot \\pi" }],
+                        children: [{ text: 'A=\\dfrac{r}{2}\\cdot \\pi' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: false,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
-                  { type: "p", children: [{ text: "Das ist leider falsch." }] },
+                  { type: 'p', children: [{ text: 'Das ist leider falsch.' }] },
                 ],
               },
             },
             {
               content: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "" },
+                      { text: '' },
                       {
-                        type: "math",
-                        src: "A = 2\\cdot \\pi \\cdot r",
+                        type: 'math',
+                        src: 'A = 2\\cdot \\pi \\cdot r',
                         inline: true,
-                        children: [{ text: "A = 2\\cdot \\pi \\cdot r" }],
+                        children: [{ text: 'A = 2\\cdot \\pi \\cdot r' }],
                       },
-                      { text: "" },
+                      { text: '' },
                     ],
                   },
                 ],
               },
               isCorrect: false,
               feedback: {
-                plugin: "text",
+                plugin: 'text',
                 state: [
                   {
-                    type: "p",
+                    type: 'p',
                     children: [
-                      { text: "Falsch. " },
+                      { text: 'Falsch. ' },
                       {
-                        type: "math",
-                        src: "U=2\\pi r",
+                        type: 'math',
+                        src: 'U=2\\pi r',
                         inline: true,
-                        children: [{ text: "U=2\\pi r" }],
+                        children: [{ text: 'U=2\\pi r' }],
                       },
-                      { text: " ist der " },
-                      { text: "Umfang", strong: true },
-                      { text: " von einem Kreis." },
+                      { text: ' ist der ' },
+                      { text: 'Umfang', strong: true },
+                      { text: ' von einem Kreis.' },
                     ],
                   },
                 ],
@@ -385,5 +385,5 @@ test("Real state with sc-mc-exercise", () => {
         },
       },
     },
-  });
-});
+  })
+})

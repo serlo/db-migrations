@@ -20,28 +20,28 @@
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
 /* eslint-env jest */
-import { expect, expectSplishSlate } from "./common";
-import split from "../src/legacyToSplish/split";
+import { expect, expectSplishSlate } from './common'
+import split from '../src/legacyToSplish/split'
 
-import { Plugin } from "../src/splishToEdtr/types";
-import transform from "../src/legacyToSplish/transform";
+import { Plugin } from '../src/splishToEdtr/types'
+import transform from '../src/legacyToSplish/transform'
 
 const cases: {
-  description: string;
-  input: ReturnType<typeof transform>;
-  output: ReturnType<typeof split>;
+  description: string
+  input: ReturnType<typeof transform>
+  output: ReturnType<typeof split>
 }[] = [
   {
-    description: "Simple Layout no split",
+    description: 'Simple Layout no split',
     input: {
       cells: [
         {
           rows: [
             {
-              cells: [{ size: 12, raw: "Lorem ipsum" }],
+              cells: [{ size: 12, raw: 'Lorem ipsum' }],
             },
             {
-              cells: [{ size: 12, raw: "dolor adipiscing amet" }],
+              cells: [{ size: 12, raw: 'dolor adipiscing amet' }],
             },
           ],
         },
@@ -57,7 +57,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem ipsum</p>")],
+                      cells: [expectSplishSlate('<p>Lorem ipsum</p>')],
                     },
                   ],
                 },
@@ -70,7 +70,7 @@ const cases: {
                   rows: [
                     {
                       cells: [
-                        expectSplishSlate("<p>dolor adipiscing amet</p>"),
+                        expectSplishSlate('<p>dolor adipiscing amet</p>'),
                       ],
                     },
                   ],
@@ -83,13 +83,13 @@ const cases: {
     },
   },
   {
-    description: "Layout with block element",
+    description: 'Layout with block element',
     input: {
       cells: [
         {
           rows: [
             {
-              cells: [{ size: 12, raw: "Lorem \n![image](url)\n ipsum" }],
+              cells: [{ size: 12, raw: 'Lorem \n![image](url)\n ipsum' }],
             },
           ],
         },
@@ -105,7 +105,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem</p>")],
+                      cells: [expectSplishSlate('<p>Lorem</p>')],
                     },
                     {
                       cells: [
@@ -113,18 +113,18 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Image,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              description: "image",
-                              src: "url",
+                              description: 'image',
+                              src: 'url',
                             },
                           },
                         },
                       ],
                     },
                     {
-                      cells: [expectSplishSlate("<p>ipsum</p>")],
+                      cells: [expectSplishSlate('<p>ipsum</p>')],
                     },
                   ],
                 },
@@ -136,13 +136,13 @@ const cases: {
     },
   },
   {
-    description: "Layout with injection",
+    description: 'Layout with injection',
     input: {
       cells: [
         {
           rows: [
             {
-              cells: [{ size: 12, raw: "Lorem \n>[alttext](url)\n ipsum" }],
+              cells: [{ size: 12, raw: 'Lorem \n>[alttext](url)\n ipsum' }],
             },
           ],
         },
@@ -158,7 +158,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem</p>")],
+                      cells: [expectSplishSlate('<p>Lorem</p>')],
                     },
                     {
                       cells: [
@@ -166,18 +166,18 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Injection,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              description: "alttext",
-                              src: "url",
+                              description: 'alttext',
+                              src: 'url',
                             },
                           },
                         },
                       ],
                     },
                     {
-                      cells: [expectSplishSlate("<p>ipsum</p>")],
+                      cells: [expectSplishSlate('<p>ipsum</p>')],
                     },
                   ],
                 },
@@ -189,7 +189,7 @@ const cases: {
     },
   },
   {
-    description: "Layout with spoiler",
+    description: 'Layout with spoiler',
     input: {
       cells: [
         {
@@ -198,7 +198,7 @@ const cases: {
               cells: [
                 {
                   size: 12,
-                  raw: "Lorem \n/// title\nmarkdowntext\n///\n ipsum",
+                  raw: 'Lorem \n/// title\nmarkdowntext\n///\n ipsum',
                 },
               ],
             },
@@ -216,7 +216,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem</p>")],
+                      cells: [expectSplishSlate('<p>Lorem</p>')],
                     },
                     {
                       cells: [
@@ -224,12 +224,12 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Spoiler,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              title: "title",
+                              title: 'title',
                               content: {
-                                type: "@splish-me/editor-core/editable",
+                                type: '@splish-me/editor-core/editable',
                                 state: {
                                   cells: [
                                     {
@@ -237,7 +237,7 @@ const cases: {
                                         {
                                           cells: [
                                             expectSplishSlate(
-                                              "<p>markdowntext</p>",
+                                              '<p>markdowntext</p>',
                                             ),
                                           ],
                                         },
@@ -252,7 +252,7 @@ const cases: {
                       ],
                     },
                     {
-                      cells: [expectSplishSlate("<p>ipsum</p>")],
+                      cells: [expectSplishSlate('<p>ipsum</p>')],
                     },
                   ],
                 },
@@ -264,7 +264,7 @@ const cases: {
     },
   },
   {
-    description: "Layout with image in spoiler",
+    description: 'Layout with image in spoiler',
     input: {
       cells: [
         {
@@ -273,7 +273,7 @@ const cases: {
               cells: [
                 {
                   size: 12,
-                  raw: "/// title\nmarkdowntext with image ![image](url)\n///",
+                  raw: '/// title\nmarkdowntext with image ![image](url)\n///',
                 },
               ],
             },
@@ -296,12 +296,12 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Spoiler,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              title: "title",
+                              title: 'title',
                               content: {
-                                type: "@splish-me/editor-core/editable",
+                                type: '@splish-me/editor-core/editable',
                                 state: {
                                   cells: [
                                     {
@@ -309,7 +309,7 @@ const cases: {
                                         {
                                           cells: [
                                             expectSplishSlate(
-                                              "<p>markdowntext with image</p>",
+                                              '<p>markdowntext with image</p>',
                                             ),
                                           ],
                                         },
@@ -319,11 +319,11 @@ const cases: {
                                               content: {
                                                 plugin: {
                                                   name: Plugin.Image,
-                                                  version: "0.0.0",
+                                                  version: '0.0.0',
                                                 },
                                                 state: {
-                                                  description: "image",
-                                                  src: "url",
+                                                  description: 'image',
+                                                  src: 'url',
                                                 },
                                               },
                                             },
@@ -349,13 +349,13 @@ const cases: {
     },
   },
   {
-    description: "Layout with geogebra injection",
+    description: 'Layout with geogebra injection',
     input: {
       cells: [
         {
           rows: [
             {
-              cells: [{ size: 12, raw: "Lorem \n>[alttext](ggt/url)\n ipsum" }],
+              cells: [{ size: 12, raw: 'Lorem \n>[alttext](ggt/url)\n ipsum' }],
             },
           ],
         },
@@ -371,7 +371,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem</p>")],
+                      cells: [expectSplishSlate('<p>Lorem</p>')],
                     },
                     {
                       cells: [
@@ -379,18 +379,18 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Geogebra,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              description: "alttext",
-                              src: "url",
+                              description: 'alttext',
+                              src: 'url',
                             },
                           },
                         },
                       ],
                     },
                     {
-                      cells: [expectSplishSlate("<p>ipsum</p>")],
+                      cells: [expectSplishSlate('<p>ipsum</p>')],
                     },
                   ],
                 },
@@ -402,7 +402,7 @@ const cases: {
     },
   },
   {
-    description: "Layout with linked block element",
+    description: 'Layout with linked block element',
     input: {
       cells: [
         {
@@ -411,7 +411,7 @@ const cases: {
               cells: [
                 {
                   size: 12,
-                  raw: "Lorem \n[![image](imageurl)](linkurl)\n ipsum",
+                  raw: 'Lorem \n[![image](imageurl)](linkurl)\n ipsum',
                 },
               ],
             },
@@ -429,7 +429,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem</p>")],
+                      cells: [expectSplishSlate('<p>Lorem</p>')],
                     },
                     {
                       cells: [
@@ -437,19 +437,19 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Image,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              description: "image",
-                              src: "imageurl",
-                              href: "linkurl",
+                              description: 'image',
+                              src: 'imageurl',
+                              href: 'linkurl',
                             },
                           },
                         },
                       ],
                     },
                     {
-                      cells: [expectSplishSlate("<p>ipsum</p>")],
+                      cells: [expectSplishSlate('<p>ipsum</p>')],
                     },
                   ],
                 },
@@ -461,17 +461,17 @@ const cases: {
     },
   },
   {
-    description: "Empty columns layout",
+    description: 'Empty columns layout',
     input: {
       cells: [
         {
           rows: [
             {
               cells: [
-                { size: 3, raw: "Lorem ipsum" },
-                { size: 3, raw: "dolor adipiscing amet" },
-                { size: 3, raw: "" },
-                { size: 3, raw: "" },
+                { size: 3, raw: 'Lorem ipsum' },
+                { size: 3, raw: 'dolor adipiscing amet' },
+                { size: 3, raw: '' },
+                { size: 3, raw: '' },
               ],
             },
           ],
@@ -488,7 +488,7 @@ const cases: {
                   size: 3,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem ipsum</p>")],
+                      cells: [expectSplishSlate('<p>Lorem ipsum</p>')],
                     },
                   ],
                 },
@@ -497,7 +497,7 @@ const cases: {
                   rows: [
                     {
                       cells: [
-                        expectSplishSlate("<p>dolor adipiscing amet</p>"),
+                        expectSplishSlate('<p>dolor adipiscing amet</p>'),
                       ],
                     },
                   ],
@@ -506,7 +506,7 @@ const cases: {
                   size: 3,
                   rows: [
                     {
-                      cells: [expectSplishSlate("")],
+                      cells: [expectSplishSlate('')],
                     },
                   ],
                 },
@@ -514,7 +514,7 @@ const cases: {
                   size: 3,
                   rows: [
                     {
-                      cells: [expectSplishSlate("")],
+                      cells: [expectSplishSlate('')],
                     },
                   ],
                 },
@@ -526,7 +526,7 @@ const cases: {
     },
   },
   {
-    description: "Blockquote",
+    description: 'Blockquote',
     input: {
       cells: [
         {
@@ -535,7 +535,7 @@ const cases: {
               cells: [
                 {
                   size: 12,
-                  raw: "Lorem \n> ipsum\n> dolor\n\n>sit amet\n\nconsectetur -> not a quote",
+                  raw: 'Lorem \n> ipsum\n> dolor\n\n>sit amet\n\nconsectetur -> not a quote',
                 },
               ],
             },
@@ -553,7 +553,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Lorem</p>")],
+                      cells: [expectSplishSlate('<p>Lorem</p>')],
                     },
                     {
                       cells: [
@@ -561,11 +561,11 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Blockquote,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
                               child: {
-                                type: "@splish-me/editor-core/editable",
+                                type: '@splish-me/editor-core/editable',
                                 state: {
                                   cells: [
                                     {
@@ -573,7 +573,7 @@ const cases: {
                                         {
                                           cells: [
                                             expectSplishSlate(
-                                              "<p>ipsum dolor</p><p>sit amet</p>",
+                                              '<p>ipsum dolor</p><p>sit amet</p>',
                                             ),
                                           ],
                                         },
@@ -590,7 +590,7 @@ const cases: {
                     {
                       cells: [
                         expectSplishSlate(
-                          "<p>consectetur -&gt; not a quote</p>",
+                          '<p>consectetur -&gt; not a quote</p>',
                         ),
                       ],
                     },
@@ -604,7 +604,7 @@ const cases: {
     },
   },
   {
-    description: "Code",
+    description: 'Code',
     input: {
       cells: [
         {
@@ -631,17 +631,17 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>Check this code:</p>")],
+                      cells: [expectSplishSlate('<p>Check this code:</p>')],
                     },
                     {
                       cells: [
                         {
                           content: {
                             plugin: {
-                              name: "code",
+                              name: 'code',
                             },
                             state: {
-                              language: "javascript",
+                              language: 'javascript',
                               src: 'console.log("hello, world!);',
                             },
                           },
@@ -649,7 +649,7 @@ const cases: {
                       ],
                     },
                     {
-                      cells: [expectSplishSlate("<p>I hope this helped</p>")],
+                      cells: [expectSplishSlate('<p>I hope this helped</p>')],
                     },
                   ],
                 },
@@ -660,12 +660,12 @@ const cases: {
       ],
     },
   },
-];
+]
 
 cases.forEach((testcase) => {
-  describe("Transformes Serlo Layout to new Layout", () => {
+  describe('Transformes Serlo Layout to new Layout', () => {
     it(testcase.description, () => {
-      expect(split(testcase.input), "to equal", testcase.output);
-    });
-  });
-});
+      expect(split(testcase.input), 'to equal', testcase.output)
+    })
+  })
+})

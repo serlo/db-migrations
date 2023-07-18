@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { createMigration } from "./utils";
+import { createMigration } from './utils'
 
 /**
  * Removes all entities of type `text-hint` from the database.
@@ -29,16 +29,16 @@ createMigration(exports, {
   up: async (db) => {
     const results = await db.runSql<{ id: number }[]>(
       `SELECT id FROM type WHERE name = 'text-hint'`,
-    );
+    )
 
     if (results.length !== 1) {
-      throw new Error("Expected type `text-hint` to exist");
+      throw new Error('Expected type `text-hint` to exist')
     }
 
-    const { id } = results[0];
+    const { id } = results[0]
     await db.runSql(
       `DELETE FROM uuid WHERE id = ANY (SELECT id FROM entity WHERE type_id = ?)`,
       id,
-    );
+    )
   },
-});
+})

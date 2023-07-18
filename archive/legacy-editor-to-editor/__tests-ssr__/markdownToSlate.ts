@@ -19,30 +19,30 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { expect, expectSplishSlate } from "./common";
-import markdownToSlate from "../src/legacyToSplish/markdownToSlate";
+import { expect, expectSplishSlate } from './common'
+import markdownToSlate from '../src/legacyToSplish/markdownToSlate'
 
 const cases: {
-  description: string;
-  input: string;
-  output: ReturnType<typeof markdownToSlate>;
+  description: string
+  input: string
+  output: ReturnType<typeof markdownToSlate>
 }[] = [
   {
-    description: "Transform markdown header to slate plugin",
-    input: "# header",
+    description: 'Transform markdown header to slate plugin',
+    input: '# header',
     output: expectSplishSlate('<h1 id="header">header</h1>'),
   },
   {
-    description: "Transform bold paragraph to slate plugin",
-    input: "**bold text**",
-    output: expectSplishSlate("<p><strong>bold text</strong></p>"),
+    description: 'Transform bold paragraph to slate plugin',
+    input: '**bold text**',
+    output: expectSplishSlate('<p><strong>bold text</strong></p>'),
   },
-];
+]
 
 cases.forEach((testcase) => {
-  describe("Transformes Serlo Layout to new Layout", () => {
+  describe('Transformes Serlo Layout to new Layout', () => {
     it(testcase.description, () => {
-      expect(markdownToSlate(testcase.input), "to equal", testcase.output);
-    });
-  });
-});
+      expect(markdownToSlate(testcase.input), 'to equal', testcase.output)
+    })
+  })
+})

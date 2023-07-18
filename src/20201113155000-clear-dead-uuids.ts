@@ -19,10 +19,10 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { clearDeadUuids, createMigration } from "./utils";
+import { clearDeadUuids, createMigration } from './utils'
 
 createMigration(exports, {
   up: async (db) => {
-    await clearDeadUuids(db);
+    await clearDeadUuids(db)
   },
-});
+})

@@ -20,7 +20,7 @@
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
 
-import { createMigration } from "./utils";
+import { createMigration } from './utils'
 
 /**
  * Removes all rows & permissions from the database that were used by the Contexter module
@@ -28,9 +28,9 @@ import { createMigration } from "./utils";
  */
 createMigration(exports, {
   up: async (db) => {
-    await db.dropTable("context_route_parameter");
-    await db.dropTable("context_route");
-    await db.dropTable("context");
-    await db.runSql(`DELETE FROM permission WHERE name LIKE "contexter.%"`);
+    await db.dropTable('context_route_parameter')
+    await db.dropTable('context_route')
+    await db.dropTable('context')
+    await db.runSql(`DELETE FROM permission WHERE name LIKE "contexter.%"`)
   },
-});
+})

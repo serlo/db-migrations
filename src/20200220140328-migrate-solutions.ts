@@ -19,7 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { createMigration } from "./utils";
+import { createMigration } from './utils'
 
 /**
  * Migrates the Edtr.io states of all entities of type `text-solution`.
@@ -28,21 +28,21 @@ import { createMigration } from "./utils";
 createMigration(exports, {
   up: async (db) => {
     interface Row {
-      id: number;
-      value: string;
+      id: number
+      value: string
     }
 
     async function processResults(results: Row[]) {
-      if (results.length === 0) return;
+      if (results.length === 0) return
 
-      const [field, ...remainingResults] = results;
-      const state = JSON.parse(field.value);
+      const [field, ...remainingResults] = results
+      const state = JSON.parse(field.value)
       await db.runSql(
         `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
         JSON.stringify(migrateState(state)),
         field.id,
-      );
-      await processResults(remainingResults);
+      )
+      await processResults(remainingResults)
     }
 
     const results = await db.runSql<Row[]>(`
@@ -53,49 +53,49 @@ createMigration(exports, {
       WHERE erf.field = 'content'
         AND erf.value LIKE '{"plugin"%'
         AND e.type_id = (SELECT id FROM type WHERE name = 'text-solution')
-    `);
-    await processResults(results);
+    `)
+    await processResults(results)
   },
-});
+})
 
 export function migrateState(state: {
-  state: { plugin: string; state: any }[];
+  state: { plugin: string; state: any }[]
 }) {
   const stepsState = state.state.map(({ plugin, state }) => {
-    if (plugin !== "solutionSteps") return state;
-    const children = [];
-    const { introduction, strategy, solutionSteps, additionals } = state;
-    if (introduction && introduction.plugin === "rows") {
-      children.push(...introduction.state);
+    if (plugin !== 'solutionSteps') return state
+    const children = []
+    const { introduction, strategy, solutionSteps, additionals } = state
+    if (introduction && introduction.plugin === 'rows') {
+      children.push(...introduction.state)
     }
-    if (introduction && introduction.plugin === "text") {
-      children.push(introduction);
+    if (introduction && introduction.plugin === 'text') {
+      children.push(introduction)
     }
-    if (strategy && strategy.plugin === "rows") {
-      children.push(...strategy.state);
+    if (strategy && strategy.plugin === 'rows') {
+      children.push(...strategy.state)
     }
     solutionSteps.forEach((step: any) => {
-      if (step.content && step.content.plugin === "rows") {
-        children.push(...step.content.state);
+      if (step.content && step.content.plugin === 'rows') {
+        children.push(...step.content.state)
       }
-    });
-    if (additionals && additionals.plugin === "rows") {
-      children.push(...additionals.state);
+    })
+    if (additionals && additionals.plugin === 'rows') {
+      children.push(...additionals.state)
     }
-    return children;
-  });
+    return children
+  })
 
   return {
-    plugin: "solution",
+    plugin: 'solution',
     state: {
       prerequisite: undefined,
       strategy: {
-        plugin: "text",
+        plugin: 'text',
       },
       steps: {
-        plugin: "rows",
+        plugin: 'rows',
         state: [].concat(...stepsState),
       },
     },
-  };
+  }
 }

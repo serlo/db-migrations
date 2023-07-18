@@ -19,16 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { ContentCell, Plugin } from "../splishToEdtr/types";
-import { SplishTextState } from "./createPlugin";
-import renderMarkdown from "./markdownToHtml";
+import { ContentCell, Plugin } from '../splishToEdtr/types'
+import { SplishTextState } from './createPlugin'
+import renderMarkdown from './markdownToHtml'
 
 const markdownToSlate = (markdown: string): ContentCell<SplishTextState> => ({
   content: {
-    plugin: { name: Plugin.Text, version: "0.0.0" },
+    plugin: { name: Plugin.Text, version: '0.0.0' },
     state: {
       importFromHtml: renderMarkdown(markdown),
     },
   },
-});
-export default markdownToSlate;
+})
+export default markdownToSlate

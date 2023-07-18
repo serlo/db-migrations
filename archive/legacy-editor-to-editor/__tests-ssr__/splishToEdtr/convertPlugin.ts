@@ -19,38 +19,38 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { convertPlugin } from "../../src/splishToEdtr/convertPlugins";
-import { expect } from "../common";
+import { convertPlugin } from '../../src/splishToEdtr/convertPlugins'
+import { expect } from '../common'
 import {
   SplishImageState,
   SplishSpoilerState,
-} from "../../src/legacyToSplish/createPlugin";
-import { ContentCell, Plugin } from "../../src/splishToEdtr/types";
+} from '../../src/legacyToSplish/createPlugin'
+import { ContentCell, Plugin } from '../../src/splishToEdtr/types'
 
-describe("plugin convert works", () => {
-  it("works with Spoiler wrapping an image", () => {
+describe('plugin convert works', () => {
+  it('works with Spoiler wrapping an image', () => {
     const image: ContentCell<SplishImageState> = {
       content: {
         plugin: { name: Plugin.Image },
         state: {
-          description: "Some image description",
-          src: "https://assets.serlo.org/some/asset",
-          title: "",
+          description: 'Some image description',
+          src: 'https://assets.serlo.org/some/asset',
+          title: '',
         },
       },
-    };
+    }
     const spoiler: ContentCell<SplishSpoilerState> = {
       content: {
         plugin: { name: Plugin.Spoiler },
         state: {
-          title: "title",
+          title: 'title',
           content: {
-            type: "@splish-me/editor-core/editable",
+            type: '@splish-me/editor-core/editable',
             state: {
-              id: "1",
+              id: '1',
               cells: [
                 {
-                  id: "2",
+                  id: '2',
                   rows: [
                     {
                       cells: [image],
@@ -62,28 +62,28 @@ describe("plugin convert works", () => {
           },
         },
       },
-    };
+    }
 
     const expected = {
-      plugin: "spoiler",
+      plugin: 'spoiler',
       state: {
         content: {
-          plugin: "rows",
+          plugin: 'rows',
           state: [
             {
-              plugin: "image",
+              plugin: 'image',
               state: {
-                alt: "Some image description",
+                alt: 'Some image description',
                 link: undefined,
                 maxWidth: undefined,
-                src: "https://assets.serlo.org/some/asset",
+                src: 'https://assets.serlo.org/some/asset',
               },
             },
           ],
         },
-        title: "title",
+        title: 'title',
       },
-    };
-    expect(convertPlugin(spoiler), "to equal", expected);
-  });
-});
+    }
+    expect(convertPlugin(spoiler), 'to equal', expected)
+  })
+})

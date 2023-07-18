@@ -19,26 +19,26 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { serializer } from "@edtr-io/plugin-text";
+import { serializer } from '@edtr-io/plugin-text'
 
-import { expect, expectSplishSlate } from "../common";
-import { htmlToSlate } from "../../src/splishToEdtr/convertSlate";
-import { Edtr, Legacy, Splish, Plugin } from "../../src/splishToEdtr";
+import { expect, expectSplishSlate } from '../common'
+import { htmlToSlate } from '../../src/splishToEdtr/convertSlate'
+import { Edtr, Legacy, Splish, Plugin } from '../../src/splishToEdtr'
 import {
   convert,
   convertLegacyToSplish,
   convertSplishToEdtrIO,
-} from "../../src";
+} from '../../src'
 
 const cases: {
-  description: string;
-  legacy: Legacy;
-  splish: Splish;
-  edtrIO: Edtr;
+  description: string
+  legacy: Legacy
+  splish: Splish
+  edtrIO: Edtr
 }[] = [
   {
-    description: "Convert taxonomy terms created without editor correctly",
-    legacy: "# Hello world",
+    description: 'Convert taxonomy terms created without editor correctly',
+    legacy: '# Hello world',
     splish: {
       cells: [
         {
@@ -62,13 +62,13 @@ const cases: {
           ],
         },
       ],
-      id: "someID",
+      id: 'someID',
     },
     edtrIO: {
-      plugin: "rows",
+      plugin: 'rows',
       state: [
         {
-          plugin: "text",
+          plugin: 'text',
           state: serializer.serialize(
             htmlToSlate('<h1 id="helloworld">Hello world</h1>'),
           ),
@@ -77,28 +77,28 @@ const cases: {
     },
   },
   {
-    description: "Convert chains methods together correctly",
+    description: 'Convert chains methods together correctly',
     legacy: [
       [
         {
           col: 24,
-          content: "## Lorem ipsum",
+          content: '## Lorem ipsum',
         },
       ],
       [
         {
           col: 16,
-          content: "dolor **sit** amet.",
+          content: 'dolor **sit** amet.',
         },
         {
           col: 8,
-          content: "consecetur",
+          content: 'consecetur',
         },
       ],
       [
         {
           col: 24,
-          content: "markdown with ![image](url)",
+          content: 'markdown with ![image](url)',
         },
       ],
     ],
@@ -130,7 +130,7 @@ const cases: {
                     {
                       cells: [
                         expectSplishSlate(
-                          "<p>dolor <strong>sit</strong> amet.</p>",
+                          '<p>dolor <strong>sit</strong> amet.</p>',
                         ),
                       ],
                     },
@@ -140,7 +140,7 @@ const cases: {
                   size: 4,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>consecetur</p>")],
+                      cells: [expectSplishSlate('<p>consecetur</p>')],
                     },
                   ],
                 },
@@ -152,7 +152,7 @@ const cases: {
                   size: 12,
                   rows: [
                     {
-                      cells: [expectSplishSlate("<p>markdown with</p>")],
+                      cells: [expectSplishSlate('<p>markdown with</p>')],
                     },
                     {
                       cells: [
@@ -160,11 +160,11 @@ const cases: {
                           content: {
                             plugin: {
                               name: Plugin.Image,
-                              version: "0.0.0",
+                              version: '0.0.0',
                             },
                             state: {
-                              description: "image",
-                              src: "url",
+                              description: 'image',
+                              src: 'url',
                             },
                           },
                         },
@@ -179,25 +179,25 @@ const cases: {
       ],
     },
     edtrIO: {
-      plugin: "rows",
+      plugin: 'rows',
       state: [
         {
-          plugin: "text",
+          plugin: 'text',
           state: serializer.serialize(
             htmlToSlate('<h2 id="loremipsum">Lorem ipsum</h2>'),
           ),
         },
         {
-          plugin: "layout",
+          plugin: 'layout',
           state: [
             {
               child: {
-                plugin: "rows",
+                plugin: 'rows',
                 state: [
                   {
-                    plugin: "text",
+                    plugin: 'text',
                     state: serializer.serialize(
-                      htmlToSlate("<p>dolor <strong>sit</strong> amet.</p>"),
+                      htmlToSlate('<p>dolor <strong>sit</strong> amet.</p>'),
                     ),
                   },
                 ],
@@ -206,12 +206,12 @@ const cases: {
             },
             {
               child: {
-                plugin: "rows",
+                plugin: 'rows',
                 state: [
                   {
-                    plugin: "text",
+                    plugin: 'text',
                     state: serializer.serialize(
-                      htmlToSlate("<p>consecetur</p>"),
+                      htmlToSlate('<p>consecetur</p>'),
                     ),
                   },
                 ],
@@ -221,35 +221,35 @@ const cases: {
           ],
         },
         {
-          plugin: "text",
-          state: serializer.serialize(htmlToSlate("<p>markdown with</p>")),
+          plugin: 'text',
+          state: serializer.serialize(htmlToSlate('<p>markdown with</p>')),
         },
         {
-          plugin: "image",
+          plugin: 'image',
           state: {
-            alt: "image",
-            src: "url",
+            alt: 'image',
+            src: 'url',
           },
         },
       ],
     },
   },
-];
+]
 
 cases.forEach((testcase) => {
-  describe("Transformes Serlo Layout to new Layout", () => {
+  describe('Transformes Serlo Layout to new Layout', () => {
     it(testcase.description, () => {
       expect(
-        convertLegacyToSplish(testcase.legacy, "someID"),
-        "to equal",
+        convertLegacyToSplish(testcase.legacy, 'someID'),
+        'to equal',
         testcase.splish,
-      );
+      )
       expect(
         convertSplishToEdtrIO(testcase.splish),
-        "to equal",
+        'to equal',
         testcase.edtrIO,
-      );
-      expect(convert(testcase.legacy), "to equal", testcase.edtrIO);
-    });
-  });
-});
+      )
+      expect(convert(testcase.legacy), 'to equal', testcase.edtrIO)
+    })
+  })
+})

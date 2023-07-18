@@ -19,12 +19,12 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import * as React from "react";
-import Html, { Rule } from "slate-html-serializer";
+import * as React from 'react'
+import Html, { Rule } from 'slate-html-serializer'
 // @ts-ignore
-import { parseFragment } from "parse5";
-import { Block, Inline, Mark, Value, ValueJSON } from "slate";
-import { normalize } from "./normalize-slate";
+import { parseFragment } from 'parse5'
+import { Block, Inline, Mark, Value, ValueJSON } from 'slate'
+import { normalize } from './normalize-slate'
 
 /**
  * This file provides a serializer for the splish slate state to html
@@ -33,21 +33,21 @@ import { normalize } from "./normalize-slate";
  * All deserializers use the new node names defined in the following variables.
  */
 
-export const createHeadingNode = (level: number) => `@splish-me/h${level}`;
-export const linkNode = "@splish-me/a";
+export const createHeadingNode = (level: number) => `@splish-me/h${level}`
+export const linkNode = '@splish-me/a'
 
-export const orderedListNode = "ordered-list";
-export const unorderedListNode = "unordered-list";
-export const listItemNode = "list-item";
-export const listItemChildNode = "list-item-child";
+export const orderedListNode = 'ordered-list'
+export const unorderedListNode = 'unordered-list'
+export const listItemNode = 'list-item'
+export const listItemChildNode = 'list-item-child'
 
-export const paragraphNode = "paragraph";
+export const paragraphNode = 'paragraph'
 
-export const strongMark = "@splish-me/strong";
-export const emphasizeMark = "@splish-me/em";
+export const strongMark = '@splish-me/strong'
+export const emphasizeMark = '@splish-me/em'
 
-export const katexBlockNode = "@splish-me/katex-block";
-export const katexInlineNode = "@splish-me/katex-inline";
+export const katexBlockNode = '@splish-me/katex-block'
+export const katexInlineNode = '@splish-me/katex-inline'
 
 export function convertOldSlate(value: ValueJSON) {
   const serializer = new Html({
@@ -61,15 +61,15 @@ export function convertOldSlate(value: ValueJSON) {
     ],
     defaultBlock: { type: paragraphNode },
     parseHtml: (html: string) => {
-      return parseFragment(html) as HTMLElement;
+      return parseFragment(html) as HTMLElement
     },
-  });
+  })
 
   return htmlToSlate(
     serializer.serialize(Value.fromJSON(value), {
       render: true,
     }),
-  );
+  )
 }
 export function htmlToSlate(html: string) {
   const deserializer = new Html({
@@ -82,141 +82,141 @@ export function htmlToSlate(html: string) {
       katexDeserializer,
       {
         deserialize(el) {
-          if (el.tagName && el.tagName.toLowerCase() === "br") {
+          if (el.tagName && el.tagName.toLowerCase() === 'br') {
             return {
-              object: "text",
-              text: "\n",
-            };
+              object: 'text',
+              text: '\n',
+            }
           }
 
-          if (el.nodeName === "#text") {
+          if (el.nodeName === '#text') {
             // @ts-ignore
-            if (el.value && el.value.match(/<!--.*?-->/)) return;
+            if (el.value && el.value.match(/<!--.*?-->/)) return
 
             return {
-              object: "text",
+              object: 'text',
               // @ts-ignore
               text: el.value,
-            };
+            }
           }
         },
       },
     ],
     defaultBlock: { type: paragraphNode },
     parseHtml: (html: string) => {
-      return parseFragment(html) as HTMLElement;
+      return parseFragment(html) as HTMLElement
     },
-  });
+  })
 
-  return normalize(deserializer.deserialize(html, { toJSON: true }));
+  return normalize(deserializer.deserialize(html, { toJSON: true }))
 }
 
-type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6
 
 const headingDeserializer: Rule = {
   deserialize(el, next) {
-    const match = el.tagName.toLowerCase().match(/h([1-6])/);
+    const match = el.tagName.toLowerCase().match(/h([1-6])/)
 
     if (match) {
-      const level = parseInt(match[1], 10) as HeadingLevel;
+      const level = parseInt(match[1], 10) as HeadingLevel
 
       return {
-        object: "block",
+        object: 'block',
         type: createHeadingNode(level),
         nodes: next(el.childNodes),
-      };
+      }
     }
   },
-};
+}
 
 const linkDeserializer: Rule = {
   deserialize(el, next) {
-    if (el.tagName.toLowerCase() === "a") {
+    if (el.tagName.toLowerCase() === 'a') {
       // @ts-ignore FIXME
-      const attr = el.attrs.find(({ name }) => name === "href");
+      const attr = el.attrs.find(({ name }) => name === 'href')
 
       return {
-        object: "inline",
+        object: 'inline',
         type: linkNode,
         nodes: next(el.childNodes),
         data: {
-          href: attr ? attr.value : "",
+          href: attr ? attr.value : '',
         },
-      };
+      }
     }
   },
-};
+}
 
 const listDeserializer: Rule = {
   deserialize(el, next) {
     switch (el.tagName.toLowerCase()) {
-      case "ol":
+      case 'ol':
         return {
-          object: "block",
+          object: 'block',
           type: orderedListNode,
           nodes: next(el.childNodes),
-        };
-      case "ul":
+        }
+      case 'ul':
         return {
-          object: "block",
+          object: 'block',
           type: unorderedListNode,
           nodes: next(el.childNodes),
-        };
-      case "li":
+        }
+      case 'li':
         return {
-          object: "block",
+          object: 'block',
           type: listItemNode,
           nodes: [
             {
-              object: "block",
+              object: 'block',
               type: listItemChildNode,
               nodes: next(el.childNodes),
             },
           ],
-        };
+        }
     }
   },
-};
+}
 
 const paragraphDeserializer: Rule = {
   deserialize(el, next) {
-    if (el.tagName.toLowerCase() === "p") {
+    if (el.tagName.toLowerCase() === 'p') {
       return {
-        object: "block",
+        object: 'block',
         type: paragraphNode,
         nodes: next(el.childNodes),
-      };
+      }
     }
   },
-};
+}
 
 const richTextDeserializer: Rule = {
   deserialize(el, next) {
     switch (el.tagName.toLowerCase()) {
-      case "strong":
-      case "b":
+      case 'strong':
+      case 'b':
         return {
-          object: "mark",
+          object: 'mark',
           type: strongMark,
           nodes: next(el.childNodes),
-        };
-      case "em":
-      case "i":
+        }
+      case 'em':
+      case 'i':
         return {
-          object: "mark",
+          object: 'mark',
           type: emphasizeMark,
           nodes: next(el.childNodes),
-        };
+        }
     }
   },
-};
+}
 
 const katexDeserializer: Rule = {
   deserialize(el, next) {
     switch (el.tagName.toLowerCase()) {
-      case "katexblock":
+      case 'katexblock':
         return {
-          object: "block",
+          object: 'block',
           type: katexBlockNode,
           data: {
             //@ts-ignore
@@ -224,10 +224,10 @@ const katexDeserializer: Rule = {
             inline: false,
           },
           nodes: next(el.childNodes),
-        };
-      case "katexinline":
+        }
+      case 'katexinline':
         return {
-          object: "inline",
+          object: 'inline',
           type: katexInlineNode,
           data: {
             //@ts-ignore
@@ -235,22 +235,22 @@ const katexDeserializer: Rule = {
             inline: true,
           },
           nodes: next(el.childNodes),
-        };
+        }
       default:
-        return;
+        return
     }
   },
-};
+}
 
 const headingSerializer: Rule = {
   serialize(obj, children) {
-    const block = obj as Block;
+    const block = obj as Block
 
-    if (block.object === "block") {
-      const match = block.type.match(/@splish-me\/h([1-6])/);
+    if (block.object === 'block') {
+      const match = block.type.match(/@splish-me\/h([1-6])/)
 
       if (match) {
-        const level = parseInt(match[1], 10) as HeadingLevel;
+        const level = parseInt(match[1], 10) as HeadingLevel
 
         return React.createElement(
           `h${level}`,
@@ -258,73 +258,73 @@ const headingSerializer: Rule = {
             node: obj,
           },
           children,
-        );
+        )
       }
     }
   },
-};
+}
 
 const linkSerializer: Rule = {
   serialize(obj, children) {
-    const block = obj as Inline;
+    const block = obj as Inline
 
-    if (block.object === "inline" && block.type === linkNode) {
-      const href = obj.data.get("href");
-      return <a href={href}>{children}</a>;
+    if (block.object === 'inline' && block.type === linkNode) {
+      const href = obj.data.get('href')
+      return <a href={href}>{children}</a>
     }
   },
-};
+}
 
 const listSerializer: Rule = {
   serialize(obj, children) {
-    const block = obj as Block;
+    const block = obj as Block
 
     switch (block.type) {
-      case "@splish-me/ul":
-        return <ul>{children}</ul>;
-      case "@splish-me/ol":
-        return <ol>{children}</ol>;
-      case "@splish-me/li":
-        return <li>{children}</li>;
+      case '@splish-me/ul':
+        return <ul>{children}</ul>
+      case '@splish-me/ol':
+        return <ol>{children}</ol>
+      case '@splish-me/li':
+        return <li>{children}</li>
     }
   },
-};
+}
 const paragraphSerializer: Rule = {
   serialize(obj, children) {
-    const block = obj as Block;
-    if (block.type === "paragraph" || block.type === "@splish-me/p") {
-      return <p>{children}</p>;
+    const block = obj as Block
+    if (block.type === 'paragraph' || block.type === '@splish-me/p') {
+      return <p>{children}</p>
     }
   },
-};
+}
 
 const richTextSerializer: Rule = {
   serialize(obj, children) {
-    const mark = obj as Mark;
-    if (mark.object === "mark") {
+    const mark = obj as Mark
+    if (mark.object === 'mark') {
       switch (mark.type) {
-        case "@splish-me/strong":
-          return <strong>{children}</strong>;
-        case "@splish-me/em":
-          return <em>{children}</em>;
+        case '@splish-me/strong':
+          return <strong>{children}</strong>
+        case '@splish-me/em':
+          return <em>{children}</em>
       }
     }
   },
-};
+}
 
 const katexSerializer: Rule = {
   serialize(obj, children) {
-    const block = obj as Block;
-    const inline = obj as Inline;
+    const block = obj as Block
+    const inline = obj as Inline
 
-    if (block.object === "block" && block.type === katexBlockNode) {
-      const formula = obj.data.get("formula");
+    if (block.object === 'block' && block.type === katexBlockNode) {
+      const formula = obj.data.get('formula')
       // @ts-ignore
-      return <katexblock>{formula}</katexblock>;
-    } else if (inline.object === "inline" && inline.type === katexInlineNode) {
-      const formula = obj.data.get("formula");
+      return <katexblock>{formula}</katexblock>
+    } else if (inline.object === 'inline' && inline.type === katexInlineNode) {
+      const formula = obj.data.get('formula')
       // @ts-ignore
-      return <katexinline>{formula}</katexinline>;
+      return <katexinline>{formula}</katexinline>
     }
   },
-};
+}

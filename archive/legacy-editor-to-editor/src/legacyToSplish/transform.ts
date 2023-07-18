@@ -19,16 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { Legacy, LegacyRow } from "../splishToEdtr/types";
+import { Legacy, LegacyRow } from '../splishToEdtr/types'
 
 const getCellsFromRow = (row: LegacyRow) =>
   row.map((cell) => ({
     size: Math.floor(cell.col / 2),
     raw: cell.content,
-  }));
+  }))
 
 const transform = (input: Legacy) => {
-  if (typeof input === "string") {
+  if (typeof input === 'string') {
     return {
       cells: [
         {
@@ -44,7 +44,7 @@ const transform = (input: Legacy) => {
           ],
         },
       ],
-    };
+    }
   }
 
   return {
@@ -55,7 +55,7 @@ const transform = (input: Legacy) => {
         })),
       },
     ],
-  };
-};
+  }
+}
 
-export default transform;
+export default transform

@@ -19,8 +19,8 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { CallbackBasedDatabase, createDatabase, Database } from "./database";
-import { isPlugin } from "./edtr-io";
+import { CallbackBasedDatabase, createDatabase, Database } from './database'
+import { isPlugin } from './edtr-io'
 
 export function createMigration(
   exports: any,
@@ -28,35 +28,35 @@ export function createMigration(
     up,
     down,
   }: {
-    up: (db: Database) => Promise<void>;
-    down?: (db: Database) => Promise<void>;
+    up: (db: Database) => Promise<void>
+    down?: (db: Database) => Promise<void>
   },
 ) {
   exports._meta = {
     version: 1,
-  };
+  }
   exports.up = (db: CallbackBasedDatabase, cb: Callback) => {
     up(createDatabase(db))
       .then(() => {
-        cb(undefined);
+        cb(undefined)
       })
       .catch((error) => {
-        cb(error);
-      });
-  };
+        cb(error)
+      })
+  }
   exports.down = (db: CallbackBasedDatabase, cb: Callback) => {
-    if (typeof down === "function") {
+    if (typeof down === 'function') {
       down(createDatabase(db))
         .then(() => {
-          cb();
+          cb()
         })
         .catch((error) => {
-          cb(error);
-        });
+          cb(error)
+        })
     } else {
-      cb();
+      cb()
     }
-  };
+  }
 }
 
 export function createEdtrIoMigration({
@@ -64,9 +64,9 @@ export function createEdtrIoMigration({
   migrateState,
   dryRun,
 }: {
-  exports: any;
-  migrateState: (state: any) => any;
-  dryRun?: boolean;
+  exports: any
+  migrateState: (state: any) => any
+  dryRun?: boolean
 }) {
   createMigration(exports, {
     up: async (db) => {
@@ -82,10 +82,10 @@ export function createEdtrIoMigration({
             `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
             newContent,
             revision.id,
-          );
+          )
         },
         dryRun,
-      });
+      })
 
       await changeAllRevisions({
         revisions: await db.runSql<Revision[]>(`
@@ -99,11 +99,11 @@ export function createEdtrIoMigration({
             `UPDATE page_revision SET content = ? WHERE id = ?`,
             newContent,
             revision.id,
-          );
+          )
         },
-      });
+      })
     },
-  });
+  })
 }
 
 async function changeAllRevisions({
@@ -112,42 +112,42 @@ async function changeAllRevisions({
   migrateState,
   dryRun,
 }: {
-  revisions: Revision[];
-  updateRevision: (newContent: string, revision: Revision) => Promise<void>;
-  migrateState: (state: any) => any;
-  dryRun?: boolean;
+  revisions: Revision[]
+  updateRevision: (newContent: string, revision: Revision) => Promise<void>
+  migrateState: (state: any) => any
+  dryRun?: boolean
 }) {
   for (const revision of revisions) {
-    let oldState;
+    let oldState
 
     try {
-      oldState = JSON.parse(revision.content);
+      oldState = JSON.parse(revision.content)
     } catch (e) {
       // Ignore (some articles have raw text)
     }
 
     if (!isPlugin(oldState)) {
       // state of legacy markdown editor
-      continue;
+      continue
     }
 
-    const newState = JSON.stringify(migrateState(oldState));
+    const newState = JSON.stringify(migrateState(oldState))
 
     if (newState !== revision.content) {
       if (dryRun) {
-        console.log("Revision: ", revision.revisionId, " done.");
+        console.log('Revision: ', revision.revisionId, ' done.')
       } else {
-        await updateRevision(newState, revision);
-        console.log("Updated revision", revision.revisionId);
+        await updateRevision(newState, revision)
+        console.log('Updated revision', revision.revisionId)
       }
     }
   }
 }
 
 interface Revision {
-  id: number;
-  content: string;
-  revisionId: number;
+  id: number
+  content: string
+  revisionId: number
 }
 
-type Callback = (error?: Error) => void;
+type Callback = (error?: Error) => void

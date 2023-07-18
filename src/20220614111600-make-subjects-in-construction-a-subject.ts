@@ -19,19 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { createMigration } from "./utils";
+import { createMigration } from './utils'
 
 createMigration(exports, {
   up: async (db) => {
-    await db.runSql("DELETE FROM uuid WHERE id = 247317");
+    await db.runSql('DELETE FROM uuid WHERE id = 247317')
 
-    await db.runSql("UPDATE term_taxonomy SET parent_id = 3 WHERE id = 106081");
+    await db.runSql('UPDATE term_taxonomy SET parent_id = 3 WHERE id = 106081')
     await db.runSql(
-      "UPDATE term_taxonomy SET taxonomy_id = 3 WHERE id = 106081",
-    );
+      'UPDATE term_taxonomy SET taxonomy_id = 3 WHERE id = 106081',
+    )
 
-    await db.runSql(
-      "UPDATE term_taxonomy SET taxonomy_id = 4 WHERE id = 41107",
-    );
+    await db.runSql('UPDATE term_taxonomy SET taxonomy_id = 4 WHERE id = 41107')
   },
-});
+})
