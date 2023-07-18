@@ -45,21 +45,17 @@ async function exec() {
     throw new Error('Usage: yarn build src/foobar.ts')
   }
 
-  const file = process.argv[2]
-  const absoluteFilePath = path.join(process.cwd(), file)
+  const file = path.resolve(process.argv[2])
 
-  if (
-    !fs.statSync(absoluteFilePath).isFile() ||
-    path.dirname(absoluteFilePath) !== src
-  ) {
+  if (!fs.statSync(file).isFile() || path.dirname(file) !== src) {
     throw new Error('File does not exist')
   }
 
-  const basename = path.basename(absoluteFilePath, '.ts')
+  const basename = path.basename(file, '.ts')
   const outfile = path.join(dist, `${basename}.js`)
 
   await esbuild.build({
-    entryPoints: [absoluteFilePath],
+    entryPoints: [file],
     treeShaking: true,
     minifySyntax: false,
     bundle: true,
