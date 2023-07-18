@@ -55,10 +55,8 @@ async function exec() {
     throw new Error('File does not exist')
   }
 
-  const outfile = path.join(
-    dist,
-    `${path.basename(absoluteFilePath, '.ts')}.cjs`,
-  )
+  const basename = path.basename(absoluteFilePath, '.ts')
+  const outfile = path.join(dist, `${basename}.js`)
 
   await esbuild.build({
     entryPoints: [absoluteFilePath],
