@@ -19,8 +19,7 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-// @ts-ignore FIXME
-import build from '@vercel/ncc'
+import * as esbuild from 'esbuild'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as util from 'util'
@@ -46,23 +45,29 @@ async function exec() {
   if (process.argv.length !== 3) {
     throw new Error('Usage: yarn build src/foobar.ts')
   }
+
   const file = process.argv[2]
-  const writeFile = util.promisify(fs.writeFile)
   const stat = util.promisify(fs.stat)
   const stats = await stat(file)
   const absoluteFilePath = path.join(process.cwd(), file)
+
   if (!stats.isFile() || path.dirname(absoluteFilePath) !== src) {
     throw new Error('File does not exist')
   }
-  const { code } = await build(absoluteFilePath, {
-    cache: false,
-    sourceMapRegister: false,
-  })
-  await writeFile(
-    path.join(dist, `${path.basename(absoluteFilePath, '.ts')}.cjs`),
-    code,
-    {
-      encoding: 'utf-8',
-    },
+
+  const outfile = path.join(
+    dist,
+    `${path.basename(absoluteFilePath, '.ts')}.cjs`,
   )
+
+  await esbuild.build({
+    entryPoints: [absoluteFilePath],
+    treeShaking: true,
+    minifySyntax: false,
+    bundle: true,
+    platform: 'node',
+    format: 'cjs',
+    target: 'node18',
+    outfile,
+  })
 }
