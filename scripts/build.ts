@@ -25,6 +25,10 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as util from 'util'
 
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 const root = path.join(__dirname, '..')
 const src = path.join(root, 'src')
 const dist = path.join(root, 'dist')
