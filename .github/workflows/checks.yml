@@ -6,18 +6,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
 
   prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
       - run: yarn lint:prettier
 
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
       - run: yarn test
+
+  migrate_ts:
+    name: Migrations succeed after calling directly from `src`
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-mysql
+      - run: yarn migrate:ts
+      - uses: ./.github/actions/test-migrations
+
+  migrate_docker:
+    name: Migrations succeed after running in docker container
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-mysql
+      - run: yarn migrate:docker
+      - uses: ./.github/actions/test-migrations

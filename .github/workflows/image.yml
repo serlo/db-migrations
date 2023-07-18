@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup
+      - uses: ./.github/actions/setup-node
       - uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GCP_KEY_CONTAINER_REGISTRY }}'
