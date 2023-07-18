@@ -59,7 +59,7 @@ async function exec() {
     sourceMapRegister: false,
   });
   await writeFile(
-    path.join(dist, `${path.basename(absoluteFilePath, ".ts")}.js`),
+    path.join(dist, `${path.basename(absoluteFilePath, ".ts")}.cjs`),
     code,
     {
       encoding: "utf-8",
