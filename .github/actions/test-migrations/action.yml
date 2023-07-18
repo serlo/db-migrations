@@ -5,7 +5,6 @@ runs:
     # With the following command we check that the migration
     # "20220625202000-convert-important-and-blockquote-to-box" was run
     # successfully
-    - run:
-        yarn mysql:list-migrations | grep
+    - run: yarn mysql:list-migrations | grep
         20220625202000-convert-important-and-blockquote-to-box
       shell: bash

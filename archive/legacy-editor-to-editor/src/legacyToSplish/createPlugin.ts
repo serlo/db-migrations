@@ -19,66 +19,70 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { v4 } from 'uuid'
+import { v4 } from "uuid";
 
-import markdownToSlate from './markdownToSlate'
-import { Element, LinkedImagesTMP, NormalizedObject } from './normalizeMarkdown'
-import { ValueJSON } from 'slate'
-import { ContentCell, Splish, Plugin } from '../splishToEdtr/types'
+import markdownToSlate from "./markdownToSlate";
+import {
+  Element,
+  LinkedImagesTMP,
+  NormalizedObject,
+} from "./normalizeMarkdown";
+import { ValueJSON } from "slate";
+import { ContentCell, Splish, Plugin } from "../splishToEdtr/types";
 
 const createPlugins = ({ normalized, elements }: NormalizedObject) => {
   const split = normalized
     .split(/(§\d+§)/)
     .map((s) => s.trim())
-    .filter((s) => s !== '')
+    .filter((s) => s !== "");
 
   if (!split.length) {
     return [
       {
-        cells: [markdownToSlate('')],
+        cells: [markdownToSlate("")],
       },
-    ]
+    ];
   }
   return split.map((markdown) => {
-    const elementIDMatch = /§(\d+)§/.exec(markdown)
+    const elementIDMatch = /§(\d+)§/.exec(markdown);
     if (elementIDMatch !== null) {
       // explicitly cast the matched number for typescript
-      const i = parseInt(elementIDMatch[1])
+      const i = parseInt(elementIDMatch[1]);
       return {
         cells: [createPluginCell(elements[i])],
-      }
+      };
     } else {
       return {
         cells: [markdownToSlate(markdown)],
-      }
+      };
     }
-  })
-}
+  });
+};
 const createPluginCell = (elem: Element): ContentCell<SplishPluginState> => {
   switch (elem.name) {
-    case 'table':
+    case "table":
       return {
         content: {
           plugin: {
             name: Plugin.Table,
-            version: '0.0.0',
+            version: "0.0.0",
           },
           state: {
             src: elem.src,
           },
         },
-      }
-    case 'spoiler':
+      };
+    case "spoiler":
       return {
         content: {
           plugin: {
             name: Plugin.Spoiler,
-            version: '0.0.0',
+            version: "0.0.0",
           },
           state: {
             title: elem.title,
             content: {
-              type: '@splish-me/editor-core/editable',
+              type: "@splish-me/editor-core/editable",
               state: {
                 id: v4(),
                 cells: [
@@ -91,17 +95,17 @@ const createPluginCell = (elem: Element): ContentCell<SplishPluginState> => {
             },
           },
         },
-      }
-    case 'blockquote':
+      };
+    case "blockquote":
       return {
         content: {
           plugin: {
             name: Plugin.Blockquote,
-            version: '0.0.0',
+            version: "0.0.0",
           },
           state: {
             child: {
-              type: '@splish-me/editor-core/editable',
+              type: "@splish-me/editor-core/editable",
               state: {
                 id: v4(),
                 cells: [
@@ -114,39 +118,39 @@ const createPluginCell = (elem: Element): ContentCell<SplishPluginState> => {
             },
           },
         },
-      }
-    case 'injection':
+      };
+    case "injection":
       return {
         content: {
           plugin: {
             name: Plugin.Injection,
-            version: '0.0.0',
+            version: "0.0.0",
           },
           state: {
             description: elem.description,
             src: elem.src,
           },
         },
-      }
-    case 'geogebra':
+      };
+    case "geogebra":
       return {
         content: {
           plugin: {
             name: Plugin.Geogebra,
-            version: '0.0.0',
+            version: "0.0.0",
           },
           state: {
             description: elem.description,
             src: elem.src,
           },
         },
-      }
-    case 'image':
+      };
+    case "image":
       return {
         content: {
           plugin: {
             name: Plugin.Image,
-            version: '0.0.0',
+            version: "0.0.0",
           },
           state: {
             description: elem.description,
@@ -157,64 +161,64 @@ const createPluginCell = (elem: Element): ContentCell<SplishPluginState> => {
               : undefined,
           },
         },
-      }
-    case 'code':
+      };
+    case "code":
       return {
         content: {
           plugin: {
-            name: 'code',
+            name: "code",
           },
           state: {
             language: elem.language,
             src: elem.src,
           },
         },
-      }
+      };
   }
-}
+};
 
 interface SplishDocumentIdentifier {
-  type: '@splish-me/editor-core/editable'
-  state: Splish
+  type: "@splish-me/editor-core/editable";
+  state: Splish;
 }
 
 export interface SplishCodeState {
-  language: string
-  src: string
+  language: string;
+  src: string;
 }
 export interface SplishSpoilerState {
-  title: string
-  content: SplishDocumentIdentifier
+  title: string;
+  content: SplishDocumentIdentifier;
 }
 
 export interface SplishTableState {
-  src: string
+  src: string;
 }
 
 export interface SplishBlockquoteState {
-  child: SplishDocumentIdentifier
+  child: SplishDocumentIdentifier;
 }
 
 export interface SplishInjectionState {
-  description: string
-  src: string
+  description: string;
+  src: string;
 }
 
 export interface SplishGeogebraState {
-  description: string
-  src: string
+  description: string;
+  src: string;
 }
 
 export interface SplishImageState {
-  description: string
-  src: string
-  title: string
-  href?: string
+  description: string;
+  src: string;
+  title: string;
+  href?: string;
 }
 
 export interface SplishTextState {
-  importFromHtml?: string
-  editorState?: ValueJSON
+  importFromHtml?: string;
+  editorState?: ValueJSON;
 }
 
 export type SplishPluginState =
@@ -225,6 +229,6 @@ export type SplishPluginState =
   | SplishInjectionState
   | SplishGeogebraState
   | SplishImageState
-  | SplishTextState
+  | SplishTextState;
 
-export default createPlugins
+export default createPlugins;

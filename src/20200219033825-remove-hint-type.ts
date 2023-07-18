@@ -19,16 +19,16 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { createMigration } from './utils'
+import { createMigration } from "./utils";
 
 /**
  * Removes type `text-hint` from the database.
  */
 createMigration(exports, {
   up: async (db) => {
-    await db.runSql(`DELETE FROM type WHERE name = 'text-hint'`)
+    await db.runSql(`DELETE FROM type WHERE name = 'text-hint'`);
   },
   down: async (db) => {
-    await db.runSql(`INSERT INTO type (name) VALUES ('text-hint')`)
+    await db.runSql(`INSERT INTO type (name) VALUES ('text-hint')`);
   },
-})
+});

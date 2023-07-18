@@ -1,1 +1,1 @@
-export { ConcatenateInsertCommands } from './concatenate-insert-commands'
+export { ConcatenateInsertCommands } from "./concatenate-insert-commands";

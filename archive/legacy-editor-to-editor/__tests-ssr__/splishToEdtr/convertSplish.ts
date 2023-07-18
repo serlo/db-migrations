@@ -19,65 +19,65 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-import { serializer } from '@edtr-io/plugin-text'
-import { convertSplishToEdtrIO } from '../../src'
-import { expect } from '../common'
-import { htmlToSlate } from '../../src/splishToEdtr/convertSlate'
-import { Edtr, Splish, Plugin } from '../../src/splishToEdtr'
+import { serializer } from "@edtr-io/plugin-text";
+import { convertSplishToEdtrIO } from "../../src";
+import { expect } from "../common";
+import { htmlToSlate } from "../../src/splishToEdtr/convertSlate";
+import { Edtr, Splish, Plugin } from "../../src/splishToEdtr";
 
 const cases: {
-  description: string
-  splish: Splish
-  edtrIO: Edtr
+  description: string;
+  splish: Splish;
+  edtrIO: Edtr;
 }[] = [
   {
-    description: 'Convert of real splish state works as expected',
+    description: "Convert of real splish state works as expected",
     splish: {
-      id: 'user/medescription',
+      id: "user/medescription",
       cells: [
         {
-          id: '2ed3b415-fede-4215-bc21-a69b6b9db5a8',
+          id: "2ed3b415-fede-4215-bc21-a69b6b9db5a8",
           inline: null,
           size: 12,
           content: {
             plugin: {
               name: Plugin.Text,
-              version: '999.0.0',
+              version: "999.0.0",
             },
             state: {
               editorState: {
-                object: 'value',
+                object: "value",
                 document: {
-                  object: 'document',
+                  object: "document",
                   data: {},
                   nodes: [
                     {
-                      object: 'block',
-                      type: 'paragraph',
+                      object: "block",
+                      type: "paragraph",
                       data: {},
                       nodes: [
                         {
-                          object: 'text',
+                          object: "text",
                           leaves: [
                             {
-                              object: 'leaf',
-                              text: 'This was created with ',
+                              object: "leaf",
+                              text: "This was created with ",
                               marks: [],
                             },
                             {
-                              object: 'leaf',
-                              text: 'Splish',
+                              object: "leaf",
+                              text: "Splish",
                               marks: [
                                 {
-                                  object: 'mark',
-                                  type: '@splish-me/strong',
+                                  object: "mark",
+                                  type: "@splish-me/strong",
                                   data: {},
                                 },
                               ],
                             },
                             {
-                              object: 'leaf',
-                              text: ' editor.',
+                              object: "leaf",
+                              text: " editor.",
                               marks: [],
                             },
                           ],
@@ -85,16 +85,16 @@ const cases: {
                       ],
                     },
                     {
-                      object: 'block',
-                      type: 'paragraph',
+                      object: "block",
+                      type: "paragraph",
                       data: {},
                       nodes: [
                         {
-                          object: 'text',
+                          object: "text",
                           leaves: [
                             {
-                              object: 'leaf',
-                              text: '',
+                              object: "leaf",
+                              text: "",
                               marks: [],
                             },
                           ],
@@ -102,26 +102,26 @@ const cases: {
                       ],
                     },
                     {
-                      object: 'block',
-                      type: '@splish-me/ul',
+                      object: "block",
+                      type: "@splish-me/ul",
                       data: {},
                       nodes: [
                         {
-                          object: 'block',
-                          type: '@splish-me/li',
+                          object: "block",
+                          type: "@splish-me/li",
                           data: {},
                           nodes: [
                             {
-                              object: 'block',
-                              type: 'paragraph',
+                              object: "block",
+                              type: "paragraph",
                               data: {},
                               nodes: [
                                 {
-                                  object: 'text',
+                                  object: "text",
                                   leaves: [
                                     {
-                                      object: 'leaf',
-                                      text: 'foo',
+                                      object: "leaf",
+                                      text: "foo",
                                       marks: [],
                                     },
                                   ],
@@ -131,21 +131,21 @@ const cases: {
                           ],
                         },
                         {
-                          object: 'block',
-                          type: '@splish-me/li',
+                          object: "block",
+                          type: "@splish-me/li",
                           data: {},
                           nodes: [
                             {
-                              object: 'block',
-                              type: 'paragraph',
+                              object: "block",
+                              type: "paragraph",
                               data: {},
                               nodes: [
                                 {
-                                  object: 'text',
+                                  object: "text",
                                   leaves: [
                                     {
-                                      object: 'leaf',
-                                      text: 'bar',
+                                      object: "leaf",
+                                      text: "bar",
                                       marks: [],
                                     },
                                   ],
@@ -165,29 +165,29 @@ const cases: {
       ],
     },
     edtrIO: {
-      plugin: 'rows',
+      plugin: "rows",
       state: [
         {
-          plugin: 'text',
+          plugin: "text",
           state: serializer.serialize(
             htmlToSlate(
-              '<p>This was created with <strong>Splish</strong> editor.</p><p></p><ul><li><p>foo</p></li><li><p>bar</p></li></ul>',
+              "<p>This was created with <strong>Splish</strong> editor.</p><p></p><ul><li><p>foo</p></li><li><p>bar</p></li></ul>",
             ),
           ),
         },
       ],
     },
   },
-]
+];
 
 cases.forEach((testcase) => {
-  describe('Transformes Splish state to editor state', () => {
+  describe("Transformes Splish state to editor state", () => {
     it(testcase.description, () => {
       expect(
         convertSplishToEdtrIO(testcase.splish),
-        'to equal',
+        "to equal",
         testcase.edtrIO,
-      )
-    })
-  })
-})
+      );
+    });
+  });
+});
