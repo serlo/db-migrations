@@ -6,7 +6,7 @@ import { createEdtrIoMigration, replacePlugins, Plugin } from './utils'
 const dryRun = false
 
 createEdtrIoMigration({
-  exports,
+  exports: module.exports,
   migrateState: replacePlugins({
     table({ plugin }) {
       if (typeof plugin.state !== 'string') {
