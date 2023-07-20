@@ -1364,7 +1364,6 @@ __metadata:
     "@types/uuid": ^9.0.2
     db-migrate: ^0.11.13
     db-migrate-mysql: ^2.2.0
-    db-migrate-plugin-typescript: ^2.0.0
     esbuild: ^0.18.14
     htmlparser2: ^9.0.0
     jest: ^29.6.1
@@ -2405,15 +2404,6 @@ __metadata:
     moment: ^2.28.0
     mysql2: ^2.1.0
   checksum: bed6aa85ef5231aed3f3554ae4c8e28c5fd31386e09b30cc26ae8e1cf2a853001b8ed6313ac59a6e55b1903fcb10490ec5d3e17c12509ed4bd138afcf56c34c4
-  languageName: node
-  linkType: hard
-
-"db-migrate-plugin-typescript@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "db-migrate-plugin-typescript@npm:2.0.0"
-  peerDependencies:
-    ts-node: ^3.3.0
-  checksum: 315ede65d7226714dbde039f134272ac084355aecb1ad986cca39c9a7590062d8e93ec7381950914b6023789990a81dc97848a1998e07bd50d847bc9e16a2770
   languageName: node
   linkType: hard
 
