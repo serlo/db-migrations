@@ -2,7 +2,10 @@
   "include": ["src"],
   "extends": "./tsconfig.prod.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2015"
+    "module": "ESNext",
+    "target": "ESNext"
+  },
+  "ts-node": {
+    "esm": true
   }
 }

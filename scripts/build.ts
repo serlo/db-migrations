@@ -19,15 +19,17 @@
  * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
  * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
  */
-// @ts-ignore FIXME
-import build from '@vercel/ncc'
+import * as esbuild from 'esbuild'
 import * as fs from 'fs'
 import * as path from 'path'
-import * as util from 'util'
+
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const root = path.join(__dirname, '..')
 const src = path.join(root, 'src')
-const dist = path.join(root, 'dist')
+const dist = path.join(root, process.env.BUILD_OUTDIR ?? 'dist')
 
 exec()
   .then(() => {
@@ -39,26 +41,25 @@ exec()
   })
 
 async function exec() {
-  if (process.argv.length !== 3) {
-    throw new Error('Usage: yarn build src/foobar.ts')
+  for (const arg of process.argv.slice(2)) {
+    const file = path.resolve(arg)
+
+    if (!fs.statSync(file).isFile() || path.dirname(file) !== src) {
+      throw new Error(`File ${file} does not exist`)
+    }
+
+    const basename = path.basename(file, '.ts')
+    const outfile = path.join(dist, `${basename}.js`)
+
+    await esbuild.build({
+      entryPoints: [file],
+      treeShaking: true,
+      minifySyntax: false,
+      bundle: true,
+      platform: 'node',
+      format: 'cjs',
+      target: 'node18',
+      outfile,
+    })
   }
-  const file = process.argv[2]
-  const writeFile = util.promisify(fs.writeFile)
-  const stat = util.promisify(fs.stat)
-  const stats = await stat(file)
-  const absoluteFilePath = path.join(process.cwd(), file)
-  if (!stats.isFile() || path.dirname(absoluteFilePath) !== src) {
-    throw new Error('File does not exist')
-  }
-  const { code } = await build(absoluteFilePath, {
-    cache: false,
-    sourceMapRegister: false,
-  })
-  await writeFile(
-    path.join(dist, `${path.basename(absoluteFilePath, '.ts')}.js`),
-    code,
-    {
-      encoding: 'utf-8',
-    },
-  )
 }
