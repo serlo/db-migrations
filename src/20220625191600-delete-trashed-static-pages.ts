@@ -21,7 +21,7 @@
  */
 import { createMigration } from './utils'
 
-createMigration(exports, {
+createMigration(module.exports, {
   up: async (db) => {
     await db.runSql('DELETE FROM ad_page WHERE page_repository_id = 18340')
     await db.runSql(

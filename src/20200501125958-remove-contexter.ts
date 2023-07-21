@@ -26,7 +26,7 @@ import { createMigration } from './utils'
  * Removes all rows & permissions from the database that were used by the Contexter module
  * THIS IS AN IRREVERSIBLE MIGRATION!
  */
-createMigration(exports, {
+createMigration(module.exports, {
   up: async (db) => {
     await db.dropTable('context_route_parameter')
     await db.dropTable('context_route')

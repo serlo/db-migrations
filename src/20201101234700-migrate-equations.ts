@@ -25,7 +25,7 @@ import { createMigration } from './utils'
  * Migrates the Edtr.io states of all equations plugins to the new format.
  * THIS IS AN IRREVERSIBLE MIGRATION!
  */
-createMigration(exports, {
+createMigration(module.exports, {
   up: async (db) => {
     interface Row {
       id: number

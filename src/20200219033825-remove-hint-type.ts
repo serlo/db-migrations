@@ -24,7 +24,7 @@ import { createMigration } from './utils'
 /**
  * Removes type `text-hint` from the database.
  */
-createMigration(exports, {
+createMigration(module.exports, {
   up: async (db) => {
     await db.runSql(`DELETE FROM type WHERE name = 'text-hint'`)
   },

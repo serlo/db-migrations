@@ -27,7 +27,7 @@ import {
 } from './utils'
 
 createEdtrIoMigration({
-  exports,
+  exports: module.exports,
   migrateState: replacePlugins({
     important: convertToBox,
     blockquote: convertToBox,
