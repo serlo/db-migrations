@@ -23,6 +23,7 @@
     "migrate:build-cache": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m dist-cache up",
     "mysql": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
+    "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
     "mysql:dump": "ts-node --experimental-specifier-resolution=node scripts/mysql/mysql-dump",
     "mysql:import-anonymous-data": "ts-node --experimental-specifier-resolution=node scripts/mysql/mysql-import-anonymous-data",
     "mysql:list-migrations": "yarn mysql --execute 'SELECT * FROM migrations'",
@@ -44,7 +45,6 @@
     "tslib": "^2.6.0"
   },
   "devDependencies": {
-    "@edtr-io/plugin-text": "^3.0.2",
     "@types/jest": "^29.5.3",
     "@types/node": "^18.16.19",
     "@types/ramda": "^0.29.3",

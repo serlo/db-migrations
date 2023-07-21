@@ -24,7 +24,7 @@ import * as R from 'ramda'
 import { createEdtrIoMigration, replacePluginState } from './utils'
 
 createEdtrIoMigration({
-  exports,
+  exports: module.exports,
   migrateState: replacePluginState({
     image: ({ state }) => {
       if (typeof state !== 'object' || state === null)

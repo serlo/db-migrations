@@ -1,6 +1,6 @@
 import { createMigration } from './utils'
 
-createMigration(exports, {
+createMigration(module.exports, {
   up: async (db) => {
     await db.runSql(`
       UPDATE entity_revision_field

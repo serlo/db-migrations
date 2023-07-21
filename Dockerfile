@@ -1,12 +1,15 @@
-FROM node:18-alpine AS dependencies
-WORKDIR /usr/src/app
-COPY .yarn .yarn
-COPY .yarnrc.yml .
-COPY package.json .
-COPY yarn.lock .
-RUN yarn --immutable --immutable-cache --check-cache --silent
+FROM node:18-alpine AS base_image
+WORKDIR /app
+COPY .yarnrc.yml package.json yarn.lock .
 
-FROM dependencies
+FROM base_image as build
+COPY .yarn .yarn
+RUN yarn workspaces focus --production
+
+FROM base_image as runner
+COPY --from=build /app/node_modules node_modules
+COPY .yarn/plugins .yarn/plugins
+COPY .yarn/releases .yarn/releases
 # Set the module type inside the docker container to CommonJS
 # Reason: Without the setting the `.js` files are handles as ESM modules.
 # Changing it to `.cjs` does not help since `db-migrate` ignores them in the
