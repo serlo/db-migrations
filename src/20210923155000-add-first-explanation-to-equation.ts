@@ -22,7 +22,7 @@
 import { createEdtrIoMigration, replacePluginState } from './utils'
 
 createEdtrIoMigration({
-  exports,
+  exports: module.exports,
   migrateState: replacePluginState({
     equations: ({ state }) => {
       if (typeof state !== 'object' || state === null)

@@ -26,7 +26,7 @@ import { clearDeadUuids, createMigration, Database } from './utils'
  * Removes some unused subjects and creates new subjects
  * THIS IS AN IRREVERSIBLE MIGRATION!
  */
-createMigration(exports, {
+createMigration(module.exports, {
   up: async (db) => {
     await removeSubject(db, {
       instance: 1,
