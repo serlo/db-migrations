@@ -6,7 +6,7 @@
   "type": "module",
   "author": "Serlo Education e.V.",
   "scripts": {
-    "_prettier": "prettier . '!dist/**/*'",
+    "_prettier": "prettier .",
     "build": "ts-node --experimental-specifier-resolution=node scripts/build",
     "build:cache": "BUILD_OUTDIR=dist-cache yarn build src/*ts",
     "docker:build": "docker build -t db-migrations-local-build:latest .",
