@@ -1,4 +1,4 @@
-/dist-cache/*js
+/dist/*js
 
 # development
 tmp
