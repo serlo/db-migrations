@@ -17,7 +17,7 @@ COPY .yarn/releases .yarn/releases
 # Updating `db-migrate` seems to be also a bigger step since then
 # `db-migrate-plugin-typescript` does not work any more.
 RUN sed -i "s/\"module\"/\"commonjs\"/g" package.json
-COPY dist migrations
+COPY migrations migrations
 COPY database.json .
 ENTRYPOINT ["yarn", "db-migrate"]
 CMD ["up"]
