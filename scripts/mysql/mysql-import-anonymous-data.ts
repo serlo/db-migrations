@@ -57,5 +57,6 @@ function runCmd(cmd: string, args: string[]) {
 }
 
 function info(message: string) {
+  // eslint-disable-next-line no-console
   console.error(`INFO: ${message}`)
 }
