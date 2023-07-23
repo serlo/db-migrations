@@ -41,6 +41,7 @@
     "db-migrate-mysql": "^2.2.0"
   },
   "devDependencies": {
+    "@serlo/legacy-editor-to-editor": "Entkenntnis/tmp-serlo-legacy-editor-to-editor",
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@types/jest": "^29.5.3",
     "@types/node": "^18.16.19",
