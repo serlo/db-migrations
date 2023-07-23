@@ -16496,27 +16496,7 @@ function __classPrivateFieldSet(receiver, state, value, kind, f) {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __nccwpck_require__(5636);
-/**
- * This file is part of Serlo.org.
- *
- * Copyright (c) 2013-2021 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2013-2021 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
- */
+
 const utils_1 = __nccwpck_require__(6252);
 (0, utils_1.createMigration)(exports, {
     up: (db) => (0, tslib_1.__awaiter)(void 0, void 0, void 0, function* () {
@@ -16600,27 +16580,7 @@ exports.clearDeadUuids = clearDeadUuids;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createEdtrIoMigration = exports.createMigration = void 0;
 const tslib_1 = __nccwpck_require__(5636);
-/**
- * This file is part of Serlo.org.
- *
- * Copyright (c) 2013-2021 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2013-2021 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
- */
+
 const edtr_io_1 = __nccwpck_require__(899);
 const database_1 = __nccwpck_require__(1879);
 function createMigration(exports, { up, down, }) {
@@ -16701,27 +16661,7 @@ exports.createEdtrIoMigration = createEdtrIoMigration;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createDatabase = void 0;
 const tslib_1 = __nccwpck_require__(5636);
-/**
- * This file is part of Serlo.org.
- *
- * Copyright (c) 2013-2021 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2013-2021 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
- */
+
 function createDatabase(db) {
     return {
         runSql: (query, ...params) => (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
@@ -16761,27 +16701,7 @@ exports.createDatabase = createDatabase;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.isPlugin = exports.updatePlugins = void 0;
 const tslib_1 = __nccwpck_require__(5636);
-/**
- * This file is part of Serlo.org.
- *
- * Copyright (c) 2013-2021 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2013-2021 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
- */
+
 const R = (0, tslib_1.__importStar)(__nccwpck_require__(563));
 function updatePlugins(transformations) {
     function transformState(value) {
@@ -16820,27 +16740,7 @@ exports.isPlugin = isPlugin;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __nccwpck_require__(5636);
-/**
- * This file is part of Serlo.org.
- *
- * Copyright (c) 2013-2021 Serlo Education e.V.
- *
- * Licensed under the Apache License, Version 2.0 (the "License")
- * you may not use this file except in compliance with the License
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @copyright Copyright (c) 2013-2021 Serlo Education e.V.
- * @license   http://www.apache.org/licenses/LICENSE-2.0 Apache License 2.0
- * @link      https://github.com/serlo-org/serlo.org for the canonical source repository
- */
+
 (0, tslib_1.__exportStar)(__nccwpck_require__(3771), exports);
 (0, tslib_1.__exportStar)(__nccwpck_require__(1066), exports);
 (0, tslib_1.__exportStar)(__nccwpck_require__(1879), exports);
