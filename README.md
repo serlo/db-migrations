@@ -40,6 +40,8 @@ You can start a local version of the mysql database via `yarn start`. There are
 the following helper functions:
 
 - `yarn mysql` – Open a shell to MySQL
+- `yarn migrate:run [path]` – Run a certain migration (like
+  `yarn migrate:run src/20201023104526-update-subjects.ts`)
 - `yarn mysql:rollback` – Rollback database before any applied migrations
 - `yarn mysql:list-migrations` – List all migrations which have been already run
 - `yarn migrate:ts` – Run all migrations directly from `src` directory (no build
