@@ -43,7 +43,7 @@
   "devDependencies": {
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@types/jest": "^29.5.3",
-    "@types/node": "^18.16.19",
+    "@types/node": "^18.17.0",
     "@types/ramda": "^0.29.3",
     "@types/react": "^18.2.15",
     "@types/semver": "^7.3.13",
