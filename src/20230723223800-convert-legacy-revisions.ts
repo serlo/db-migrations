@@ -1,4 +1,4 @@
-import { convert, Edtr, Legacy } from '../archive/legacy-editor-to-editor'
+import { convert, Edtr, Legacy } from './utils/legacy-editor-to-editor'
 import { createMigration } from './utils'
 
 // Follow ups:
@@ -8,34 +8,29 @@ import { createMigration } from './utils'
 // maybe run add-image-caption mutation again
 // maybe run migrate-equations, add-first-explanation-to-equation and add-transformation-target-to-equations again
 
-
-
-
 createMigration(module.exports, {
   up: async (db) => {
-    const result = await db.runSql<{id: number, description: string}[]>(`
+    const result = await db.runSql<{ id: number; description: string }[]>(`
       SELECT id, description
       FROM term_taxonomy
       WHERE description LIKE '[%'
       LIMIT 1
-      `
-    )
+      `)
     //console.log(result)
     //const convertedDescriptions = result.map(row => convertOrReturnInput(row.description))
 
-
-    const response = await db.runSql<{id: number, entity_revision_id:number, value: string}[]>(`
+    const response = await db.runSql<
+      { id: number; entity_revision_id: number; value: string }[]
+    >(`
       SELECT id, entity_revision_id, value
       FROM entity_revision_field
       WHERE field = 'content' AND value LIKE '[%'
       LIMIT 1
     `)
 
-
     console.log(response)
-    response.map(row => convertOrReturnInput(row.value))
-  }
-
+    response.map((row) => convertOrReturnInput(row.value))
+  },
 })
 
 function convertOrReturnInput(input?: string) {
