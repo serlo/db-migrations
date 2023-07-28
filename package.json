@@ -22,7 +22,7 @@
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:ts": "npm-run-all build:cache migrate:build-cache",
     "migrate:build-cache": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m dist up",
-    "mysql": "docker compose exec mysql serlo-mysql",
+    "mysql": "docker-compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
     "mysql:dump": "ts-node --experimental-specifier-resolution=node scripts/mysql/mysql-dump",
@@ -32,12 +32,14 @@
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node --experimental-specifier-resolution=node scripts/push-image",
     "start": "yarn start:docker",
-    "start:docker": "docker compose up mysql --detach",
+    "start:docker": "docker-compose up mysql --detach",
     "stop": "yarn stop:docker",
-    "stop:docker": "docker compose down",
+    "stop:docker": "docker-compose down",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
+    "@edtr-io/core": "^3.0.1",
+    "@edtr-io/plugin-text": "^3.0.2",
     "db-migrate": "^0.11.13",
     "db-migrate-mysql": "^2.2.0"
   },
