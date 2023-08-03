@@ -51,6 +51,7 @@ export function convertOldSlate(value: ValueJSON) {
   )
 }
 export function htmlToSlate(html: string) {
+  const sanitizedHtml = html.replace(/(<katexblock><\/katexblock>|<katexinline><\/katexinline>)/g, '')
   const deserializer = new Html({
     rules: [
       headingDeserializer,
@@ -87,7 +88,7 @@ export function htmlToSlate(html: string) {
     },
   })
 
-  return normalize(deserializer.deserialize(html, { toJSON: true }))
+  return normalize(deserializer.deserialize(sanitizedHtml, { toJSON: true }))
 }
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6

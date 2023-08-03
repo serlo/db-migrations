@@ -1,4 +1,4 @@
-import {convert, Edtr, Legacy} from './utils/legacy-editor-to-editor'
+import {convert, Edtr} from '@serlo/legacy-editor-to-editor'
 import {createMigration} from './utils'
 
 // Follow ups:
@@ -20,19 +20,13 @@ createMigration(module.exports, {
       SELECT id, description
       FROM term_taxonomy
       WHERE description LIKE '[%'
-      LIMIT 600
       `)
-    //console.log(result)
-
     for (const taxonomy of legacyTaxonomies) {
-      //console.log(taxonomy.id)
       const convertedDescription = convertOrReturnInput(taxonomy.description)
       if (convertedDescription) {
-        //console.log(`conv: ${convertedDescription}`)
         // example description that will be sanitized:
         // {"plugin":"rows","state":[{"plugin":"text","state":[{"type":"p","children":[{"text":"[[{"col":24,"content":"* Eigenschaften von Exponentialfunktionen\n* e-Funktion\n* NatÃ¼rliche Logarithmusfunktion\n* Differentialgleichungen des Typs "},{"type":"math","src":"f'(x) = k f(x)","inline":true,"children":[{"text":"f'(x) = k f(x)"}]},{"text":" (GK)\n"}]]"}]}]}]}
-        const sanitizedDescription = convertedDescription.replaceAll("'", "\\'")
-        //console.log(`conv: ${sanitizedDescription}`)
+        const sanitizedDescription = convertedDescription.replace(/\\/g, "\\\\").replace(/'/g, "\\'")//.replace(/\\"/g, '"')
         await db.runSql(`
           UPDATE term_taxonomy
           SET description = '${sanitizedDescription}'
@@ -52,20 +46,14 @@ createMigration(module.exports, {
     >(`
       SELECT id, entity_revision_id, value
       FROM entity_revision_field
-      WHERE field = 'content' AND value LIKE '[%' AND entity_revision_id = 2036
-      LIMIT 1
+      WHERE field = 'content' AND value LIKE '[%'
     `)
-
-    //console.log(response)
     for (const revision of legacyEntityRevisions) {
-      console.log(`revisionID: ${revision.entity_revision_id}`)
       const convertedRevision = convertOrReturnInput(revision.value)
       if (convertedRevision) {
-        console.log(`conv: ${convertedRevision}`)
         // example description that will be sanitized:
         // {"col":12,"content":"\n\nm %%Syntax error from line 1 column 394 to line 1 column 448. Unexpected 'lspace'.%%"}
-        const sanitizedRevision = convertedRevision.replaceAll("'", "\\'")
-        console.log(`id: ${revision.id} \n sanitized: ${sanitizedRevision}`)
+        const sanitizedRevision = convertedRevision.replace(/\\/g, "\\\\").replace(/'/g, "\\'")
         await db.runSql(`
           UPDATE entity_revision_field
           SET value = '${sanitizedRevision}'
@@ -89,15 +77,10 @@ function convertOrReturnInput(input?: string) {
   if (input?.startsWith('[')) {
     // Legacy editor state
 
-    const legacy = input as Legacy
-    // fixes https://github.com/serlo/frontend/issues/1563
-
-    const sanitized = JSON.parse(JSON.stringify(legacy).replace(/```/g, ''))
-    console.log(`sanitized content: ${sanitized}`)
+    const sanitized = JSON.parse(input.replace(/```/g, ''))
     const converted = convert(sanitized) as Edtr
-    console.log(`converted content ${converted}`)
 
-    return !converted || typeof converted === 'string'
+    return !converted
         ? converted
         : JSON.stringify(converted)
   }
