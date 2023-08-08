@@ -14,11 +14,8 @@ createMigration(module.exports, {
     try {
       await convertTaxonomyDescriptions(db)
       await convertEntityRevisionFieldValues(db)
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        console.error(e.message)
-        console.error(e.stack)
-      }
+    } catch (error: unknown) {
+      logError('General error was thrown', error)
     }
   },
 })
@@ -36,14 +33,21 @@ async function convertTaxonomyDescriptions(db: Database) {
   `)
 
   for (const taxonomy of legacyTaxonomies) {
-    const convertedDescription = convertContent(taxonomy.description)
-    if (convertedDescription.isConverted) {
-      const newDescription = escapeMySQL(convertedDescription.convertedContent)
-      await db.runSql(`
+    try {
+      const convertedDescription = convertContent(taxonomy.description)
+      if (convertedDescription.isConverted) {
+        const newDescription = escapeMySQL(
+          convertedDescription.convertedContent,
+        )
+        await db.runSql(`
           UPDATE term_taxonomy
             SET description = '${newDescription}'
             WHERE id = ${taxonomy.id}
-      `)
+        `)
+        console.log(`converted taxonomy: ${taxonomy.id}`)
+      }
+    } catch (e: unknown) {
+      logError('Error in converting taxonomy', e, taxonomy)
     }
   }
 }
@@ -62,13 +66,18 @@ async function convertEntityRevisionFieldValues(db: Database) {
   `)
 
   for (const revision of legacyEntityRevisions) {
-    const convertedRevision = convertContent(revision.value)
-    if (convertedRevision.isConverted) {
-      await db.runSql(`
+    try {
+      const convertedRevision = convertContent(revision.value)
+      if (convertedRevision.isConverted) {
+        await db.runSql(`
           UPDATE entity_revision_field
             SET value = '${escapeMySQL(convertedRevision.convertedContent)}'
             WHERE id = ${revision.id}
-      `)
+        `)
+        console.log(`converted revision field: ${revision.entity_revision_id}`)
+      }
+    } catch (error: unknown) {
+      logError('Error in converting revision field', error, revision)
     }
   }
 }
@@ -105,4 +114,18 @@ function isLegacyContent(arg: unknown): arg is Legacy {
 
 function escapeMySQL(text: string): string {
   return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+}
+
+function logError(message: string, error: unknown, context?: unknown) {
+  console.error(`ERROR: ${message}`)
+
+  if (error instanceof Error) {
+    console.error(error.message)
+    if (error.stack) console.error(error.stack)
+  }
+  if (context != null) {
+    console.error('CONTEXT:')
+    console.debug(context)
+  }
+  console.error('END OF ERROR')
 }
