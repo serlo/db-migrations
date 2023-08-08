@@ -37,14 +37,9 @@ async function convertTaxonomyDescriptions(db: Database) {
   for (const taxonomy of legacyTaxonomies) {
     const convertedDescription = convertOrReturnInput(taxonomy.description)
     if (convertedDescription) {
-      // example description that will be sanitized:
-      // {"plugin":"rows","state":[{"plugin":"text","state":[{"type":"p","children":[{"text":"[[{"col":24,"content":"* Eigenschaften von Exponentialfunktionen\n* e-Funktion\n* NatÃ¼rliche Logarithmusfunktion\n* Differentialgleichungen des Typs "},{"type":"math","src":"f'(x) = k f(x)","inline":true,"children":[{"text":"f'(x) = k f(x)"}]},{"text":" (GK)\n"}]]"}]}]}]}
-      const sanitizedDescription = convertedDescription
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'") //.replace(/\\"/g, '"')
       await db.runSql(`
           UPDATE term_taxonomy
-            SET description = '${sanitizedDescription}'
+            SET description = '${escapeMySQL(convertedDescription)}'
             WHERE id = ${taxonomy.id}
       `)
     }
@@ -67,14 +62,9 @@ async function convertEntityRevisionFieldValues(db: Database) {
   for (const revision of legacyEntityRevisions) {
     const convertedRevision = convertOrReturnInput(revision.value)
     if (convertedRevision) {
-      // example description that will be sanitized:
-      // {"col":12,"content":"\n\nm %%Syntax error from line 1 column 394 to line 1 column 448. Unexpected 'lspace'.%%"}
-      const sanitizedRevision = convertedRevision
-        .replace(/\\/g, '\\\\')
-        .replace(/'/g, "\\'")
       await db.runSql(`
           UPDATE entity_revision_field
-            SET value = '${sanitizedRevision}'
+            SET value = '${escapeMySQL(convertedRevision)}'
             WHERE id = ${revision.id}
       `)
     }
@@ -102,4 +92,8 @@ function convertOrReturnInput(input?: string) {
 
   // fallback
   return input
+}
+
+function escapeMySQL(text: string): string {
+  return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
 }
