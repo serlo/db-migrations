@@ -1,5 +1,6 @@
-import { convert, Edtr } from '@serlo/legacy-editor-to-editor'
+import { convert, Legacy } from '@serlo/legacy-editor-to-editor'
 import { createMigration, Database } from './utils'
+import * as t from 'io-ts'
 
 // Follow ups:
 // run table to serloTable conversion again
@@ -35,11 +36,12 @@ async function convertTaxonomyDescriptions(db: Database) {
   `)
 
   for (const taxonomy of legacyTaxonomies) {
-    const convertedDescription = convertOrReturnInput(taxonomy.description)
-    if (convertedDescription) {
+    const convertedDescription = convertContent(taxonomy.description)
+    if (convertedDescription.isConverted) {
+      const newDescription = escapeMySQL(convertedDescription.convertedContent)
       await db.runSql(`
           UPDATE term_taxonomy
-            SET description = '${escapeMySQL(convertedDescription)}'
+            SET description = '${newDescription}'
             WHERE id = ${taxonomy.id}
       `)
     }
@@ -60,38 +62,45 @@ async function convertEntityRevisionFieldValues(db: Database) {
   `)
 
   for (const revision of legacyEntityRevisions) {
-    const convertedRevision = convertOrReturnInput(revision.value)
-    if (convertedRevision) {
+    const convertedRevision = convertContent(revision.value)
+    if (convertedRevision.isConverted) {
       await db.runSql(`
           UPDATE entity_revision_field
-            SET value = '${escapeMySQL(convertedRevision)}'
+            SET value = '${escapeMySQL(convertedRevision.convertedContent)}'
             WHERE id = ${revision.id}
       `)
     }
   }
 }
 
-function convertOrReturnInput(input?: string) {
+function convertContent(input?: string): ConversionResult {
   if (!input) {
-    return input
-    // should we return undefined / '' or something like this?
-    // { plugin: 'rows', state: [{ plugin: 'text' }] }
+    return { isConverted: false }
   }
 
-  // probably editor state already
-  if (input?.startsWith('{')) return input
+  let parsedInput
 
-  if (input?.startsWith('[')) {
-    // Legacy editor state
-
-    const sanitized = JSON.parse(input.replace(/```/g, ''))
-    const converted = convert(sanitized) as Edtr
-
-    return !converted ? converted : JSON.stringify(converted)
+  try {
+    parsedInput = JSON.parse(input.replace(/```/g, ''))
+  } catch (error: unknown) {
+    // content is no JSON -> cannot be converted
+    return { isConverted: false }
   }
 
-  // fallback
-  return input
+  if (isLegacyContent(parsedInput)) {
+    const convertedContent = JSON.stringify(convert(parsedInput))
+    return { isConverted: true, convertedContent }
+  } else {
+    return { isConverted: false }
+  }
+}
+
+type ConversionResult =
+  | { isConverted: false }
+  | { isConverted: true; convertedContent: string }
+
+function isLegacyContent(arg: unknown): arg is Legacy {
+  return t.array(t.array(t.type({ col: t.number, content: t.string }))).is(arg)
 }
 
 function escapeMySQL(text: string): string {
