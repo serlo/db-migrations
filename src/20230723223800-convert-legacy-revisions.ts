@@ -44,7 +44,6 @@ async function convertTaxonomyDescriptions(db: Database) {
             SET description = '${newDescription}'
             WHERE id = ${taxonomy.id}
         `)
-        console.log(`converted taxonomy: ${taxonomy.id}`)
       }
     } catch (e: unknown) {
       logError('Error in converting taxonomy', e, taxonomy)
@@ -74,7 +73,6 @@ async function convertEntityRevisionFieldValues(db: Database) {
             SET value = '${escapeMySQL(convertedRevision.convertedContent)}'
             WHERE id = ${revision.id}
         `)
-        console.log(`converted revision field: ${revision.entity_revision_id}`)
       }
     } catch (error: unknown) {
       logError('Error in converting revision field', error, revision)
