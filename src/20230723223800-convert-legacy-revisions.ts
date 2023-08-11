@@ -59,7 +59,7 @@ async function convertEntityRevisionFieldValues(db: Database) {
   const legacyEntityRevisions = await db.runSql<Revision[]>(`
       SELECT id, entity_revision_id, value
         FROM entity_revision_field
-        WHERE field = 'content' AND value LIKE '[%'
+        WHERE field in ('content', 'reasoning', 'description')
   `)
 
   for (const revision of legacyEntityRevisions) {
