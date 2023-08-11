@@ -87,7 +87,7 @@ function convertContent(input?: string): ConversionResult {
 
   try {
     // Why is this needed?
-    parsedInput = JSON.parse(input.replace(/```/g, '')) as unknown
+    parsedInput = JSON.parse(input) as unknown
   } catch (error: unknown) {
     parsedInput = undefined
   }

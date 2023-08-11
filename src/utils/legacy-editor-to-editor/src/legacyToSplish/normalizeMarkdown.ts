@@ -114,8 +114,8 @@ const normalizeMarkdown = (markdown: string) => {
     normalized: markdown,
     elements: [],
   }
-  normalizedObj = extractCode(normalizedObj)
   normalizedObj = extractSpoilers(normalizedObj)
+  normalizedObj = extractCode(normalizedObj)
   normalizedObj = extractTable(normalizedObj)
   normalizedObj = extractBlockquote(normalizedObj)
   normalizedObj = extractInjections(normalizedObj)
