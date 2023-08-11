@@ -27,9 +27,7 @@ async function convertTaxonomyDescriptions(db: Database) {
   }
 
   const legacyTaxonomies = await db.runSql<Taxonomy[]>(`
-      SELECT id, description
-        FROM term_taxonomy
-        WHERE description LIKE '[%'
+      SELECT id, description FROM term_taxonomy
   `)
 
   for (const taxonomy of legacyTaxonomies) {
@@ -81,24 +79,30 @@ async function convertEntityRevisionFieldValues(db: Database) {
 }
 
 function convertContent(input?: string): ConversionResult {
-  if (!input) {
+  if (input == null || input === '') {
     return { isConverted: false }
   }
 
-  let parsedInput
+  let parsedInput = undefined
 
   try {
-    parsedInput = JSON.parse(input.replace(/```/g, ''))
+    // Why is this needed?
+    parsedInput = JSON.parse(input.replace(/```/g, '')) as unknown
   } catch (error: unknown) {
-    // content is no JSON -> cannot be converted
-    return { isConverted: false }
+    parsedInput = undefined
   }
 
-  if (isLegacyContent(parsedInput)) {
-    const convertedContent = JSON.stringify(convert(parsedInput))
-    return { isConverted: true, convertedContent }
+  if (parsedInput != null && typeof parsedInput === 'object') {
+    if (isLegacyContent(parsedInput)) {
+      const convertedContent = JSON.stringify(convert(parsedInput))
+      return { isConverted: true, convertedContent }
+    } else {
+      return { isConverted: false }
+    }
   } else {
-    return { isConverted: false }
+    // Content is markdown
+    const convertedContent = JSON.stringify(convert(input))
+    return { isConverted: true, convertedContent }
   }
 }
 
