@@ -40,7 +40,7 @@ export function convertOldSlate(value: ValueJSON) {
     ],
     defaultBlock: { type: paragraphNode },
     parseHtml: (html: string) => {
-      return parseFragment(html) as HTMLElement
+      return parseFragment(html) as unknown as HTMLElement
     },
   })
 
@@ -51,7 +51,10 @@ export function convertOldSlate(value: ValueJSON) {
   )
 }
 export function htmlToSlate(html: string) {
-  const sanitizedHtml = html.replace(/(<katexblock><\/katexblock>|<katexinline><\/katexinline>)/g, '')
+  const sanitizedHtml = html.replace(
+    /(<katexblock><\/katexblock>|<katexinline><\/katexinline>)/g,
+    '',
+  )
   const deserializer = new Html({
     rules: [
       headingDeserializer,
@@ -84,7 +87,7 @@ export function htmlToSlate(html: string) {
     ],
     defaultBlock: { type: paragraphNode },
     parseHtml: (html: string) => {
-      return parseFragment(html) as HTMLElement
+      return parseFragment(html) as unknown as HTMLElement
     },
   })
 
@@ -293,7 +296,7 @@ const richTextSerializer: Rule = {
 }
 
 const katexSerializer: Rule = {
-  serialize(obj, children) {
+  serialize(obj) {
     const block = obj as Block
     const inline = obj as Inline
 
