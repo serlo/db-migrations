@@ -21,12 +21,6 @@ const fileName = spawnSync('basename', [latestDump], {
   .stdout.toString()
   .trim()
 
-const tmpFile = `/tmp/${fileName}`
-
-if (!existsSync(tmpFile)) {
-  runCmd('gsutil', ['cp', latestDump, `/tmp/${fileName}`])
-}
-
 const container = spawnSync('docker-compose', ['ps', '-q', 'mysql'], {
   stdio: 'pipe',
   encoding: 'utf-8',
@@ -34,9 +28,16 @@ const container = spawnSync('docker-compose', ['ps', '-q', 'mysql'], {
   .stdout.toString()
   .trim()
 
-runCmd('unzip', ['-o', `/tmp/${fileName}`, '-d', '/tmp'])
-runCmd('docker', ['cp', '/tmp/mysql.sql', `${container}:/tmp/mysql.sql`])
-runCmd('docker', ['cp', '/tmp/user.csv', `${container}:/tmp/user.csv`])
+const tmpFile = `/tmp/${fileName}`
+
+if (!existsSync(tmpFile)) {
+  // Update dump data
+  runCmd('gsutil', ['cp', latestDump, `/tmp/${fileName}`])
+
+  runCmd('unzip', ['-o', `/tmp/${fileName}`, '-d', '/tmp'])
+  runCmd('docker', ['cp', '/tmp/mysql.sql', `${container}:/tmp/mysql.sql`])
+  runCmd('docker', ['cp', '/tmp/user.csv', `${container}:/tmp/user.csv`])
+}
 
 info('Start importing MySQL data')
 execCommand(`pv /tmp/mysql.sql | serlo-mysql`)
