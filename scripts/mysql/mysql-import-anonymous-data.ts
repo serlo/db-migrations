@@ -1,4 +1,5 @@
 import { spawnSync } from 'child_process'
+import { existsSync, statSync } from 'fs'
 
 const latestDump = spawnSync(
   'bash',
@@ -20,7 +21,11 @@ const fileName = spawnSync('basename', [latestDump], {
   .stdout.toString()
   .trim()
 
-runCmd('gsutil', ['cp', latestDump, `/tmp/${fileName}`])
+const tmpFile = `/tmp/${fileName}`
+
+if (!existsSync(tmpFile)) {
+  runCmd('gsutil', ['cp', latestDump, `/tmp/${fileName}`])
+}
 
 const container = spawnSync('docker-compose', ['ps', '-q', 'mysql'], {
   stdio: 'pipe',
