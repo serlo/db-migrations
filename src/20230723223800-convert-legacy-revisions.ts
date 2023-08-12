@@ -36,14 +36,11 @@ async function convertTaxonomyDescriptions(db: Database) {
     try {
       const convertedDescription = convertContent(taxonomy.description)
       if (convertedDescription.isConverted) {
-        const newDescription = escapeMySQL(
+        await db.runSql(
+          'UPDATE term_taxonomy SET description = ? WHERE id = ?',
           convertedDescription.convertedContent,
+          taxonomy.id,
         )
-        await db.runSql(`
-          UPDATE term_taxonomy
-            SET description = '${newDescription}'
-            WHERE id = ${taxonomy.id}
-        `)
       }
     } catch (e: unknown) {
       logError('Error in converting taxonomy', e, taxonomy)
@@ -66,14 +63,11 @@ async function convertUserDescriptions(db: Database) {
     try {
       const convertedDescription = convertContent(user.description)
       if (convertedDescription.isConverted) {
-        const newDescription = escapeMySQL(
+        await db.runSql(
+          'UPDATE user SET description = ? WHERE id = ?',
           convertedDescription.convertedContent,
+          user.id,
         )
-        await db.runSql(`
-          UPDATE user
-            SET description = '${newDescription}'
-            WHERE id = ${user.id}
-        `)
       }
     } catch (e: unknown) {
       logError('Error in converting user', e, user)
@@ -93,16 +87,13 @@ async function convertStaticPages(db: Database) {
 
   for (const page_revision of all_page_revisions) {
     try {
-      const convertedDescription = convertContent(page_revision.content)
-      if (convertedDescription.isConverted) {
-        const newDescription = escapeMySQL(
-          convertedDescription.convertedContent,
+      const newContent = convertContent(page_revision.content)
+      if (newContent.isConverted) {
+        await db.runSql(
+          'UPDATE page_revision set content = ? WHERE id = ?',
+          newContent.convertedContent,
+          page_revision.id,
         )
-        await db.runSql(`
-          UPDATE page_revision
-            SET content = '${newDescription}'
-            WHERE id = ${page_revision.id}
-        `)
       }
     } catch (e: unknown) {
       logError('Error in converting static page', e, page_revision)
@@ -134,11 +125,11 @@ async function convertEntityRevisionFieldValues(db: Database) {
     try {
       const convertedRevision = convertContent(revision.value)
       if (convertedRevision.isConverted) {
-        await db.runSql(`
-          UPDATE entity_revision_field
-            SET value = '${escapeMySQL(convertedRevision.convertedContent)}'
-            WHERE id = ${revision.id}
-        `)
+        await db.runSql(
+          'UPDATE entity_revision_field SET value = ? WHERE id = ?',
+          convertedRevision.convertedContent,
+          revision.id,
+        )
       }
     } catch (error: unknown) {
       logError('Error in converting revision field', error, revision)
@@ -180,10 +171,6 @@ type ConversionResult =
 
 function isLegacyContent(arg: unknown): arg is Legacy {
   return t.array(t.array(t.type({ col: t.number, content: t.string }))).is(arg)
-}
-
-function escapeMySQL(text: string): string {
-  return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
 }
 
 function logError(message: string, error: unknown, context?: unknown) {
