@@ -35,9 +35,9 @@ if (!existsSync(tmpFile)) {
   runCmd('gsutil', ['cp', latestDump, `/tmp/${fileName}`])
 
   runCmd('unzip', ['-o', `/tmp/${fileName}`, '-d', '/tmp'])
-  runCmd('docker', ['cp', '/tmp/mysql.sql', `${container}:/tmp/mysql.sql`])
-  runCmd('docker', ['cp', '/tmp/user.csv', `${container}:/tmp/user.csv`])
 }
+runCmd('docker', ['cp', '/tmp/mysql.sql', `${container}:/tmp/mysql.sql`])
+runCmd('docker', ['cp', '/tmp/user.csv', `${container}:/tmp/user.csv`])
 
 info('Start importing MySQL data')
 execCommand(`pv /tmp/mysql.sql | serlo-mysql`)
