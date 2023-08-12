@@ -14,6 +14,7 @@ createMigration(module.exports, {
     try {
       await convertTaxonomyDescriptions(db)
       await convertEntityRevisionFieldValues(db)
+      await convertUserDescriptions(db)
     } catch (error: unknown) {
       logError('General error was thrown', error)
     }
@@ -45,6 +46,36 @@ async function convertTaxonomyDescriptions(db: Database) {
       }
     } catch (e: unknown) {
       logError('Error in converting taxonomy', e, taxonomy)
+    }
+  }
+}
+
+async function convertUserDescriptions(db: Database) {
+  type User = {
+    id: number
+    description?: string
+  }
+
+  // ID is a bot account
+  const all_users = await db.runSql<User[]>(`
+      SELECT id, description FROM user WHERE id != 191656
+  `)
+
+  for (const user of all_users) {
+    try {
+      const convertedDescription = convertContent(user.description)
+      if (convertedDescription.isConverted) {
+        const newDescription = escapeMySQL(
+          convertedDescription.convertedContent,
+        )
+        await db.runSql(`
+          UPDATE user
+            SET description = '${newDescription}'
+            WHERE id = ${user.id}
+        `)
+      }
+    } catch (e: unknown) {
+      logError('Error in converting taxonomy', e, user)
     }
   }
 }
