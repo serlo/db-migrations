@@ -57,9 +57,16 @@ async function convertEntityRevisionFieldValues(db: Database) {
   }
 
   const legacyEntityRevisions = await db.runSql<Revision[]>(`
-      SELECT id, entity_revision_id, value
+      SELECT
+          entity_revision_field.id, entity_revision_field.entity_revision_id,
+          entity_revision_field.value
         FROM entity_revision_field
-        WHERE field in ('content', 'reasoning', 'description')
+        JOIN entity_revision on entity_revision_field.entity_revision_id = entity_revision.id
+        JOIN entity on entity.id = entity_revision.repository_id
+        JOIN type on type.id = entity.type_id
+        WHERE
+          (entity_revision_field.field = "content" and type.name != "video")
+          or field = "reasoning" or field = "description"
   `)
 
   for (const revision of legacyEntityRevisions) {
