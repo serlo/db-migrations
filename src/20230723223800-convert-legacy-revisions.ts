@@ -1,13 +1,16 @@
 import { convert, Legacy } from '@serlo/legacy-editor-to-editor'
-import { createMigration, Database } from './utils'
+import { createMigration, Database, replacePluginState } from './utils'
 import * as t from 'io-ts'
-
-// Follow ups:
-// run table to serloTable conversion again
-// run important and blockquote conversions again
-// auto-convert layout plugin to either multimedia or rows plugin
-// maybe run add-image-caption mutation again
-// maybe run migrate-equations, add-first-explanation-to-equation and add-transformation-target-to-equations again
+import * as f from 'fp-ts/function'
+import { addImageCaption } from './20220517163100-add-image-caption'
+import {
+  migrateEquationsState,
+  LegacyEquationsPluginState,
+} from './20201101234700-migrate-equations'
+import { addFirstExplanationToEquation } from './20210923155000-add-first-explanation-to-equation'
+import { addTransformationTargetToEquation } from './20210923231900-add-transformation-target-to-equations'
+import { convertImportantAndBlockquoteToBox } from './20220625202000-convert-important-and-blockquote-to-box'
+import { convertTableToSerloTable } from './20230526090001-convert-table-to-serlo-table'
 
 createMigration(module.exports, {
   up: async (db) => {
@@ -153,16 +156,59 @@ function convertContent(input?: string): ConversionResult {
 
   if (parsedInput != null && typeof parsedInput === 'object') {
     if (isLegacyContent(parsedInput)) {
-      const convertedContent = JSON.stringify(convert(parsedInput))
+      const convertedContent = convertWithFollowUps(parsedInput)
       return { isConverted: true, convertedContent }
     } else {
       return { isConverted: false }
     }
   } else {
     // Content is markdown
-    const convertedContent = JSON.stringify(convert(input))
+    const convertedContent = convertWithFollowUps(input)
     return { isConverted: true, convertedContent }
   }
+}
+
+const LegacyEquationsState = t.type({
+  steps: t.array(
+    t.type({
+      left: t.type({ plugin: t.literal('text') }),
+      right: t.type({ plugin: t.literal('text') }),
+      transform: t.type({ plugin: t.literal('text') }),
+      sign: t.string,
+    }),
+  ),
+})
+
+const migrateEquations = replacePluginState({
+  equation: ({ state }) => {
+    if (LegacyEquationsState.is(state)) {
+      return migrateEquationsState(
+        state as unknown as LegacyEquationsPluginState,
+      )
+    } else {
+      return document
+    }
+  },
+})
+
+// Follow ups:
+// run table to serloTable conversion again
+// run important and blockquote conversions again
+// auto-convert layout plugin to either multimedia or rows plugin
+// maybe run add-image-caption mutation again
+// maybe run migrate-equations, add-first-explanation-to-equation and add-transformation-target-to-equations again
+function convertWithFollowUps(content: string | Legacy) {
+  return f.pipe(
+    content,
+    convert,
+    migrateEquations,
+    addFirstExplanationToEquation,
+    addTransformationTargetToEquation,
+    addImageCaption,
+    convertImportantAndBlockquoteToBox,
+    convertTableToSerloTable,
+    JSON.stringify,
+  ) as string
 }
 
 type ConversionResult =
