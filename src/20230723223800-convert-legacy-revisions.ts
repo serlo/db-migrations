@@ -15,6 +15,7 @@ createMigration(module.exports, {
       await convertTaxonomyDescriptions(db)
       await convertEntityRevisionFieldValues(db)
       await convertUserDescriptions(db)
+      await convertStaticPages(db)
     } catch (error: unknown) {
       logError('General error was thrown', error)
     }
@@ -75,7 +76,36 @@ async function convertUserDescriptions(db: Database) {
         `)
       }
     } catch (e: unknown) {
-      logError('Error in converting taxonomy', e, user)
+      logError('Error in converting user', e, user)
+    }
+  }
+}
+
+async function convertStaticPages(db: Database) {
+  type StaticPage = {
+    id: number
+    content: string
+  }
+
+  const all_page_revisions = await db.runSql<StaticPage[]>(`
+      SELECT id, content FROM page_revision
+  `)
+
+  for (const page_revision of all_page_revisions) {
+    try {
+      const convertedDescription = convertContent(page_revision.content)
+      if (convertedDescription.isConverted) {
+        const newDescription = escapeMySQL(
+          convertedDescription.convertedContent,
+        )
+        await db.runSql(`
+          UPDATE page_revision
+            SET content = '${newDescription}'
+            WHERE id = ${page_revision.id}
+        `)
+      }
+    } catch (e: unknown) {
+      logError('Error in converting static page', e, page_revision)
     }
   }
 }
