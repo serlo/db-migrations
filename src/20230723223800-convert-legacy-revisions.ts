@@ -30,7 +30,7 @@ async function convertTaxonomyDescriptions(db: Database) {
     contentType: 'taxonomy term',
     querySql: `
       SELECT id, id as revision_id, description as content
-      FROM term_taxonomy
+      FROM term_taxonomy WHERE id > ?
     `,
     updateSql: 'UPDATE term_taxonomy SET description = ? WHERE id = ?',
     db,
@@ -42,7 +42,7 @@ async function convertUserDescriptions(db: Database) {
     contentType: 'user',
     querySql: `
       SELECT id, id as revision_id, description as content
-      FROM user WHERE id != 191656
+      FROM user WHERE id != 191656 and id > ?
     `,
     updateSql: 'UPDATE user SET description = ? WHERE id = ?',
     db,
@@ -54,6 +54,7 @@ async function convertStaticPages(db: Database) {
     contentType: 'static page revision',
     querySql: `
       SELECT id, id as revision_id, content FROM page_revision
+      WHERE id > ?
     `,
     updateSql: 'UPDATE page_revision set content = ? WHERE id = ?',
     db,
@@ -73,8 +74,9 @@ async function convertEntityRevisionFieldValues(db: Database) {
         JOIN entity on entity.id = entity_revision.repository_id
         JOIN type on type.id = entity.type_id
         WHERE
-          (entity_revision_field.field = "content" and type.name != "video")
-          or field = "reasoning" or field = "description"
+          ((entity_revision_field.field = "content" and type.name != "video")
+          or field = "reasoning" or field = "description")
+          and entity_revision_field.id > ?
   `,
     updateSql: 'UPDATE entity_revision_field SET value = ? WHERE id = ?',
     db,
@@ -86,8 +88,9 @@ async function runConversion(args: {
   updateSql: string
   contentType: string
   db: Database
+  batchSize?: number
 }) {
-  const { querySql, updateSql, contentType, db } = args
+  const { querySql, updateSql, contentType, db, batchSize = 5000 } = args
 
   type Row = {
     id: number
@@ -95,19 +98,28 @@ async function runConversion(args: {
     content: string
   }
 
-  const rows = await db.runSql<Row[]>(querySql)
+  let rows: Row[] = []
 
-  for (const row of rows) {
-    try {
-      const convertedRevision = convertContent(row.content)
-      if (convertedRevision.isConverted) {
-        await db.runSql(updateSql, convertedRevision.convertedContent, row.id)
-        console.log(`${contentType} updated: ${row.id}`)
+  do {
+    const querySqlWithLimit = querySql + ` ORDER BY id limit ${batchSize}`
+    const afterId = rows.at(-1)?.id ?? 0
+    rows = await db.runSql<Row[]>(querySqlWithLimit, afterId)
+
+    console.log(`Consume batch ${afterId} ... ${rows.at(-1)?.id ?? 0}`)
+
+    for (const row of rows) {
+      try {
+        console.log(`Try to convert ${contentType}: ${row.revision_id}`)
+        const convertedRevision = convertContent(row.content)
+        if (convertedRevision.isConverted) {
+          await db.runSql(updateSql, convertedRevision.convertedContent, row.id)
+          console.log(`${contentType} updated: ${row.revision_id}`)
+        }
+      } catch (error: unknown) {
+        logError(`Error in converting ${contentType}`, error, row)
       }
-    } catch (error: unknown) {
-      logError(`Error in converting ${contentType}`, error, row)
     }
-  }
+  } while (rows.length != 0)
 }
 
 function convertContent(input?: string): ConversionResult {
