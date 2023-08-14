@@ -44,6 +44,7 @@ async function convertTaxonomyDescriptions(db: Database) {
           convertedDescription.convertedContent,
           taxonomy.id,
         )
+        console.log(`Taxonomy updated: ${taxonomy.id}`)
       }
     } catch (e: unknown) {
       logError('Error in converting taxonomy', e, taxonomy)
@@ -71,6 +72,7 @@ async function convertUserDescriptions(db: Database) {
           convertedDescription.convertedContent,
           user.id,
         )
+        console.log(`User updated: ${user.id}`)
       }
     } catch (e: unknown) {
       logError('Error in converting user', e, user)
@@ -97,6 +99,7 @@ async function convertStaticPages(db: Database) {
           newContent.convertedContent,
           page_revision.id,
         )
+        console.log(`Static page revision updated: ${page_revision.id}`)
       }
     } catch (e: unknown) {
       logError('Error in converting static page', e, page_revision)
@@ -133,6 +136,7 @@ async function convertEntityRevisionFieldValues(db: Database) {
           convertedRevision.convertedContent,
           revision.id,
         )
+        console.log(`Entity revision updated: ${revision.id}`)
       }
     } catch (error: unknown) {
       logError('Error in converting revision field', error, revision)
