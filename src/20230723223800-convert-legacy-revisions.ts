@@ -26,98 +26,48 @@ createMigration(module.exports, {
 })
 
 async function convertTaxonomyDescriptions(db: Database) {
-  type Taxonomy = {
-    id: number
-    description?: string
-  }
-
-  const legacyTaxonomies = await db.runSql<Taxonomy[]>(`
-      SELECT id, description FROM term_taxonomy
-  `)
-
-  for (const taxonomy of legacyTaxonomies) {
-    try {
-      const convertedDescription = convertContent(taxonomy.description)
-      if (convertedDescription.isConverted) {
-        await db.runSql(
-          'UPDATE term_taxonomy SET description = ? WHERE id = ?',
-          convertedDescription.convertedContent,
-          taxonomy.id,
-        )
-        console.log(`Taxonomy updated: ${taxonomy.id}`)
-      }
-    } catch (e: unknown) {
-      logError('Error in converting taxonomy', e, taxonomy)
-    }
-  }
+  await runConversion({
+    contentType: 'taxonomy term',
+    querySql: `
+      SELECT id, id as revision_id, description as content
+      FROM term_taxonomy
+    `,
+    updateSql: 'UPDATE term_taxonomy SET description = ? WHERE id = ?',
+    db,
+  })
 }
 
 async function convertUserDescriptions(db: Database) {
-  type User = {
-    id: number
-    description?: string
-  }
-
-  // ID is a bot account
-  const all_users = await db.runSql<User[]>(`
-      SELECT id, description FROM user WHERE id != 191656
-  `)
-
-  for (const user of all_users) {
-    try {
-      const convertedDescription = convertContent(user.description)
-      if (convertedDescription.isConverted) {
-        await db.runSql(
-          'UPDATE user SET description = ? WHERE id = ?',
-          convertedDescription.convertedContent,
-          user.id,
-        )
-        console.log(`User updated: ${user.id}`)
-      }
-    } catch (e: unknown) {
-      logError('Error in converting user', e, user)
-    }
-  }
+  await runConversion({
+    contentType: 'user',
+    querySql: `
+      SELECT id, id as revision_id, description as content
+      FROM user WHERE id != 191656
+    `,
+    updateSql: 'UPDATE user SET description = ? WHERE id = ?',
+    db,
+  })
 }
 
 async function convertStaticPages(db: Database) {
-  type StaticPage = {
-    id: number
-    content: string
-  }
-
-  const all_page_revisions = await db.runSql<StaticPage[]>(`
-      SELECT id, content FROM page_revision
-  `)
-
-  for (const page_revision of all_page_revisions) {
-    try {
-      const newContent = convertContent(page_revision.content)
-      if (newContent.isConverted) {
-        await db.runSql(
-          'UPDATE page_revision set content = ? WHERE id = ?',
-          newContent.convertedContent,
-          page_revision.id,
-        )
-        console.log(`Static page revision updated: ${page_revision.id}`)
-      }
-    } catch (e: unknown) {
-      logError('Error in converting static page', e, page_revision)
-    }
-  }
+  await runConversion({
+    contentType: 'static page revision',
+    querySql: `
+      SELECT id, id as revision_id, content FROM page_revision
+    `,
+    updateSql: 'UPDATE page_revision set content = ? WHERE id = ?',
+    db,
+  })
 }
 
 async function convertEntityRevisionFieldValues(db: Database) {
-  type Revision = {
-    id: number
-    entity_revision_id: number
-    value: string
-  }
-
-  const legacyEntityRevisions = await db.runSql<Revision[]>(`
+  await runConversion({
+    contentType: 'entity revision',
+    querySql: `
       SELECT
-          entity_revision_field.id, entity_revision_field.entity_revision_id,
-          entity_revision_field.value
+          entity_revision_field.id as id,
+          entity_revision_field.entity_revision_id as revision_id,
+          entity_revision_field.value as content
         FROM entity_revision_field
         JOIN entity_revision on entity_revision_field.entity_revision_id = entity_revision.id
         JOIN entity on entity.id = entity_revision.repository_id
@@ -125,21 +75,37 @@ async function convertEntityRevisionFieldValues(db: Database) {
         WHERE
           (entity_revision_field.field = "content" and type.name != "video")
           or field = "reasoning" or field = "description"
-  `)
+  `,
+    updateSql: 'UPDATE entity_revision_field SET value = ? WHERE id = ?',
+    db,
+  })
+}
 
-  for (const revision of legacyEntityRevisions) {
+async function runConversion(args: {
+  querySql: string
+  updateSql: string
+  contentType: string
+  db: Database
+}) {
+  const { querySql, updateSql, contentType, db } = args
+
+  type Row = {
+    id: number
+    revision_id: number
+    content: string
+  }
+
+  const rows = await db.runSql<Row[]>(querySql)
+
+  for (const row of rows) {
     try {
-      const convertedRevision = convertContent(revision.value)
+      const convertedRevision = convertContent(row.content)
       if (convertedRevision.isConverted) {
-        await db.runSql(
-          'UPDATE entity_revision_field SET value = ? WHERE id = ?',
-          convertedRevision.convertedContent,
-          revision.id,
-        )
-        console.log(`Entity revision updated: ${revision.id}`)
+        await db.runSql(updateSql, convertedRevision.convertedContent, row.id)
+        console.log(`${contentType} updated: ${row.id}`)
       }
     } catch (error: unknown) {
-      logError('Error in converting revision field', error, revision)
+      logError(`Error in converting ${contentType}`, error, row)
     }
   }
 }
