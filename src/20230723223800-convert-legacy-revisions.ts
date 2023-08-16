@@ -11,21 +11,26 @@ import { addFirstExplanationToEquation } from './20210923155000-add-first-explan
 import { addTransformationTargetToEquation } from './20210923231900-add-transformation-target-to-equations'
 import { convertImportantAndBlockquoteToBox } from './20220625202000-convert-important-and-blockquote-to-box'
 import { convertTableToSerloTable } from './20230526090001-convert-table-to-serlo-table'
+import { ApiCache } from './utils/api-cache'
 
 createMigration(module.exports, {
   up: async (db) => {
     try {
-      await convertTaxonomyDescriptions(db)
-      await convertEntityRevisionFieldValues(db)
-      await convertUserDescriptions(db)
-      await convertStaticPages(db)
+      const apiCache = new ApiCache()
+
+      await convertTaxonomyDescriptions(db, apiCache)
+      await convertEntityRevisionFieldValues(db, apiCache)
+      await convertUserDescriptions(db, apiCache)
+      await convertStaticPages(db, apiCache)
+
+      await apiCache.quit()
     } catch (error: unknown) {
       logError('General error was thrown', error)
     }
   },
 })
 
-async function convertTaxonomyDescriptions(db: Database) {
+async function convertTaxonomyDescriptions(db: Database, apiCache: ApiCache) {
   await runConversion({
     contentType: 'taxonomy term',
     querySql: `
@@ -34,10 +39,11 @@ async function convertTaxonomyDescriptions(db: Database) {
     `,
     updateSql: 'UPDATE term_taxonomy SET description = ? WHERE id = ?',
     db,
+    apiCache,
   })
 }
 
-async function convertUserDescriptions(db: Database) {
+async function convertUserDescriptions(db: Database, apiCache: ApiCache) {
   await runConversion({
     contentType: 'user',
     querySql: `
@@ -46,10 +52,11 @@ async function convertUserDescriptions(db: Database) {
     `,
     updateSql: 'UPDATE user SET description = ? WHERE id = ?',
     db,
+    apiCache,
   })
 }
 
-async function convertStaticPages(db: Database) {
+async function convertStaticPages(db: Database, apiCache: ApiCache) {
   await runConversion({
     contentType: 'static page revision',
     querySql: `
@@ -58,10 +65,14 @@ async function convertStaticPages(db: Database) {
     `,
     updateSql: 'UPDATE page_revision set content = ? WHERE id = ?',
     db,
+    apiCache,
   })
 }
 
-async function convertEntityRevisionFieldValues(db: Database) {
+async function convertEntityRevisionFieldValues(
+  db: Database,
+  apiCache: ApiCache,
+) {
   await runConversion({
     contentType: 'entity revision',
     querySql: `
@@ -80,6 +91,7 @@ async function convertEntityRevisionFieldValues(db: Database) {
   `,
     updateSql: 'UPDATE entity_revision_field SET value = ? WHERE id = ?',
     db,
+    apiCache,
   })
 }
 
@@ -88,9 +100,11 @@ async function runConversion(args: {
   updateSql: string
   contentType: string
   db: Database
+  apiCache: ApiCache
   batchSize?: number
 }) {
-  const { querySql, updateSql, contentType, db, batchSize = 5000 } = args
+  const { querySql, updateSql, contentType, batchSize = 5000 } = args
+  const { db, apiCache } = args
 
   type Row = {
     id: number
@@ -114,6 +128,7 @@ async function runConversion(args: {
         if (convertedRevision.isConverted) {
           await db.runSql(updateSql, convertedRevision.convertedContent, row.id)
           console.log(`${contentType} updated: ${row.revision_id}`)
+          await apiCache.deleteUuid(row.revision_id)
         }
       } catch (error: unknown) {
         logError(`Error in converting ${contentType}`, error, row)
