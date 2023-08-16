@@ -8,7 +8,7 @@ services:
       - .env
       - .env-docker
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
 
   mysql:
     image: eu.gcr.io/serlo-shared/serlo-mysql-database:latest
