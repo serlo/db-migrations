@@ -4,8 +4,12 @@ services:
   server-migrate:
     build:
       context: .
-    environment:
-      - DATABASE=mysql://root:secret@mysql:3306/serlo
+    env_file:
+      - .env
+      - .env-docker
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
   mysql:
     image: eu.gcr.io/serlo-shared/serlo-mysql-database:latest
     platform: linux/x86_64
