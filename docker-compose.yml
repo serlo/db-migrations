@@ -11,3 +11,8 @@ services:
     platform: linux/x86_64
     ports:
       - '3306:3306'
+
+  redis:
+    image: redis:6.0
+    ports:
+      - '6379:6379'
