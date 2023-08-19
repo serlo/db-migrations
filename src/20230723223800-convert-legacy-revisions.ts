@@ -48,7 +48,7 @@ async function convertUserDescriptions(db: Database, apiCache: ApiCache) {
     contentType: 'user',
     querySql: `
       SELECT id, id as revision_id, description as content
-      FROM user WHERE id != 191656 description != "NULL" and id > ?
+      FROM user WHERE id != 191656 and description != "NULL" and id > ?
     `,
     updateSql: 'UPDATE user SET description = ? WHERE id = ?',
     db,
