@@ -21,7 +21,7 @@
     "migrate:docker": "docker compose run --build --rm server-migrate",
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:ts": "npm-run-all build:cache migrate:up",
-    "migrate:up": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m dist up",
+    "migrate:up": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m migrations up",
     "mysql": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
