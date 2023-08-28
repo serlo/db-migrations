@@ -1,5 +1,10 @@
 import { convert, Legacy } from '@serlo/legacy-editor-to-editor'
-import { createMigration, Database, replacePluginState } from './utils'
+import {
+  createMigration,
+  Database,
+  replacePluginState,
+  transformPlugins,
+} from './utils'
 import * as t from 'io-ts'
 import * as f from 'fp-ts/function'
 import { addImageCaption } from './20220517163100-add-image-caption'
@@ -193,6 +198,45 @@ const migrateEquations = replacePluginState({
   },
 })
 
+const PluginDecoder = t.type({ plugin: t.string, state: t.unknown })
+
+const RowsPluginDecoder = t.type({
+  plugin: t.literal('rows'),
+  state: t.array(PluginDecoder),
+})
+
+const LayoutPluginDecoder = t.type({
+  plugin: t.literal('layout'),
+  state: t.array(
+    t.type({
+      width: t.number,
+      child: t.unknown,
+    }),
+  ),
+})
+
+const removeLayoutPlugins = transformPlugins({
+  layout: (value) => {
+    if (LayoutPluginDecoder.is(value)) {
+      return value.state.flatMap(({ child }) => {
+        if (RowsPluginDecoder.is(child)) {
+          return child.state
+        } else if (PluginDecoder.is(child)) {
+          return [child]
+        } else {
+          throw new Error(
+            `Illegal value (remove layout plugin): ${JSON.stringify(value)}`,
+          )
+        }
+      })
+    } else {
+      throw new Error(
+        `Illegal value (remove layout plugin): ${JSON.stringify(value)}`,
+      )
+    }
+  },
+})
+
 // Follow ups:
 // run table to serloTable conversion again
 // run important and blockquote conversions again
@@ -209,6 +253,7 @@ function convertWithFollowUps(content: string | Legacy) {
     addImageCaption,
     convertImportantAndBlockquoteToBox,
     convertTableToSerloTable,
+    removeLayoutPlugins,
     JSON.stringify,
   ) as string
 }
