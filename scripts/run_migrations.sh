@@ -38,7 +38,7 @@ delete_migrations_in_mysql() {
 }
 
 run_migrations_in_build_outdir() {
-  yarn migrate:up
+  yarn migrate:up:dist
 }
 
 main "$@"
