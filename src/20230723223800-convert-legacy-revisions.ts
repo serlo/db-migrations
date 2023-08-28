@@ -4,6 +4,7 @@ import {
   Database,
   replacePluginState,
   transformPlugins,
+  transformSlateTypes,
 } from './utils'
 import * as t from 'io-ts'
 import * as f from 'fp-ts/function'
@@ -237,6 +238,57 @@ const removeLayoutPlugins = transformPlugins({
   },
 })
 
+const removeEmptyParagraphs = transformSlateTypes({
+  p: (value) => {
+    if (getSlateText(value).trim() === '') {
+      return []
+    }
+  },
+})
+
+const removeEmptyTextPlugins = transformPlugins({
+  text: (value) => {
+    if (getSlateText(value).trim() === '') {
+      return []
+    }
+  },
+})
+
+const BoxPluginStateDecoder = t.type({
+  content: t.type({ plugin: t.literal('rows'), state: t.array(t.unknown) }),
+})
+
+const removeEmptyBoxPlugins = transformPlugins({
+  box: (value) => {
+    if (
+      BoxPluginStateDecoder.is(value.state) &&
+      value.state.content.state.length === 0
+    ) {
+      return []
+    }
+  },
+})
+
+function getSlateText(value: unknown): string {
+  if (Array.isArray(value)) {
+    return value.map(getSlateText).join('')
+  }
+
+  if (t.type({ text: t.string }).is(value)) {
+    return value.text
+  }
+
+  if (t.type({ type: t.literal('math'), src: t.string }).is(value)) {
+    return value.src
+  }
+
+  if (typeof value == 'object' && value != null) {
+    return Object.values(value).map(getSlateText).join('')
+  }
+
+  return ''
+}
+
 // Follow ups:
 // run table to serloTable conversion again
 // run important and blockquote conversions again
@@ -254,6 +306,9 @@ function convertWithFollowUps(content: string | Legacy) {
     convertImportantAndBlockquoteToBox,
     convertTableToSerloTable,
     removeLayoutPlugins,
+    removeEmptyParagraphs,
+    removeEmptyTextPlugins,
+    removeEmptyBoxPlugins,
     JSON.stringify,
   ) as string
 }
