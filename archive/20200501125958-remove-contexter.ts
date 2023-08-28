@@ -1,4 +1,4 @@
-import { createMigration } from './utils'
+import { createMigration } from '../src/utils'
 
 /**
  * Removes all rows & permissions from the database that were used by the Contexter module
