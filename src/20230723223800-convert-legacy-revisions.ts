@@ -13,6 +13,8 @@ import { convertImportantAndBlockquoteToBox } from './20220625202000-convert-imp
 import { convertTableToSerloTable } from './20230526090001-convert-table-to-serlo-table'
 import { ApiCache } from './utils/api-cache'
 
+const throwErrors = true
+
 createMigration(module.exports, {
   up: async (db) => {
     try {
@@ -26,6 +28,8 @@ createMigration(module.exports, {
       await apiCache.quit()
     } catch (error: unknown) {
       logError('General error was thrown', error)
+
+      if (throwErrors) throw error
     }
   },
 })
@@ -132,6 +136,7 @@ async function runConversion(args: {
         }
       } catch (error: unknown) {
         logError(`Error in converting ${contentType}`, error, row)
+        if (throwErrors) throw error
       }
     }
   } while (rows.length != 0)
