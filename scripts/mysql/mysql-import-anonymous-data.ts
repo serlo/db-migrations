@@ -1,4 +1,5 @@
 import { spawnSync } from 'child_process'
+import { existsSync, statSync } from 'fs'
 
 const TMP_DIR = '/tmp'
 
@@ -7,7 +8,10 @@ main()
 function main() {
   const latestDump = getLatestDump()
   const fileName = getFileName(latestDump)
-  downloadDump(latestDump, fileName)
+  const tmpFile = `${TMP_DIR}/${fileName}`
+  if (!existsSync(tmpFile)) {
+    downloadDump(latestDump, tmpFile)
+  }
 
   const container = getMySQLContainer()
   if (!container) {
@@ -17,7 +21,7 @@ function main() {
     return
   }
 
-  unzipAndCopyToContainer(fileName, container)
+  unzipAndCopyToContainer(tmpFile, container)
   populateDumpInMySql()
 }
 
@@ -51,7 +55,7 @@ function getFileName(dumpPath: string): string {
 }
 
 function downloadDump(dumpPath: string, fileName: string) {
-  runCmd('gsutil', ['cp', dumpPath, `${TMP_DIR}/${fileName}`])
+  runCmd('gsutil', ['cp', dumpPath, fileName])
 }
 
 function getMySQLContainer(): string | null {
@@ -65,8 +69,8 @@ function getMySQLContainer(): string | null {
   return container || null
 }
 
-function unzipAndCopyToContainer(fileName: string, container: string) {
-  runCmd('unzip', ['-o', `${TMP_DIR}/${fileName}`, '-d', TMP_DIR])
+function unzipAndCopyToContainer(tmpFile: string, container: string) {
+  runCmd('unzip', ['-o', tmpFile, '-d', TMP_DIR])
   runCmd('docker', [
     'cp',
     `${TMP_DIR}/mysql.sql`,
