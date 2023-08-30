@@ -97,6 +97,10 @@ async function convertEntityRevisionFieldValues(
         WHERE
           ((entity_revision_field.field = "content" and type.name != "video")
           or field = "reasoning" or field = "description")
+          and type.name not in ("input-expression-equal-match-challenge",
+            "input-number-exact-match-challenge", "input-string-normalized-match-challenge",
+            "math-puzzle", "multiple-choice-right-answer", "multiple-choice-wrong-answer",
+            "single-choice-right-answer", "single-choice-wrong-answer")
           and entity_revision_field.id > ?
   `,
     updateSql: 'UPDATE entity_revision_field SET value = ? WHERE id = ?',
