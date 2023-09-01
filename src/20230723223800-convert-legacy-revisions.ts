@@ -242,14 +242,6 @@ const removeLayoutPlugins = transformPlugins({
   },
 })
 
-const removeEmptyParagraphs = transformSlateTypes({
-  p: (value) => {
-    if (getSlateText(value).trim() === '') {
-      return []
-    }
-  },
-})
-
 const removeEmptyTextPlugins = transformPlugins({
   text: (value) => {
     if (getSlateText(value).trim() === '') {
@@ -310,7 +302,6 @@ function convertWithFollowUps(content: string | Legacy) {
     convertImportantAndBlockquoteToBox,
     convertTableToSerloTable,
     removeLayoutPlugins,
-    removeEmptyParagraphs,
     removeEmptyTextPlugins,
     removeEmptyBoxPlugins,
     JSON.stringify,

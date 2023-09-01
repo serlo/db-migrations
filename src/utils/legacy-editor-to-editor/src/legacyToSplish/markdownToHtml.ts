@@ -13,5 +13,7 @@ const renderMarkdown = (input: string) => {
       '<katexblock>$1</katexblock>',
     )
     .replace(/\r?\n/gm, '')
+    .replace(/<p><\/p>/g, '')
+    .replace(/<\/p><p>/g, '</p><p>&nbsp;</p><p>')
 }
 export default renderMarkdown
