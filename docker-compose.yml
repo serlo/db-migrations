@@ -7,7 +7,7 @@ services:
     environment:
       - DATABASE=mysql://root:secret@mysql:3306/serlo
   mysql:
-    image: eu.gcr.io/serlo-shared/serlo-mysql-database:0.3.1
+    image: eu.gcr.io/serlo-shared/serlo-mysql-database:latest
     platform: linux/x86_64
     pull_policy: always
     ports:
