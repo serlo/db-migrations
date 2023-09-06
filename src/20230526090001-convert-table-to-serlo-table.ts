@@ -4,22 +4,23 @@ import { parseDOM } from 'htmlparser2'
 import { createEdtrIoMigration, replacePlugins, Plugin } from './utils'
 
 const dryRun = false
+export const convertTableToSerloTable = replacePlugins({
+  table({ plugin }) {
+    if (typeof plugin.state !== 'string') {
+      throw new Error('plugin state is not a string')
+    }
+    const serloTable = convertTable(plugin as EdtrPluginTable)
+
+    if (!serloTable) console.log('could not convert this table!!')
+
+    if (dryRun) return { plugin: 'table', state: plugin.state + ' ' }
+    return serloTable ?? plugin
+  },
+})
 
 createEdtrIoMigration({
   exports: module.exports,
-  migrateState: replacePlugins({
-    table({ plugin }) {
-      if (typeof plugin.state !== 'string') {
-        throw new Error('plugin state is not a string')
-      }
-      const serloTable = convertTable(plugin as EdtrPluginTable)
-
-      if (!serloTable) console.log('could not convert this table!!')
-
-      if (dryRun) return { plugin: 'table', state: plugin.state + ' ' }
-      return serloTable ?? plugin
-    },
-  }),
+  migrateState: convertTableToSerloTable,
   dryRun,
 })
 

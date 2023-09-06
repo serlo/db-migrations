@@ -1,6 +1,6 @@
 {
   "name": "@serlo/server-migrate",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
@@ -12,7 +12,7 @@
     "build:cache": "BUILD_OUTDIR=dist yarn _build src/*ts",
     "docker:build": "docker build -t db-migrations-local-build:latest .",
     "docker:rm": "docker image rm db-migrations-local-build",
-    "docker:run": "docker run --env DATABASE=mysql://root:secret@host.docker.internal:3306/serlo --add-host=host.docker.internal:host-gateway --name db-migrations-from-local-build db-migrations-local-build",
+    "docker:run": "docker run --env-file .env --env-file .env-docker --add-host=host.docker.internal:host-gateway --name db-migrations-from-local-build db-migrations-local-build",
     "docker:stop": "docker stop db-migrations-from-local-build && docker container rm db-migrations-from-local-build",
     "format": "yarn format:prettier",
     "format:prettier": "yarn _prettier --write",
@@ -22,8 +22,8 @@
     "migrate:docker": "docker compose run --build --rm server-migrate",
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:ts": "npm-run-all build:cache migrate:up:dist",
-    "migrate:up": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m migrations up",
-    "migrate:up:dist": "DATABASE=mysql://root:secret@localhost:3306/serlo yarn db-migrate -m dist up",
+    "migrate:up": "yarn db-migrate -m migrations up",
+    "migrate:up:dist": "yarn db-migrate -m dist up",
     "mysql": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
@@ -33,7 +33,7 @@
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node --experimental-specifier-resolution=node scripts/push-image",
     "start": "yarn start:docker",
-    "start:docker": "docker compose up mysql --detach",
+    "start:docker": "docker compose up mysql redis --detach",
     "stop": "yarn stop:docker",
     "stop:docker": "docker compose down",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
@@ -43,6 +43,8 @@
     "db-migrate-mysql": "^2.2.0"
   },
   "devDependencies": {
+    "@edtr-io/core": "^2.0.0",
+    "@edtr-io/plugin-text": "^3.0.2",
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@types/jest": "^29.5.4",
     "@types/node": "^18.17.14",
@@ -50,8 +52,12 @@
     "@types/react": "^18.2.21",
     "@types/semver": "^7.5.1",
     "@types/uuid": "^9.0.3",
+    "dotenv": "^16.3.1",
     "esbuild": "^0.19.2",
+    "fp-ts": "^2.16.1",
     "htmlparser2": "^9.0.0",
+    "io-ts": "^2.2.20",
+    "ioredis": "^5.3.2",
     "jest": "^29.6.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.3",
@@ -67,5 +73,8 @@
   "packageManager": "yarn@3.6.1",
   "engines": {
     "node": "^18.0.0"
-  }
+  },
+  "workspaces": [
+    "src/utils/*"
+  ]
 }

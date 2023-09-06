@@ -27,6 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: serlo/configure-repositories/actions/setup-node@main
+      - run: yarn start
       - run: yarn test
 
   migrate_ts:
@@ -35,6 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: serlo/configure-repositories/actions/setup-node@main
+      - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
       - run: yarn mysql:delete-all-migrations
       - run: yarn migrate:ts
@@ -46,6 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: serlo/configure-repositories/actions/setup-node@main
+      - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
       - run: yarn mysql:delete-all-migrations
       - run: yarn migrate:docker

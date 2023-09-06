@@ -1,3 +1,4 @@
+import * as t from 'io-ts'
 import * as R from 'ramda'
 
 export function replacePlugins(transformations: {
@@ -57,6 +58,60 @@ function updatePlugins(
   return applyChangeToChildren
 }
 
+export function transformPlugins(transformations: {
+  [key in string]?: ListTransformation<Plugin>
+}) {
+  return transformLists((value) => {
+    if (isPlugin(value)) {
+      const transformFunc = transformations[value.plugin]
+
+      if (typeof transformFunc === 'function') {
+        return transformFunc(value)
+      }
+    }
+  })
+}
+
+export function transformSlateTypes(transformations: {
+  [key in string]?: ListTransformation<SlateNode>
+}) {
+  return transformLists((value) => {
+    if (SlateNodeDecoder.is(value)) {
+      const transformFunc = transformations[value.type]
+
+      if (typeof transformFunc === 'function') {
+        return transformFunc(value)
+      }
+    }
+  })
+}
+
+function transformLists(
+  transform: ListTransformation<unknown>,
+): Transformation {
+  function applyTransformation(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      const newValue = value.flatMap((element) => {
+        const transformation = transform(element)
+
+        return transformation !== undefined ? transformation : [element]
+      })
+
+      return newValue.map(applyTransformation)
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      return R.mapObjIndexed(applyTransformation, value)
+    }
+
+    return value
+  }
+
+  return applyTransformation
+}
+
+type ListTransformation<A> = (element: A) => A[] | undefined
+
 export function isPlugin(value: unknown): value is Plugin {
   return (
     R.has('plugin', value) &&
@@ -71,3 +126,6 @@ export interface Plugin {
   plugin: string
   state: unknown
 }
+
+const SlateNodeDecoder = t.type({ type: t.string })
+type SlateNode = t.TypeOf<typeof SlateNodeDecoder>

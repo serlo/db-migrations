@@ -165,7 +165,7 @@ function migrateState(document: { plugin: string; state: any }): {
   }
 }
 
-interface LegacyEquationsPluginState {
+export interface LegacyEquationsPluginState {
   steps: {
     left: {
       plugin: 'text'

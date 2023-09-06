@@ -5,12 +5,14 @@ import {
   Transformation,
 } from './utils'
 
+export const convertImportantAndBlockquoteToBox = replacePlugins({
+  important: convertToBox,
+  blockquote: convertToBox,
+})
+
 createEdtrIoMigration({
   exports: module.exports,
-  migrateState: replacePlugins({
-    important: convertToBox,
-    blockquote: convertToBox,
-  }),
+  migrateState: convertImportantAndBlockquoteToBox,
 })
 
 function convertToBox({
