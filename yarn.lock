@@ -1435,22 +1435,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edtr-io/core@npm:^2.0.0, @edtr-io/core@npm:^2.6.0":
-  version: 2.8.2
-  resolution: "@edtr-io/core@npm:2.8.2"
+"@edtr-io/core@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@edtr-io/core@npm:3.0.1"
   dependencies:
     "@babel/runtime": ^7.17.8
-    "@edtr-io/default-document-editor": ^2.5.0
-    "@edtr-io/default-plugin-toolbar": ^2.5.0
-    "@edtr-io/internal__document-editor": ^2.5.0
-    "@edtr-io/internal__plugin": ^2.5.0
-    "@edtr-io/internal__plugin-state": ^2.5.0
-    "@edtr-io/internal__plugin-toolbar": ^2.5.0
-    "@edtr-io/store": ^2.8.2
-    "@edtr-io/ui": ^2.5.0
+    "@edtr-io/default-document-editor": ^3.0.1
+    "@edtr-io/default-plugin-toolbar": ^3.0.1
+    "@edtr-io/internal__document-editor": ^3.0.0
+    "@edtr-io/internal__plugin": ^3.0.1
+    "@edtr-io/internal__plugin-state": ^3.0.0
+    "@edtr-io/internal__plugin-toolbar": ^3.0.0
+    "@edtr-io/store": ^3.0.1
+    "@edtr-io/ui": ^3.0.1
     "@types/ramda": ^0.28.5
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@types/react": ^18.0.27
+    "@types/react-dom": ^18.0.10
     "@types/react-redux": ^7.1.23
     "@types/shortid": ^0.0.29
     "@types/styled-components": ^5.1.24
@@ -1459,63 +1459,63 @@ __metadata:
     react-redux: ^7.2.6
     shortid: ^2.2.16
   peerDependencies:
-    react: ">= 17"
+    react: ^18.0.0
     react-dnd: ">= 14"
     react-dnd-html5-backend: ">= 14"
-    react-dom: ">= 17"
+    react-dom: ^18.0.0
     react-is: ">= 17"
     redux: ">= 4"
     styled-components: ">= 4"
-  checksum: 905d3df302a04705303d7d5cbb4c961b92fa988b4f0ee236ae29d4d85d80fa3fd14f411fffa07273434d1fcd37c1c9ea2d3826a42bbc7cd26d6718bcca5fe40a
+  checksum: 5c6bb23f4b07cf4cd80e70852419fa9d7c6a9bbf920390d164267db190668cc575b5b5816c279b9269792544b6c616dcff9965362e853c9339e0b833052aa342
   languageName: node
   linkType: hard
 
-"@edtr-io/default-document-editor@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@edtr-io/default-document-editor@npm:2.5.0"
+"@edtr-io/default-document-editor@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@edtr-io/default-document-editor@npm:3.0.1"
   dependencies:
-    "@edtr-io/document-editor": ^2.5.0
-    "@edtr-io/ui": ^2.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@edtr-io/document-editor": ^3.0.0
+    "@edtr-io/ui": ^3.0.1
+    "@types/react": ^18.0.27
+    "@types/react-dom": ^18.0.10
     "@types/styled-components": ^5.1.24
   peerDependencies:
-    react: ">= 17"
-    react-dom: ">= 17"
+    react: ^18.0.0
+    react-dom: ^18.0.0
     react-is: ">= 17"
     styled-components: ">= 4"
-  checksum: d6ce69cb1294853b2269d0c08d75c705ab5a4f17242d96fe1b20809e50cab753eb9e01cfcfbd1eb18eb30567b5156fcb885f608ab7d0136a8677bcdbff22f689
+  checksum: 3a08931672741bea0ee6d1bb120b1e2d688bade6de2257b7c3604c194e1c666833cd5a117e7a40bcfc5c9995b0c83f83de451c3d258d8f9e73253de2a23e7757
   languageName: node
   linkType: hard
 
-"@edtr-io/default-plugin-toolbar@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@edtr-io/default-plugin-toolbar@npm:2.5.0"
+"@edtr-io/default-plugin-toolbar@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "@edtr-io/default-plugin-toolbar@npm:3.0.1"
   dependencies:
-    "@edtr-io/plugin-toolbar": ^2.5.0
-    "@edtr-io/ui": ^2.5.0
-    "@types/react": ^17.0.43
-    "@types/react-dom": ^17.0.14
+    "@edtr-io/plugin-toolbar": ^3.0.0
+    "@edtr-io/ui": ^3.0.1
+    "@types/react": ^18.0.27
+    "@types/react-dom": ^18.0.10
     "@types/react-modal": ^3.13.1
     "@types/styled-components": ^5.1.24
     react-modal: ^3.14.4
   peerDependencies:
-    react: ">= 17"
-    react-dom: ">= 17"
+    react: ^18.0.0
+    react-dom: ^18.0.0
     react-is: ">= 17"
     styled-components: ">= 4"
-  checksum: 2f2accaba8e255f6972e86952da13c253e06b1e205cbd6904d028c6009ec26f79f925221e5f9139bc7f2c08cc759eebca0b1e10f93287c0f0f93ea082d2a3799
+  checksum: bc15bd4756cbbf6ca0ce412d86cf7b6f20d6b441079b3ccfb05c3192d7b8095120bced2879ce25461455a39fd6963c64f355f4c5321363fc89e06939fb625d88
   languageName: node
   linkType: hard
 
-"@edtr-io/document-editor@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@edtr-io/document-editor@npm:2.5.0"
+"@edtr-io/document-editor@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@edtr-io/document-editor@npm:3.0.0"
   dependencies:
-    "@edtr-io/internal__document-editor": ^2.5.0
+    "@edtr-io/internal__document-editor": ^3.0.0
   peerDependencies:
     react: ">= 17"
-  checksum: 5e63a3c9821c5901374659e1d4083c3a6ee9898034350b40d4c27dfe9c59e0227a5d6500bd9d5ab9a89af8f15c6c461b077768a106f4f7a00dac58cf6c7edfa1
+  checksum: bebf765a8a4001422d5173b90c3b6354c2303374bbe416c8e8bd447f3c45e1527340faa906eff28d97c1af5a9ed66e5e0870cb836dcd60b596d19f91437402bb
   languageName: node
   linkType: hard
 
@@ -1906,15 +1906,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@edtr-io/plugin-toolbar@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@edtr-io/plugin-toolbar@npm:2.5.0"
+"@edtr-io/plugin-toolbar@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@edtr-io/plugin-toolbar@npm:3.0.0"
   dependencies:
-    "@edtr-io/internal__plugin-toolbar": ^2.5.0
-    "@types/react": ^17.0.43
+    "@edtr-io/internal__plugin-toolbar": ^3.0.0
+    "@types/react": ^18.0.27
   peerDependencies:
     react: ">= 17"
-  checksum: ccee719db6935df00f0658e102678ef4aaedd331de166cf06d77bc2b09811937f92a39b3a67086485811179211d77c6a695f6e9936eff4c1a7f216ee23e52ec6
+  checksum: 11755d95a0c30a5c748fac987278a83b03f46c37fceff108e5a4877928a9eeae63bac51ab29381956cbf8c46f6e5b1d8f6e1f32916f8028035af41456ab76b69
   languageName: node
   linkType: hard
 
@@ -3024,7 +3024,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/legacy-editor-to-editor@workspace:src/utils/legacy-editor-to-editor"
   dependencies:
-    "@edtr-io/core": ^2.6.0
+    "@edtr-io/core": ^3.0.1
     "@edtr-io/plugin-text": ^2.6.0
     "@fortawesome/fontawesome-svg-core": ^6.1.1
     "@fortawesome/free-solid-svg-icons": ^6.1.1
@@ -3070,7 +3070,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/server-migrate@workspace:."
   dependencies:
-    "@edtr-io/core": ^2.0.0
+    "@edtr-io/core": ^3.0.1
     "@edtr-io/plugin-text": ^3.0.2
     "@serlo/markdown": Entkenntnis/tmp-serlo-markdown
     "@types/jest": ^29.5.4

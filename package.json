@@ -43,7 +43,7 @@
     "db-migrate-mysql": "^2.2.0"
   },
   "devDependencies": {
-    "@edtr-io/core": "^2.0.0",
+    "@edtr-io/core": "^3.0.1",
     "@edtr-io/plugin-text": "^3.0.2",
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@types/jest": "^29.5.4",
