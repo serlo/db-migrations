@@ -54,10 +54,10 @@ export function createEdtrIoMigration({
 
       await changeAllRevisions({
         revisions: await db.runSql<Revision[]>(`
-        SELECT erf.id, erf.value as content, erf.entity_revision_id as revisionId
-        FROM entity_revision_field erf
-        WHERE erf.field = 'content'
-      `),
+          SELECT erf.id, erf.value as content, erf.entity_revision_id as revisionId
+          FROM entity_revision_field erf
+          WHERE erf.field = 'content'
+        `),
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
@@ -72,10 +72,10 @@ export function createEdtrIoMigration({
 
       await changeAllRevisions({
         revisions: await db.runSql<Revision[]>(`
-        SELECT
-          page_revision.id, page_revision.content, page_revision.id as revisionId
-        FROM page_revision
-      `),
+          SELECT
+            page_revision.id, page_revision.content, page_revision.id as revisionId
+          FROM page_revision
+        `),
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
@@ -109,7 +109,7 @@ export function createEdtrIoMigration({
         revisions: await db.runSql<Revision[]>(`
           SELECT id, description as content, id as revisionId
           FROM user WHERE description != "NULL"
-      `),
+        `),
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
