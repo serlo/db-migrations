@@ -57,6 +57,7 @@ export function createEdtrIoMigration({
     up: async (db) => {
       const apiCache = new ApiCache()
 
+      console.log('Convert entity revisions')
       let logs = await changeUuidContents({
         query: `
           SELECT
@@ -84,6 +85,7 @@ export function createEdtrIoMigration({
         db,
       })
 
+      console.log('Convert page revisions')
       logs = logs.concat(
         await changeUuidContents({
           query: `
@@ -100,6 +102,7 @@ export function createEdtrIoMigration({
         }),
       )
 
+      console.log('Convert taxonomy terms')
       logs = logs.concat(
         await changeUuidContents({
           query: `
@@ -115,6 +118,7 @@ export function createEdtrIoMigration({
         }),
       )
 
+      console.log('Convert users')
       logs = logs.concat(
         await changeUuidContents({
           query: `
