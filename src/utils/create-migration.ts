@@ -164,8 +164,9 @@ async function changeUuidContents({
   const logs: Log[] = []
 
   do {
-    const lastUuid = uuids.at(-1)?.uuid ?? 0
-    uuids = await db.runSql(querySQL, lastUuid, 5000)
+    const lastID = uuids.at(-1)?.id ?? 0
+    console.log(`Last ID: ${lastID}`)
+    uuids = await db.runSql(querySQL, lastID, 5000)
 
     for (const uuid of uuids) {
       let oldState
