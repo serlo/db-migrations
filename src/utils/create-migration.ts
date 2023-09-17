@@ -145,7 +145,7 @@ async function changeAllRevisions({
 
       const newContent = JSON.stringify(migrateState(oldState))
 
-      if (newContent !== revision.content) {
+      if (newContent !== JSON.stringify(oldState)) {
         if (dryRun) {
           console.log('Revision: ', revision.revisionId, ' done.')
         } else {
