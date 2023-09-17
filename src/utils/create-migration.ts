@@ -85,6 +85,7 @@ export function createEdtrIoMigration({
           )
         },
         apiCache,
+        dryRun,
       })
 
       await changeAllRevisions({
@@ -101,6 +102,7 @@ export function createEdtrIoMigration({
           )
         },
         apiCache,
+        dryRun,
       })
 
       await changeAllRevisions({
@@ -117,6 +119,7 @@ export function createEdtrIoMigration({
           )
         },
         apiCache,
+        dryRun,
       })
 
       await apiCache.quit()
