@@ -54,9 +54,22 @@ export function createEdtrIoMigration({
 
       await changeAllRevisions({
         query: `
-          SELECT erf.id, erf.value as content, erf.entity_revision_id as revisionId
-          FROM entity_revision_field erf
-          WHERE erf.field = 'content' and erf.id > ?
+          SELECT
+              entity_revision_field.id as id,
+              entity_revision_field.entity_revision_id as revision_id,
+              entity_revision_field.value as content
+            FROM entity_revision_field
+            JOIN entity_revision on entity_revision_field.entity_revision_id = entity_revision.id
+            JOIN entity on entity.id = entity_revision.repository_id
+            JOIN type on type.id = entity.type_id
+            WHERE
+              ((entity_revision_field.field = "content" and type.name != "video")
+              or field = "reasoning" or field = "description")
+              and type.name not in ("input-expression-equal-match-challenge",
+                "input-number-exact-match-challenge", "input-string-normalized-match-challenge",
+                "math-puzzle", "multiple-choice-right-answer", "multiple-choice-wrong-answer",
+                "single-choice-right-answer", "single-choice-wrong-answer")
+              and entity_revision_field.id > ?
         `,
         migrateState,
         updateQuery: `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
