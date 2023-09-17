@@ -111,7 +111,7 @@ export function createEdtrIoMigration({
           `,
           migrateState,
           table: 'term_taxonomy',
-          column: 'content',
+          column: 'description',
           apiCache,
           dryRun,
           db,
