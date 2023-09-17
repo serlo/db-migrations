@@ -93,7 +93,7 @@ export function createEdtrIoMigration({
       await changeAllRevisions({
         query: `
           SELECT id, description as content, id as revisionId
-          FROM user WHERE description != "NULL" and id > ?
+          FROM user WHERE id != 191656 and description != "NULL" and id > ?
         `,
         migrateState,
         updateQuery: `UPDATE user SET description = ? WHERE id = ?`,
