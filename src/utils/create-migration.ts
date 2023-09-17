@@ -185,25 +185,25 @@ async function changeUuidContents({
       const newContent = JSON.stringify(migrateState(oldState))
 
       if (newContent !== JSON.stringify(oldState)) {
-        if (dryRun) {
-          console.log('Revision: ', uuid.uuid, ' done.')
-        } else {
+        if (!dryRun) {
           await db.runSql(
             `UPDATE ${table} SET ${column} = ? WHERE id = ?`,
             newContent,
             uuid.id,
           )
-          logs.push({
-            table,
-            column,
-            uuid: uuid.uuid,
-            tableId: uuid.id,
-            oldContent: uuid.content,
-            newContent,
-          })
           await apiCache.deleteUuid(uuid.uuid)
-          console.log('Updated revision', uuid.uuid)
         }
+
+        console.log(`Update ${table}.${column} with ID ${uuid.uuid}`)
+
+        logs.push({
+          table,
+          column,
+          uuid: uuid.uuid,
+          tableId: uuid.id,
+          oldContent: uuid.content,
+          newContent,
+        })
       }
     }
   } while (uuids.length > 0)
