@@ -136,6 +136,7 @@ async function changeAllRevisions({
         oldState = JSON.parse(revision.content)
       } catch (e) {
         // Ignore (some articles have raw text)
+        continue
       }
 
       if (!isPlugin(oldState)) {
