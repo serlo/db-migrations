@@ -81,6 +81,36 @@ export function createEdtrIoMigration({
           )
         },
       })
+
+      await changeAllRevisions({
+        revisions: await db.runSql<Revision[]>(`
+          SELECT id, description as content, id as revisionId
+          FROM term_taxonomy
+        `),
+        migrateState,
+        async updateRevision(newContent, revision) {
+          await db.runSql(
+            `UPDATE term_taxonomy SET content = ? WHERE id = ?`,
+            newContent,
+            revision.id,
+          )
+        },
+      })
+
+      await changeAllRevisions({
+        revisions: await db.runSql<Revision[]>(`
+          SELECT id, description as content, id as revisionId
+          FROM user WHERE description != "NULL"
+      `),
+        migrateState,
+        async updateRevision(newContent, revision) {
+          await db.runSql(
+            `UPDATE user SET description = ? WHERE id = ?`,
+            newContent,
+            revision.id,
+          )
+        },
+      })
     },
   })
 }
