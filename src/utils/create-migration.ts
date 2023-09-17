@@ -53,11 +53,11 @@ export function createEdtrIoMigration({
       const apiCache = new ApiCache()
 
       await changeAllRevisions({
-        revisions: await db.runSql<Revision[]>(`
+        query: `
           SELECT erf.id, erf.value as content, erf.entity_revision_id as revisionId
           FROM entity_revision_field erf
-          WHERE erf.field = 'content'
-        `),
+          WHERE erf.field = 'content' and erf.id > ?
+        `,
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
@@ -68,14 +68,15 @@ export function createEdtrIoMigration({
         },
         apiCache,
         dryRun,
+        db,
       })
 
       await changeAllRevisions({
-        revisions: await db.runSql<Revision[]>(`
+        query: `
           SELECT
             page_revision.id, page_revision.content, page_revision.id as revisionId
-          FROM page_revision
-        `),
+          FROM page_revision WHERE page_revision.id > ?
+        `,
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
@@ -86,13 +87,14 @@ export function createEdtrIoMigration({
         },
         apiCache,
         dryRun,
+        db,
       })
 
       await changeAllRevisions({
-        revisions: await db.runSql<Revision[]>(`
+        query: `
           SELECT id, description as content, id as revisionId
-          FROM term_taxonomy
-        `),
+          FROM term_taxonomy WHERE id > ?
+        `,
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
@@ -103,13 +105,14 @@ export function createEdtrIoMigration({
         },
         apiCache,
         dryRun,
+        db,
       })
 
       await changeAllRevisions({
-        revisions: await db.runSql<Revision[]>(`
+        query: `
           SELECT id, description as content, id as revisionId
-          FROM user WHERE description != "NULL"
-        `),
+          FROM user WHERE description != "NULL" and id > ?
+        `,
         migrateState,
         async updateRevision(newContent, revision) {
           await db.runSql(
@@ -120,6 +123,7 @@ export function createEdtrIoMigration({
         },
         apiCache,
         dryRun,
+        db,
       })
 
       await apiCache.quit()
@@ -128,44 +132,54 @@ export function createEdtrIoMigration({
 }
 
 async function changeAllRevisions({
-  revisions,
+  query,
+  db,
   updateRevision,
   migrateState,
   apiCache,
   dryRun,
 }: {
-  revisions: Revision[]
+  query: string
+  db: Database
   updateRevision: (newContent: string, revision: Revision) => Promise<void>
   migrateState: (state: any) => any
   apiCache: ApiCache
   dryRun?: boolean
 }) {
-  for (const revision of revisions) {
-    let oldState
+  const querySQL = query + ' LIMIT ?'
+  let revisions: Revision[] = []
 
-    try {
-      oldState = JSON.parse(revision.content)
-    } catch (e) {
-      // Ignore (some articles have raw text)
-    }
+  do {
+    const lastRevisionId = revisions.at(-1)?.revisionId ?? 0
+    revisions = await db.runSql(querySQL, lastRevisionId, 5000)
 
-    if (!isPlugin(oldState)) {
-      // state of legacy markdown editor
-      continue
-    }
+    for (const revision of revisions) {
+      let oldState
 
-    const newState = JSON.stringify(migrateState(oldState))
+      try {
+        oldState = JSON.parse(revision.content)
+      } catch (e) {
+        // Ignore (some articles have raw text)
+      }
 
-    if (newState !== revision.content) {
-      if (dryRun) {
-        console.log('Revision: ', revision.revisionId, ' done.')
-      } else {
-        await updateRevision(newState, revision)
-        await apiCache.deleteUuid(revision.revisionId)
-        console.log('Updated revision', revision.revisionId)
+      if (!isPlugin(oldState)) {
+        // state of legacy markdown editor
+        continue
+      }
+
+      const newState = JSON.stringify(migrateState(oldState))
+
+      if (newState !== revision.content) {
+        if (dryRun) {
+          console.log('Revision: ', revision.revisionId, ' done.')
+        } else {
+          await updateRevision(newState, revision)
+          await apiCache.deleteUuid(revision.revisionId)
+          console.log('Updated revision', revision.revisionId)
+        }
       }
     }
-  }
+  } while (revisions.length > 0)
 }
 
 interface Revision {
