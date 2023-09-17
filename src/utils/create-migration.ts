@@ -1,6 +1,9 @@
 import { ApiCache } from './api-cache'
 import { CallbackBasedDatabase, createDatabase, Database } from './database'
 import { isPlugin } from './edtr-io'
+import { writeFileSync } from 'fs'
+import path from 'path'
+import { tmpdir } from 'os'
 
 export function createMigration(
   exports: any,
@@ -43,16 +46,18 @@ export function createEdtrIoMigration({
   exports,
   migrateState,
   dryRun,
+  migrationName = 'migration',
 }: {
   exports: any
   migrateState: (state: any) => any
   dryRun?: boolean
+  migrationName?: string
 }) {
   createMigration(exports, {
     up: async (db) => {
       const apiCache = new ApiCache()
 
-      await changeAllRevisions({
+      let logs = await changeAllRevisions({
         query: `
           SELECT
               entity_revision_field.id as id,
@@ -72,48 +77,61 @@ export function createEdtrIoMigration({
               and entity_revision_field.id > ?
         `,
         migrateState,
-        updateQuery: `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
+        table: 'entity_revision_field',
+        column: 'value',
         apiCache,
         dryRun,
         db,
       })
 
-      await changeAllRevisions({
-        query: `
-          SELECT
-            page_revision.id, page_revision.content, page_revision.id as revisionId
-          FROM page_revision WHERE page_revision.id > ?
-        `,
-        migrateState,
-        updateQuery: `UPDATE page_revision SET content = ? WHERE id = ?`,
-        apiCache,
-        dryRun,
-        db,
-      })
+      logs = logs.concat(
+        await changeAllRevisions({
+          query: `
+            SELECT
+              page_revision.id, page_revision.content, page_revision.id as revisionId
+            FROM page_revision WHERE page_revision.id > ?
+          `,
+          migrateState,
+          table: 'page_revision',
+          column: 'content',
+          apiCache,
+          dryRun,
+          db,
+        }),
+      )
 
-      await changeAllRevisions({
-        query: `
-          SELECT id, description as content, id as revisionId
-          FROM term_taxonomy WHERE id > ?
-        `,
-        migrateState,
-        updateQuery: `UPDATE term_taxonomy SET content = ? WHERE id = ?`,
-        apiCache,
-        dryRun,
-        db,
-      })
+      logs = logs.concat(
+        await changeAllRevisions({
+          query: `
+            SELECT id, description as content, id as revisionId
+            FROM term_taxonomy WHERE id > ?
+          `,
+          migrateState,
+          table: 'term_taxonomy',
+          column: 'content',
+          apiCache,
+          dryRun,
+          db,
+        }),
+      )
 
-      await changeAllRevisions({
-        query: `
-          SELECT id, description as content, id as revisionId
-          FROM user WHERE id != 191656 and description != "NULL" and id > ?
-        `,
-        migrateState,
-        updateQuery: `UPDATE user SET description = ? WHERE id = ?`,
-        apiCache,
-        dryRun,
-        db,
-      })
+      logs = logs.concat(
+        await changeAllRevisions({
+          query: `
+            SELECT id, description as content, id as revisionId
+            FROM user WHERE id != 191656 and description != "NULL" and id > ?
+          `,
+          migrateState,
+          table: 'user',
+          column: 'description',
+          apiCache,
+          dryRun,
+          db,
+        }),
+      )
+
+      const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
+      writeFileSync(logFileName, JSON.stringify(logs))
 
       await apiCache.quit()
     },
@@ -123,20 +141,23 @@ export function createEdtrIoMigration({
 async function changeAllRevisions({
   query,
   db,
-  updateQuery,
   migrateState,
   apiCache,
   dryRun,
+  table,
+  column,
 }: {
   query: string
   db: Database
-  updateQuery: string
+  table: string
+  column: string
   migrateState: (state: any) => any
   apiCache: ApiCache
   dryRun?: boolean
 }) {
   const querySQL = query + ' LIMIT ?'
   let revisions: Revision[] = []
+  const logs: Log[] = []
 
   do {
     const lastRevisionId = revisions.at(-1)?.revisionId ?? 0
@@ -163,19 +184,42 @@ async function changeAllRevisions({
         if (dryRun) {
           console.log('Revision: ', revision.revisionId, ' done.')
         } else {
-          await db.runSql(updateQuery, newContent, revision.id)
+          await db.runSql(
+            `UPDATE ${table} SET ${column} = ? WHERE id = ?`,
+            newContent,
+            revision.id,
+          )
+          logs.push({
+            table,
+            column,
+            uuid: revision.revisionId,
+            tableId: revision.id,
+            oldContent: revision.content,
+            newContent,
+          })
           await apiCache.deleteUuid(revision.revisionId)
           console.log('Updated revision', revision.revisionId)
         }
       }
     }
   } while (revisions.length > 0)
+
+  return logs
 }
 
 interface Revision {
   id: number
   content: string
   revisionId: number
+}
+
+interface Log {
+  uuid: number
+  tableId: number
+  oldContent: string
+  newContent: string
+  table: string
+  column: string
 }
 
 type Callback = (error?: Error) => void
