@@ -57,7 +57,7 @@ export function createEdtrIoMigration({
     up: async (db) => {
       const apiCache = new ApiCache()
 
-      let logs = await changeAllRevisions({
+      let logs = await changeUuidContents({
         query: `
           SELECT
               entity_revision_field.id as id,
@@ -85,7 +85,7 @@ export function createEdtrIoMigration({
       })
 
       logs = logs.concat(
-        await changeAllRevisions({
+        await changeUuidContents({
           query: `
             SELECT
               page_revision.id, page_revision.content, page_revision.id as revisionId
@@ -101,7 +101,7 @@ export function createEdtrIoMigration({
       )
 
       logs = logs.concat(
-        await changeAllRevisions({
+        await changeUuidContents({
           query: `
             SELECT id, description as content, id as revisionId
             FROM term_taxonomy WHERE id > ?
@@ -116,7 +116,7 @@ export function createEdtrIoMigration({
       )
 
       logs = logs.concat(
-        await changeAllRevisions({
+        await changeUuidContents({
           query: `
             SELECT id, description as content, id as revisionId
             FROM user WHERE id != 191656 and description != "NULL" and id > ?
@@ -138,7 +138,7 @@ export function createEdtrIoMigration({
   })
 }
 
-async function changeAllRevisions({
+async function changeUuidContents({
   query,
   db,
   migrateState,
@@ -156,18 +156,18 @@ async function changeAllRevisions({
   dryRun?: boolean
 }) {
   const querySQL = query + ' LIMIT ?'
-  let revisions: Revision[] = []
+  let uuids: Uuid[] = []
   const logs: Log[] = []
 
   do {
-    const lastRevisionId = revisions.at(-1)?.revisionId ?? 0
-    revisions = await db.runSql(querySQL, lastRevisionId, 5000)
+    const lastUuid = uuids.at(-1)?.uuid ?? 0
+    uuids = await db.runSql(querySQL, lastUuid, 5000)
 
-    for (const revision of revisions) {
+    for (const uuid of uuids) {
       let oldState
 
       try {
-        oldState = JSON.parse(revision.content)
+        oldState = JSON.parse(uuid.content)
       } catch (e) {
         // Ignore (some articles have raw text)
         continue
@@ -182,35 +182,35 @@ async function changeAllRevisions({
 
       if (newContent !== JSON.stringify(oldState)) {
         if (dryRun) {
-          console.log('Revision: ', revision.revisionId, ' done.')
+          console.log('Revision: ', uuid.uuid, ' done.')
         } else {
           await db.runSql(
             `UPDATE ${table} SET ${column} = ? WHERE id = ?`,
             newContent,
-            revision.id,
+            uuid.id,
           )
           logs.push({
             table,
             column,
-            uuid: revision.revisionId,
-            tableId: revision.id,
-            oldContent: revision.content,
+            uuid: uuid.uuid,
+            tableId: uuid.id,
+            oldContent: uuid.content,
             newContent,
           })
-          await apiCache.deleteUuid(revision.revisionId)
-          console.log('Updated revision', revision.revisionId)
+          await apiCache.deleteUuid(uuid.uuid)
+          console.log('Updated revision', uuid.uuid)
         }
       }
     }
-  } while (revisions.length > 0)
+  } while (uuids.length > 0)
 
   return logs
 }
 
-interface Revision {
+interface Uuid {
   id: number
   content: string
-  revisionId: number
+  uuid: number
 }
 
 interface Log {
