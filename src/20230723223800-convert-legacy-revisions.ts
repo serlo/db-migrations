@@ -4,7 +4,6 @@ import {
   Database,
   replacePluginState,
   transformPlugins,
-  transformSlateTypes,
 } from './utils'
 import * as t from 'io-ts'
 import * as f from 'fp-ts/function'
