@@ -59,13 +59,7 @@ export function createEdtrIoMigration({
           WHERE erf.field = 'content' and erf.id > ?
         `,
         migrateState,
-        async updateRevision(newContent, revision) {
-          await db.runSql(
-            `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
-            newContent,
-            revision.id,
-          )
-        },
+        updateQuery: `UPDATE entity_revision_field SET value = ? WHERE id = ?`,
         apiCache,
         dryRun,
         db,
@@ -78,13 +72,7 @@ export function createEdtrIoMigration({
           FROM page_revision WHERE page_revision.id > ?
         `,
         migrateState,
-        async updateRevision(newContent, revision) {
-          await db.runSql(
-            `UPDATE page_revision SET content = ? WHERE id = ?`,
-            newContent,
-            revision.id,
-          )
-        },
+        updateQuery: `UPDATE page_revision SET content = ? WHERE id = ?`,
         apiCache,
         dryRun,
         db,
@@ -96,13 +84,7 @@ export function createEdtrIoMigration({
           FROM term_taxonomy WHERE id > ?
         `,
         migrateState,
-        async updateRevision(newContent, revision) {
-          await db.runSql(
-            `UPDATE term_taxonomy SET content = ? WHERE id = ?`,
-            newContent,
-            revision.id,
-          )
-        },
+        updateQuery: `UPDATE term_taxonomy SET content = ? WHERE id = ?`,
         apiCache,
         dryRun,
         db,
@@ -114,13 +96,7 @@ export function createEdtrIoMigration({
           FROM user WHERE description != "NULL" and id > ?
         `,
         migrateState,
-        async updateRevision(newContent, revision) {
-          await db.runSql(
-            `UPDATE user SET description = ? WHERE id = ?`,
-            newContent,
-            revision.id,
-          )
-        },
+        updateQuery: `UPDATE user SET description = ? WHERE id = ?`,
         apiCache,
         dryRun,
         db,
@@ -134,14 +110,14 @@ export function createEdtrIoMigration({
 async function changeAllRevisions({
   query,
   db,
-  updateRevision,
+  updateQuery,
   migrateState,
   apiCache,
   dryRun,
 }: {
   query: string
   db: Database
-  updateRevision: (newContent: string, revision: Revision) => Promise<void>
+  updateQuery: string
   migrateState: (state: any) => any
   apiCache: ApiCache
   dryRun?: boolean
@@ -167,13 +143,13 @@ async function changeAllRevisions({
         continue
       }
 
-      const newState = JSON.stringify(migrateState(oldState))
+      const newContent = JSON.stringify(migrateState(oldState))
 
-      if (newState !== revision.content) {
+      if (newContent !== revision.content) {
         if (dryRun) {
           console.log('Revision: ', revision.revisionId, ' done.')
         } else {
-          await updateRevision(newState, revision)
+          await db.runSql(updateQuery, newContent, revision.id)
           await apiCache.deleteUuid(revision.revisionId)
           console.log('Updated revision', revision.revisionId)
         }
