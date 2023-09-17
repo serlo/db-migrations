@@ -1,3 +1,4 @@
+import { ApiCache } from './api-cache'
 import { CallbackBasedDatabase, createDatabase, Database } from './database'
 import { isPlugin } from './edtr-io'
 
@@ -49,6 +50,8 @@ export function createEdtrIoMigration({
 }) {
   createMigration(exports, {
     up: async (db) => {
+      const apiCache = new ApiCache()
+
       await changeAllRevisions({
         revisions: await db.runSql<Revision[]>(`
         SELECT erf.id, erf.value as content, erf.entity_revision_id as revisionId
@@ -63,6 +66,7 @@ export function createEdtrIoMigration({
             revision.id,
           )
         },
+        apiCache,
         dryRun,
       })
 
@@ -80,6 +84,7 @@ export function createEdtrIoMigration({
             revision.id,
           )
         },
+        apiCache,
       })
 
       await changeAllRevisions({
@@ -95,6 +100,7 @@ export function createEdtrIoMigration({
             revision.id,
           )
         },
+        apiCache,
       })
 
       await changeAllRevisions({
@@ -110,7 +116,10 @@ export function createEdtrIoMigration({
             revision.id,
           )
         },
+        apiCache,
       })
+
+      await apiCache.quit()
     },
   })
 }
@@ -119,11 +128,13 @@ async function changeAllRevisions({
   revisions,
   updateRevision,
   migrateState,
+  apiCache,
   dryRun,
 }: {
   revisions: Revision[]
   updateRevision: (newContent: string, revision: Revision) => Promise<void>
   migrateState: (state: any) => any
+  apiCache: ApiCache
   dryRun?: boolean
 }) {
   for (const revision of revisions) {
@@ -147,6 +158,7 @@ async function changeAllRevisions({
         console.log('Revision: ', revision.revisionId, ' done.')
       } else {
         await updateRevision(newState, revision)
+        await apiCache.deleteUuid(revision.revisionId)
         console.log('Updated revision', revision.revisionId)
       }
     }
