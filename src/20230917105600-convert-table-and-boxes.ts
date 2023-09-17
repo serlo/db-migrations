@@ -14,6 +14,7 @@ import {
 createEdtrIoMigration({
   exports: module.exports,
   migrateState: convertEdtrIo,
+  migrationName: '2023-09-17-upgrade-all-edtr-io-states',
 })
 
 function convertEdtrIo(content: unknown) {
