@@ -62,7 +62,7 @@ export function createEdtrIoMigration({
         query: `
           SELECT
               entity_revision_field.id as id,
-              entity_revision_field.entity_revision_id as revision_id,
+              entity_revision_field.entity_revision_id as uuid,
               entity_revision_field.value as content
             FROM entity_revision_field
             JOIN entity_revision on entity_revision_field.entity_revision_id = entity_revision.id
@@ -90,7 +90,7 @@ export function createEdtrIoMigration({
         await changeUuidContents({
           query: `
             SELECT
-              page_revision.id, page_revision.content, page_revision.id as revisionId
+              page_revision.id, page_revision.content, page_revision.id as uuid
             FROM page_revision WHERE page_revision.id > ?
           `,
           migrateState,
@@ -106,7 +106,7 @@ export function createEdtrIoMigration({
       logs = logs.concat(
         await changeUuidContents({
           query: `
-            SELECT id, description as content, id as revisionId
+            SELECT id, description as content, id as uuid
             FROM term_taxonomy WHERE id > ?
           `,
           migrateState,
@@ -122,7 +122,7 @@ export function createEdtrIoMigration({
       logs = logs.concat(
         await changeUuidContents({
           query: `
-            SELECT id, description as content, id as revisionId
+            SELECT id, description as content, id as uuid
             FROM user WHERE id != 191656 and description != "NULL" and id > ?
           `,
           migrateState,
@@ -164,8 +164,9 @@ async function changeUuidContents({
   const logs: Log[] = []
 
   do {
-    const lastUuid = uuids.at(-1)?.uuid ?? 0
-    uuids = await db.runSql(querySQL, lastUuid, 5000)
+    const lastID = uuids.at(-1)?.id ?? 0
+    console.log(`Last ID: ${lastID}`)
+    uuids = await db.runSql(querySQL, lastID, 5000)
 
     for (const uuid of uuids) {
       let oldState
