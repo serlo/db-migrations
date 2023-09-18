@@ -39,7 +39,7 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
-    "db-migrate": "^0.11.13",
+    "db-migrate": "^0.11.14",
     "db-migrate-mysql": "^2.3.2"
   },
   "devDependencies": {

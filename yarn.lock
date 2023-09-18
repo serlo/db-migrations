@@ -3627,7 +3627,7 @@ __metadata:
     "@types/react": ^18.2.21
     "@types/semver": ^7.5.1
     "@types/uuid": ^9.0.3
-    db-migrate: ^0.11.13
+    db-migrate: ^0.11.14
     db-migrate-mysql: ^2.3.2
     dotenv: ^16.3.1
     esbuild: ^0.19.3
@@ -5788,9 +5788,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"db-migrate@npm:^0.11.13":
-  version: 0.11.13
-  resolution: "db-migrate@npm:0.11.13"
+"db-migrate@npm:^0.11.14":
+  version: 0.11.14
+  resolution: "db-migrate@npm:0.11.14"
   dependencies:
     balanced-match: ^1.0.0
     bluebird: ^3.1.1
@@ -5809,7 +5809,7 @@ __metadata:
     yargs: ^15.3.1
   bin:
     db-migrate: bin/db-migrate
-  checksum: 49b3e2ebe5ba96c2a8b5fc088b557e8b4c35bc5fea5f3a289700b5914aa051a63d77c3796a4b2c24c06d95fa419a60f5d627a5223ea2c1bab4c844eef2dbb622
+  checksum: 4b65671a67c695b423e385101a61b331cbd87e7b0ae79ff6cdc3e395611d94a4b872cb64785228212349e7455224a91c27df3f973b2542c6d651afadf5101147
   languageName: node
   linkType: hard
 
