@@ -3582,7 +3582,7 @@ __metadata:
     "@types/react": ^17.0.47
     "@types/react-dom": ^18.2.6
     "@types/styled-components": ^5.1.27
-    "@types/uuid": ^8.3.4
+    "@types/uuid": ^9.0.4
     immutable: ^4.1.0
     parse5: ^7.1.2
     ramda: ^0.29.0
@@ -3600,7 +3600,7 @@ __metadata:
     tslib: ^2.4.0
     typescript: ^5.1.5
     unexpected: ^13.1.0
-    uuid: ^9.0.0
+    uuid: ^9.0.1
   languageName: unknown
   linkType: soft
 
@@ -3626,7 +3626,7 @@ __metadata:
     "@types/ramda": ^0.29.3
     "@types/react": ^18.2.21
     "@types/semver": ^7.5.1
-    "@types/uuid": ^9.0.3
+    "@types/uuid": ^9.0.4
     db-migrate: ^0.11.14
     db-migrate-mysql: ^2.3.2
     dotenv: ^16.3.1
@@ -3645,7 +3645,7 @@ __metadata:
     ts-node: ^10.9.1
     tslib: ^2.6.2
     typescript: ^5.2.2
-    uuid: ^9.0.0
+    uuid: ^9.0.1
   languageName: unknown
   linkType: soft
 
@@ -4090,17 +4090,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^8.3.4":
-  version: 8.3.4
-  resolution: "@types/uuid@npm:8.3.4"
-  checksum: 6f11f3ff70f30210edaa8071422d405e9c1d4e53abbe50fdce365150d3c698fe7bbff65c1e71ae080cbfb8fded860dbb5e174da96fdbbdfcaa3fb3daa474d20f
-  languageName: node
-  linkType: hard
-
-"@types/uuid@npm:^9.0.3":
-  version: 9.0.3
-  resolution: "@types/uuid@npm:9.0.3"
-  checksum: 3dde198defd71c067dd14b3050a8fe6d1ead5fe94ec318472e2c30a399d13f18941fe66cffabdcac7267177c9de2f975fdee6f0cc87cde610a2578e1ce4cc3af
+"@types/uuid@npm:^9.0.4":
+  version: 9.0.4
+  resolution: "@types/uuid@npm:9.0.4"
+  checksum: 356e2504456eaebbc43a5af5ca6c07d71f5ae5520b5767cb1c62cd0ec55475fc4ee3d16a2874f4a5fce78e40e8583025afd3a7d9ba41f82939de310665f53f0e
   languageName: node
   linkType: hard
 
@@ -14094,12 +14087,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "uuid@npm:9.0.0"
+"uuid@npm:^9.0.1":
+  version: 9.0.1
+  resolution: "uuid@npm:9.0.1"
   bin:
     uuid: dist/bin/uuid
-  checksum: 8dd2c83c43ddc7e1c71e36b60aea40030a6505139af6bee0f382ebcd1a56f6cd3028f7f06ffb07f8cf6ced320b76aea275284b224b002b289f89fe89c389b028
+  checksum: 39931f6da74e307f51c0fb463dc2462807531dc80760a9bff1e35af4316131b4fc3203d16da60ae33f07fdca5b56f3f1dd662da0c99fea9aaeab2004780cc5f4
   languageName: node
   linkType: hard
 
