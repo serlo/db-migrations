@@ -1,7 +1,8 @@
 import { ApiCache } from './api-cache'
 import { CallbackBasedDatabase, createDatabase, Database } from './database'
 import { isPlugin } from './edtr-io'
-import { writeFileSync } from 'fs'
+import type { WriteStream } from 'fs'
+import { createWriteStream } from 'fs'
 import path from 'path'
 import { tmpdir } from 'os'
 
@@ -57,25 +58,28 @@ export function createEdtrIoMigration({
     up: async (db) => {
       const apiCache = new ApiCache()
 
+      const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
+      const logFileStream = createWriteStream(logFileName)
+
       console.log('Convert entity revisions')
-      let logs = await changeUuidContents({
+      await changeUuidContents({
         query: `
           SELECT
-              entity_revision_field.id as id,
-              entity_revision_field.entity_revision_id as uuid,
-              entity_revision_field.value as content
-            FROM entity_revision_field
-            JOIN entity_revision on entity_revision_field.entity_revision_id = entity_revision.id
-            JOIN entity on entity.id = entity_revision.repository_id
-            JOIN type on type.id = entity.type_id
-            WHERE
-              ((entity_revision_field.field = "content" and type.name != "video")
-              or field = "reasoning" or field = "description")
-              and type.name not in ("input-expression-equal-match-challenge",
-                "input-number-exact-match-challenge", "input-string-normalized-match-challenge",
-                "math-puzzle", "multiple-choice-right-answer", "multiple-choice-wrong-answer",
-                "single-choice-right-answer", "single-choice-wrong-answer")
-              and entity_revision_field.id > ?
+            entity_revision_field.id as id,
+            entity_revision_field.entity_revision_id as uuid,
+            entity_revision_field.value as content
+          FROM entity_revision_field
+          JOIN entity_revision on entity_revision_field.entity_revision_id = entity_revision.id
+          JOIN entity on entity.id = entity_revision.repository_id
+          JOIN type on type.id = entity.type_id
+          WHERE
+            ((entity_revision_field.field = "content" and type.name != "video")
+            or field = "reasoning" or field = "description")
+            and type.name not in ("input-expression-equal-match-challenge",
+              "input-number-exact-match-challenge", "input-string-normalized-match-challenge",
+              "math-puzzle", "multiple-choice-right-answer", "multiple-choice-wrong-answer",
+              "single-choice-right-answer", "single-choice-wrong-answer")
+            and entity_revision_field.id > ?
         `,
         migrateState,
         table: 'entity_revision_field',
@@ -83,59 +87,55 @@ export function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        logFileStream,
       })
 
       console.log('Convert page revisions')
-      logs = logs.concat(
-        await changeUuidContents({
-          query: `
-            SELECT
-              page_revision.id, page_revision.content, page_revision.id as uuid
-            FROM page_revision WHERE page_revision.id > ?
-          `,
-          migrateState,
-          table: 'page_revision',
-          column: 'content',
-          apiCache,
-          dryRun,
-          db,
-        }),
-      )
+      await changeUuidContents({
+        query: `
+          SELECT
+            page_revision.id, page_revision.content, page_revision.id as uuid
+          FROM page_revision WHERE page_revision.id > ?
+        `,
+        migrateState,
+        table: 'page_revision',
+        column: 'content',
+        apiCache,
+        dryRun,
+        db,
+        logFileStream,
+      })
 
       console.log('Convert taxonomy terms')
-      logs = logs.concat(
-        await changeUuidContents({
-          query: `
-            SELECT id, description as content, id as uuid
-            FROM term_taxonomy WHERE id > ?
-          `,
-          migrateState,
-          table: 'term_taxonomy',
-          column: 'description',
-          apiCache,
-          dryRun,
-          db,
-        }),
-      )
+
+      await changeUuidContents({
+        query: `
+          SELECT id, description as content, id as uuid
+          FROM term_taxonomy WHERE id > ?
+        `,
+        migrateState,
+        table: 'term_taxonomy',
+        column: 'description',
+        apiCache,
+        dryRun,
+        db,
+        logFileStream,
+      })
 
       console.log('Convert users')
-      logs = logs.concat(
-        await changeUuidContents({
-          query: `
-            SELECT id, description as content, id as uuid
-            FROM user WHERE id != 191656 and description != "NULL" and id > ?
-          `,
-          migrateState,
-          table: 'user',
-          column: 'description',
-          apiCache,
-          dryRun,
-          db,
-        }),
-      )
-
-      const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
-      writeFileSync(logFileName, JSON.stringify(logs))
+      await changeUuidContents({
+        query: `
+          SELECT id, description as content, id as uuid
+          FROM user WHERE id != 191656 and description != "NULL" and id > ?
+        `,
+        migrateState,
+        table: 'user',
+        column: 'description',
+        apiCache,
+        dryRun,
+        db,
+        logFileStream,
+      })
 
       await apiCache.quit()
     },
@@ -150,6 +150,7 @@ async function changeUuidContents({
   dryRun,
   table,
   column,
+  logFileStream,
 }: {
   query: string
   db: Database
@@ -157,11 +158,11 @@ async function changeUuidContents({
   column: string
   migrateState: (state: any) => any
   apiCache: ApiCache
+  logFileStream: WriteStream
   dryRun?: boolean
 }) {
   const querySQL = query + ' LIMIT ?'
   let uuids: Uuid[] = []
-  const logs: Log[] = []
 
   do {
     const lastID = uuids.at(-1)?.id ?? 0
@@ -197,34 +198,26 @@ async function changeUuidContents({
 
         console.log(`Update ${table}.${column} with ID ${uuid.uuid}`)
 
-        logs.push({
-          table,
-          column,
-          uuid: uuid.uuid,
-          tableId: uuid.id,
-          oldContent: uuid.content,
-          newContent,
-        })
+        logFileStream.write(
+          JSON.stringify({
+            table,
+            column,
+            uuid: uuid.uuid,
+            tableId: uuid.id,
+            oldContent: uuid.content,
+            newContent,
+          }),
+        )
+        logFileStream.write('\n')
       }
     }
   } while (uuids.length > 0)
-
-  return logs
 }
 
 interface Uuid {
   id: number
   content: string
   uuid: number
-}
-
-interface Log {
-  uuid: number
-  tableId: number
-  oldContent: string
-  newContent: string
-  table: string
-  column: string
 }
 
 type Callback = (error?: Error) => void
