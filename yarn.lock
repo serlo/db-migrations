@@ -3625,7 +3625,7 @@ __metadata:
     "@types/node": ^18.17.19
     "@types/ramda": ^0.29.5
     "@types/react": ^18.2.21
-    "@types/semver": ^7.5.1
+    "@types/semver": ^7.5.3
     "@types/uuid": ^9.0.4
     db-migrate: ^0.11.14
     db-migrate-mysql: ^2.3.2
@@ -4033,10 +4033,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^7.5.1":
-  version: 7.5.1
-  resolution: "@types/semver@npm:7.5.1"
-  checksum: 2fffe938c7ac168711f245a16e1856a3578d77161ca17e29a05c3e02c7be3e9c5beefa29a3350f6c1bd982fb70aa28cc52e4845eb7d36246bcdc0377170d584d
+"@types/semver@npm:^7.5.3":
+  version: 7.5.3
+  resolution: "@types/semver@npm:7.5.3"
+  checksum: 349fdd1ab6c213bac5c991bac766bd07b8b12e63762462bb058740dcd2eb09c8193d068bb226f134661275f2022976214c0e727a4e5eb83ec1b131127c980d3e
   languageName: node
   linkType: hard
 
