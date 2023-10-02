@@ -45,6 +45,7 @@
     "db-migrate-mysql": "^2.3.2"
   },
   "devDependencies": {
+    "@jest/types": "^29.6.3",
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@types/jest": "^29.5.5",
     "@types/node": "^18.18.1",

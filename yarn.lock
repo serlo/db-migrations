@@ -2948,6 +2948,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@serlo/server-migrate@workspace:."
   dependencies:
+    "@jest/types": ^29.6.3
     "@serlo/markdown": Entkenntnis/tmp-serlo-markdown
     "@types/jest": ^29.5.5
     "@types/node": ^18.18.1
