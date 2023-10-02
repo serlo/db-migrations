@@ -2909,14 +2909,14 @@ __metadata:
     "@fortawesome/react-fontawesome": ^0.2.0
     "@serlo/markdown": Entkenntnis/tmp-serlo-markdown
     "@types/ramda": ^0.29.5
-    "@types/react": ^17.0.47
+    "@types/react": ^18.2.24
     "@types/react-dom": ^18.2.8
     "@types/styled-components": ^5.1.28
     "@types/uuid": ^9.0.4
     immutable: ^4.1.0
     parse5: ^7.1.2
     ramda: ^0.29.0
-    react: ^17.0.2
+    react: ^18.2.0
     react-dnd: ^16.0.1
     react-dnd-html5-backend: ^16.0.1
     react-dom: ^18.2.0
@@ -3332,7 +3332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17, @types/react@npm:^17.0.43, @types/react@npm:^17.0.47":
+"@types/react@npm:^17, @types/react@npm:^17.0.43":
   version: 17.0.65
   resolution: "@types/react@npm:17.0.65"
   dependencies:
@@ -3340,6 +3340,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: bb862f0f97a49e690cd5c62743307d17398ee62b87bbb2c85c1b01cb992244c0aef4ecdedaab0e8d33c6315d5a8f067cf90e7f1c366b8819678c59204e202932
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.24":
+  version: 18.2.24
+  resolution: "@types/react@npm:18.2.24"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: ea5d8204e71b1c9c6631f429a93f8e7be0614cdbdb464e92b3181bdccd8a7c45e30ded8b13da726684b6393f651317c36d54832e3d3cdea0da480a3f26268909
   languageName: node
   linkType: hard
 
@@ -10988,13 +10999,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^17.0.2":
-  version: 17.0.2
-  resolution: "react@npm:17.0.2"
+"react@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react@npm:18.2.0"
   dependencies:
     loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
+  checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
   languageName: node
   linkType: hard
 
