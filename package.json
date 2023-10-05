@@ -35,7 +35,7 @@
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node --experimental-specifier-resolution=node scripts/push-image",
     "start": "yarn start:docker",
-    "start:docker": "docker-compose up mysql redis --detach",
+    "start:docker": "docker-compose up -d mysql redis",
     "stop": "yarn stop:docker",
     "stop:docker": "docker-compose down",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
