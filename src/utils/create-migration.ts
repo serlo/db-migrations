@@ -107,7 +107,6 @@ export function createEdtrIoMigration({
       })
 
       console.log('Convert taxonomy terms')
-
       await changeUuidContents({
         query: `
           SELECT id, description as content, id as uuid
@@ -120,9 +119,8 @@ export function createEdtrIoMigration({
         dryRun,
         db,
         logFileStream,
-      })
-
-      console.log('Convert users')
+      }),
+        console.log('Convert users')
       await changeUuidContents({
         query: `
           SELECT id, description as content, id as uuid

@@ -190,7 +190,7 @@ const LegacyEquationsState = t.type({
   ),
 })
 
-const migrateEquations = replacePluginState({
+export const migrateEquations = replacePluginState({
   equation: ({ state }) => {
     if (LegacyEquationsState.is(state)) {
       return migrateEquationsState(
@@ -219,7 +219,7 @@ const LayoutPluginDecoder = t.type({
   ),
 })
 
-const removeLayoutPlugins = transformPlugins({
+export const removeLayoutPlugins = transformPlugins({
   layout: (value) => {
     if (LayoutPluginDecoder.is(value)) {
       return value.state.flatMap(({ child }) => {
