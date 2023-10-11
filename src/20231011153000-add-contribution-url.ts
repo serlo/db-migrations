@@ -16,7 +16,7 @@ createMigration(module.exports, {
     ]
 
     for (const row of rowsToChange) {
-      await db.runSql(`UPDATE license SET contribution_url = url, url = ${row[1]} WHERE id = ${row[0]};`)
+      await db.runSql(`UPDATE license SET contribution_url = url, url = '${row[1]}' WHERE id = ${row[0]};`)
     }
   },
 })
