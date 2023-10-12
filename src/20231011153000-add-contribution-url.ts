@@ -24,18 +24,18 @@ createMigration(module.exports, {
 
     const rowsToAdjustLicenseUrl = [
       // Add ShareAlike
-      [9, "https://creativecommons.org/licenses/by-sa/4.0/"],
-      [13, "https://creativecommons.org/licenses/by-sa/4.0/"],
-      [17, "https://creativecommons.org/licenses/by-sa/4.0/"],
+      [9, 'https://creativecommons.org/licenses/by-sa/4.0/'],
+      [13, 'https://creativecommons.org/licenses/by-sa/4.0/'],
+      [17, 'https://creativecommons.org/licenses/by-sa/4.0/'],
       // Change deed language
-      [16, "https://creativecommons.org/licenses/by-nd/4.0/deed.de"],
+      [16, 'https://creativecommons.org/licenses/by-nd/4.0/deed.de'],
       // Add ShareAlike and change deed language
-      [18, "http://creativecommons.org/licenses/by-sa/4.0/deed.fr"],
+      [18, 'http://creativecommons.org/licenses/by-sa/4.0/deed.fr'],
     ]
 
     for (const rowToAdjustLicenseUrl of rowsToAdjustLicenseUrl) {
       await db.runSql(
-        `UPDATE license SET url = '${rowToAdjustLicenseUrl[1]}' WHERE id = ${rowToAdjustLicenseUrl[0]};`
+        `UPDATE license SET url = '${rowToAdjustLicenseUrl[1]}' WHERE id = ${rowToAdjustLicenseUrl[0]};`,
       )
     }
   },
