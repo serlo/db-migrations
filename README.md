@@ -26,7 +26,7 @@ Note: Also make sure you have `cmake` installed on your machine (e.g.
 
 2. You need to build a migration by running
 `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
-new file in `dist`. Both files in `dist` and `src` need to be added in the PR.
+new file in `migrations`. Both files in `migrations` and `src` need to be added in the PR.
 _Notice that any changes in other directories that are imported by the file will
 be built together!_
 <!-- TODO: in conception still in the new infrastructure.
