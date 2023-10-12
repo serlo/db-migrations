@@ -3,7 +3,7 @@ import { createMigration } from './utils'
 createMigration(module.exports, {
   up: async (db) => {
     await db.runSql(
-      'ALTER TABLE license ADD attribution_url VARCHAR(255) DEFAULT NULL;',
+      'ALTER TABLE license ADD original_author_url VARCHAR(255) DEFAULT NULL;',
     )
 
     const rowsToAddLicenseUrl = [
@@ -18,7 +18,7 @@ createMigration(module.exports, {
 
     for (const rowToAddLicenseUrl of rowsToAddLicenseUrl) {
       await db.runSql(
-        `UPDATE license SET attribution_url = url, url = '${rowToAddLicenseUrl[1]}' WHERE id = ${rowToAddLicenseUrl[0]};`,
+        `UPDATE license SET original_author_url = url, url = '${rowToAddLicenseUrl[1]}' WHERE id = ${rowToAddLicenseUrl[0]};`,
       )
     }
 
