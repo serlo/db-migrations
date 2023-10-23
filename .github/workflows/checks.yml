@@ -38,7 +38,6 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
-      - run: yarn mysql:delete-all-migrations:ci
       - run: yarn migrate:ts
       - uses: ./.github/actions/test-migrations
 
@@ -50,6 +49,5 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
-      - run: yarn mysql:delete-all-migrations:ci
       - run: yarn migrate:docker
       - uses: ./.github/actions/test-migrations
