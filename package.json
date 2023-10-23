@@ -30,7 +30,6 @@
     "mysql:ci": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
-    "mysql:delete-all-migrations:ci": "yarn mysql:ci --execute 'DELETE FROM migrations'",
     "mysql:import-anonymous-data": "ts-node --experimental-specifier-resolution=node scripts/mysql/mysql-import-anonymous-data",
     "mysql:list-migrations": "yarn mysql --execute 'SELECT * FROM migrations'",
     "mysql:list-migrations:ci": "yarn mysql:ci --execute 'SELECT * FROM migrations'",
