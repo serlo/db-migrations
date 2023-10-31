@@ -11,6 +11,7 @@ const ExerciseContentDecoder = t.type({
   plugin: t.literal('exercise'),
   state: t.record(t.string, t.unknown),
 })
+const RowPluginDecoder = t.type({ plugin: t.literal('rows') })
 
 createMigration(exports, {
   up: async (db) => {
@@ -57,7 +58,7 @@ async function updateExercise(
 
   let exerciseContent = await getContent(db, exercise)
 
-  if (t.type({ plugin: t.literal('rows') }).is(exerciseContent)) {
+  if (RowPluginDecoder.is(exerciseContent)) {
     exerciseContent = {
       plugin: 'exercise',
       state: { content: exerciseContent },
@@ -72,9 +73,19 @@ async function updateExercise(
 
   if (exerciseContent.state.solution != null) return
 
-  const solutionContent = await getContent(db, solution)
+  let solutionContent = await getContent(db, solution)
 
   if (solutionContent == null) return
+
+  if (RowPluginDecoder.is(solutionContent)) {
+    solutionContent = {
+      plugin: 'solution',
+      state: {
+        strategy: { plugin: 'text' },
+        steps: solutionContent,
+      },
+    }
+  }
 
   if (!SolutionContentDecoder.is(solutionContent)) {
     throw new Error(
