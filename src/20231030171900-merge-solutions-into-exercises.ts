@@ -5,7 +5,19 @@ import { ApiCache } from './utils/api-cache'
 
 const SolutionContentDecoder = t.type({
   plugin: t.literal('solution'),
-  state: t.record(t.string, t.unknown),
+  state: t.intersection([
+    t.type({
+      steps: t.type({
+        plugin: t.literal('rows'),
+      }),
+      strategy: t.type({
+        // TODO: We need another migration to fix solutions with a box
+        // as a strategy
+        plugin: t.union([t.literal('text'), t.literal('box')]),
+      }),
+    }),
+    t.partial({ licenseId: t.number }),
+  ]),
 })
 const ExerciseContentDecoder = t.type({
   plugin: t.literal('exercise'),
