@@ -55,10 +55,14 @@ async function updateExercise(
 
   if (solution === null) return
 
-  const exerciseContent = await getContent(db, exercise)
+  let exerciseContent = await getContent(db, exercise)
 
-  // TODO: Fix content of those exercises
-  if (t.type({ plugin: t.literal('rows') }).is(exerciseContent)) return
+  if (t.type({ plugin: t.literal('rows') }).is(exerciseContent)) {
+    exerciseContent = {
+      plugin: 'exercise',
+      state: { content: exerciseContent },
+    }
+  }
 
   if (!ExerciseContentDecoder.is(exerciseContent)) {
     throw new Error(
