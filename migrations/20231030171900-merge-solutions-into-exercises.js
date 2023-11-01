@@ -709,118 +709,6 @@ var require_Apply = __commonJS({
   }
 });
 
-// node_modules/fp-ts/lib/Functor.js
-var require_Functor = __commonJS({
-  "node_modules/fp-ts/lib/Functor.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.asUnit = exports2.as = exports2.getFunctorComposition = exports2.let = exports2.bindTo = exports2.flap = exports2.map = void 0;
-    var function_1 = require_function();
-    function map(F, G) {
-      return function(f) {
-        return function(fa) {
-          return F.map(fa, function(ga) {
-            return G.map(ga, f);
-          });
-        };
-      };
-    }
-    exports2.map = map;
-    function flap(F) {
-      return function(a) {
-        return function(fab) {
-          return F.map(fab, function(f) {
-            return f(a);
-          });
-        };
-      };
-    }
-    exports2.flap = flap;
-    function bindTo(F) {
-      return function(name) {
-        return function(fa) {
-          return F.map(fa, function(a) {
-            var _a;
-            return _a = {}, _a[name] = a, _a;
-          });
-        };
-      };
-    }
-    exports2.bindTo = bindTo;
-    function let_(F) {
-      return function(name, f) {
-        return function(fa) {
-          return F.map(fa, function(a) {
-            var _a;
-            return Object.assign({}, a, (_a = {}, _a[name] = f(a), _a));
-          });
-        };
-      };
-    }
-    exports2.let = let_;
-    function getFunctorComposition(F, G) {
-      var _map = map(F, G);
-      return {
-        map: function(fga, f) {
-          return (0, function_1.pipe)(fga, _map(f));
-        }
-      };
-    }
-    exports2.getFunctorComposition = getFunctorComposition;
-    function as(F) {
-      return function(self, b) {
-        return F.map(self, function() {
-          return b;
-        });
-      };
-    }
-    exports2.as = as;
-    function asUnit(F) {
-      var asM = as(F);
-      return function(self) {
-        return asM(self, void 0);
-      };
-    }
-    exports2.asUnit = asUnit;
-  }
-});
-
-// node_modules/fp-ts/lib/Applicative.js
-var require_Applicative = __commonJS({
-  "node_modules/fp-ts/lib/Applicative.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.getApplicativeComposition = exports2.getApplicativeMonoid = void 0;
-    var Apply_1 = require_Apply();
-    var function_1 = require_function();
-    var Functor_1 = require_Functor();
-    function getApplicativeMonoid(F) {
-      var f = (0, Apply_1.getApplySemigroup)(F);
-      return function(M) {
-        return {
-          concat: f(M).concat,
-          empty: F.of(M.empty)
-        };
-      };
-    }
-    exports2.getApplicativeMonoid = getApplicativeMonoid;
-    function getApplicativeComposition(F, G) {
-      var map = (0, Functor_1.getFunctorComposition)(F, G).map;
-      var _ap = (0, Apply_1.ap)(F, G);
-      return {
-        map,
-        of: function(a) {
-          return F.of(G.of(a));
-        },
-        ap: function(fgab, fga) {
-          return (0, function_1.pipe)(fgab, _ap(fga));
-        }
-      };
-    }
-    exports2.getApplicativeComposition = getApplicativeComposition;
-  }
-});
-
 // node_modules/fp-ts/lib/Chain.js
 var require_Chain = __commonJS({
   "node_modules/fp-ts/lib/Chain.js"(exports2) {
@@ -859,23 +747,6 @@ var require_Chain = __commonJS({
       };
     }
     exports2.bind = bind;
-  }
-});
-
-// node_modules/fp-ts/lib/ChainRec.js
-var require_ChainRec = __commonJS({
-  "node_modules/fp-ts/lib/ChainRec.js"(exports2) {
-    "use strict";
-    Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.tailRec = void 0;
-    var tailRec = function(startWith, f) {
-      var ab = f(startWith);
-      while (ab._tag === "Left") {
-        ab = f(ab.left);
-      }
-      return ab.right;
-    };
-    exports2.tailRec = tailRec;
   }
 });
 
@@ -1000,6 +871,2154 @@ var require_FromEither = __commonJS({
       };
     }
     exports2.tapEither = tapEither;
+  }
+});
+
+// node_modules/fp-ts/lib/Functor.js
+var require_Functor = __commonJS({
+  "node_modules/fp-ts/lib/Functor.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.asUnit = exports2.as = exports2.getFunctorComposition = exports2.let = exports2.bindTo = exports2.flap = exports2.map = void 0;
+    var function_1 = require_function();
+    function map(F, G) {
+      return function(f) {
+        return function(fa) {
+          return F.map(fa, function(ga) {
+            return G.map(ga, f);
+          });
+        };
+      };
+    }
+    exports2.map = map;
+    function flap(F) {
+      return function(a) {
+        return function(fab) {
+          return F.map(fab, function(f) {
+            return f(a);
+          });
+        };
+      };
+    }
+    exports2.flap = flap;
+    function bindTo(F) {
+      return function(name) {
+        return function(fa) {
+          return F.map(fa, function(a) {
+            var _a;
+            return _a = {}, _a[name] = a, _a;
+          });
+        };
+      };
+    }
+    exports2.bindTo = bindTo;
+    function let_(F) {
+      return function(name, f) {
+        return function(fa) {
+          return F.map(fa, function(a) {
+            var _a;
+            return Object.assign({}, a, (_a = {}, _a[name] = f(a), _a));
+          });
+        };
+      };
+    }
+    exports2.let = let_;
+    function getFunctorComposition(F, G) {
+      var _map = map(F, G);
+      return {
+        map: function(fga, f) {
+          return (0, function_1.pipe)(fga, _map(f));
+        }
+      };
+    }
+    exports2.getFunctorComposition = getFunctorComposition;
+    function as(F) {
+      return function(self, b) {
+        return F.map(self, function() {
+          return b;
+        });
+      };
+    }
+    exports2.as = as;
+    function asUnit(F) {
+      var asM = as(F);
+      return function(self) {
+        return asM(self, void 0);
+      };
+    }
+    exports2.asUnit = asUnit;
+  }
+});
+
+// node_modules/fp-ts/lib/Eq.js
+var require_Eq = __commonJS({
+  "node_modules/fp-ts/lib/Eq.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.eqDate = exports2.eqNumber = exports2.eqString = exports2.eqBoolean = exports2.eq = exports2.strictEqual = exports2.getStructEq = exports2.getTupleEq = exports2.Contravariant = exports2.getMonoid = exports2.getSemigroup = exports2.eqStrict = exports2.URI = exports2.contramap = exports2.tuple = exports2.struct = exports2.fromEquals = void 0;
+    var function_1 = require_function();
+    var fromEquals = function(equals) {
+      return {
+        equals: function(x, y) {
+          return x === y || equals(x, y);
+        }
+      };
+    };
+    exports2.fromEquals = fromEquals;
+    var struct = function(eqs) {
+      return (0, exports2.fromEquals)(function(first, second) {
+        for (var key in eqs) {
+          if (!eqs[key].equals(first[key], second[key])) {
+            return false;
+          }
+        }
+        return true;
+      });
+    };
+    exports2.struct = struct;
+    var tuple = function() {
+      var eqs = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        eqs[_i] = arguments[_i];
+      }
+      return (0, exports2.fromEquals)(function(first, second) {
+        return eqs.every(function(E, i) {
+          return E.equals(first[i], second[i]);
+        });
+      });
+    };
+    exports2.tuple = tuple;
+    var contramap_ = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.contramap)(f));
+    };
+    var contramap = function(f) {
+      return function(fa) {
+        return (0, exports2.fromEquals)(function(x, y) {
+          return fa.equals(f(x), f(y));
+        });
+      };
+    };
+    exports2.contramap = contramap;
+    exports2.URI = "Eq";
+    exports2.eqStrict = {
+      equals: function(a, b) {
+        return a === b;
+      }
+    };
+    var empty = {
+      equals: function() {
+        return true;
+      }
+    };
+    var getSemigroup = function() {
+      return {
+        concat: function(x, y) {
+          return (0, exports2.fromEquals)(function(a, b) {
+            return x.equals(a, b) && y.equals(a, b);
+          });
+        }
+      };
+    };
+    exports2.getSemigroup = getSemigroup;
+    var getMonoid = function() {
+      return {
+        concat: (0, exports2.getSemigroup)().concat,
+        empty
+      };
+    };
+    exports2.getMonoid = getMonoid;
+    exports2.Contravariant = {
+      URI: exports2.URI,
+      contramap: contramap_
+    };
+    exports2.getTupleEq = exports2.tuple;
+    exports2.getStructEq = exports2.struct;
+    exports2.strictEqual = exports2.eqStrict.equals;
+    exports2.eq = exports2.Contravariant;
+    exports2.eqBoolean = exports2.eqStrict;
+    exports2.eqString = exports2.eqStrict;
+    exports2.eqNumber = exports2.eqStrict;
+    exports2.eqDate = {
+      equals: function(first, second) {
+        return first.valueOf() === second.valueOf();
+      }
+    };
+  }
+});
+
+// node_modules/fp-ts/lib/Ord.js
+var require_Ord = __commonJS({
+  "node_modules/fp-ts/lib/Ord.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.ordDate = exports2.ordNumber = exports2.ordString = exports2.ordBoolean = exports2.ord = exports2.getDualOrd = exports2.getTupleOrd = exports2.between = exports2.clamp = exports2.max = exports2.min = exports2.geq = exports2.leq = exports2.gt = exports2.lt = exports2.equals = exports2.trivial = exports2.Contravariant = exports2.getMonoid = exports2.getSemigroup = exports2.URI = exports2.contramap = exports2.reverse = exports2.tuple = exports2.fromCompare = exports2.equalsDefault = void 0;
+    var Eq_1 = require_Eq();
+    var function_1 = require_function();
+    var equalsDefault = function(compare2) {
+      return function(first, second) {
+        return first === second || compare2(first, second) === 0;
+      };
+    };
+    exports2.equalsDefault = equalsDefault;
+    var fromCompare = function(compare2) {
+      return {
+        equals: (0, exports2.equalsDefault)(compare2),
+        compare: function(first, second) {
+          return first === second ? 0 : compare2(first, second);
+        }
+      };
+    };
+    exports2.fromCompare = fromCompare;
+    var tuple = function() {
+      var ords = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        ords[_i] = arguments[_i];
+      }
+      return (0, exports2.fromCompare)(function(first, second) {
+        var i = 0;
+        for (; i < ords.length - 1; i++) {
+          var r = ords[i].compare(first[i], second[i]);
+          if (r !== 0) {
+            return r;
+          }
+        }
+        return ords[i].compare(first[i], second[i]);
+      });
+    };
+    exports2.tuple = tuple;
+    var reverse = function(O) {
+      return (0, exports2.fromCompare)(function(first, second) {
+        return O.compare(second, first);
+      });
+    };
+    exports2.reverse = reverse;
+    var contramap_ = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.contramap)(f));
+    };
+    var contramap = function(f) {
+      return function(fa) {
+        return (0, exports2.fromCompare)(function(first, second) {
+          return fa.compare(f(first), f(second));
+        });
+      };
+    };
+    exports2.contramap = contramap;
+    exports2.URI = "Ord";
+    var getSemigroup = function() {
+      return {
+        concat: function(first, second) {
+          return (0, exports2.fromCompare)(function(a, b) {
+            var ox = first.compare(a, b);
+            return ox !== 0 ? ox : second.compare(a, b);
+          });
+        }
+      };
+    };
+    exports2.getSemigroup = getSemigroup;
+    var getMonoid = function() {
+      return {
+        concat: (0, exports2.getSemigroup)().concat,
+        empty: (0, exports2.fromCompare)(function() {
+          return 0;
+        })
+      };
+    };
+    exports2.getMonoid = getMonoid;
+    exports2.Contravariant = {
+      URI: exports2.URI,
+      contramap: contramap_
+    };
+    exports2.trivial = {
+      equals: function_1.constTrue,
+      compare: /* @__PURE__ */ (0, function_1.constant)(0)
+    };
+    var equals = function(O) {
+      return function(second) {
+        return function(first) {
+          return first === second || O.compare(first, second) === 0;
+        };
+      };
+    };
+    exports2.equals = equals;
+    var lt = function(O) {
+      return function(first, second) {
+        return O.compare(first, second) === -1;
+      };
+    };
+    exports2.lt = lt;
+    var gt = function(O) {
+      return function(first, second) {
+        return O.compare(first, second) === 1;
+      };
+    };
+    exports2.gt = gt;
+    var leq = function(O) {
+      return function(first, second) {
+        return O.compare(first, second) !== 1;
+      };
+    };
+    exports2.leq = leq;
+    var geq = function(O) {
+      return function(first, second) {
+        return O.compare(first, second) !== -1;
+      };
+    };
+    exports2.geq = geq;
+    var min = function(O) {
+      return function(first, second) {
+        return first === second || O.compare(first, second) < 1 ? first : second;
+      };
+    };
+    exports2.min = min;
+    var max = function(O) {
+      return function(first, second) {
+        return first === second || O.compare(first, second) > -1 ? first : second;
+      };
+    };
+    exports2.max = max;
+    var clamp = function(O) {
+      var minO = (0, exports2.min)(O);
+      var maxO = (0, exports2.max)(O);
+      return function(low, hi) {
+        return function(a) {
+          return maxO(minO(a, hi), low);
+        };
+      };
+    };
+    exports2.clamp = clamp;
+    var between = function(O) {
+      var ltO = (0, exports2.lt)(O);
+      var gtO = (0, exports2.gt)(O);
+      return function(low, hi) {
+        return function(a) {
+          return ltO(a, low) || gtO(a, hi) ? false : true;
+        };
+      };
+    };
+    exports2.between = between;
+    exports2.getTupleOrd = exports2.tuple;
+    exports2.getDualOrd = exports2.reverse;
+    exports2.ord = exports2.Contravariant;
+    function compare(first, second) {
+      return first < second ? -1 : first > second ? 1 : 0;
+    }
+    var strictOrd = {
+      equals: Eq_1.eqStrict.equals,
+      compare
+    };
+    exports2.ordBoolean = strictOrd;
+    exports2.ordString = strictOrd;
+    exports2.ordNumber = strictOrd;
+    exports2.ordDate = (0, function_1.pipe)(
+      exports2.ordNumber,
+      /* @__PURE__ */ (0, exports2.contramap)(function(date) {
+        return date.valueOf();
+      })
+    );
+  }
+});
+
+// node_modules/fp-ts/lib/Magma.js
+var require_Magma = __commonJS({
+  "node_modules/fp-ts/lib/Magma.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.concatAll = exports2.endo = exports2.filterSecond = exports2.filterFirst = exports2.reverse = void 0;
+    var reverse = function(M) {
+      return {
+        concat: function(first, second) {
+          return M.concat(second, first);
+        }
+      };
+    };
+    exports2.reverse = reverse;
+    var filterFirst = function(predicate) {
+      return function(M) {
+        return {
+          concat: function(first, second) {
+            return predicate(first) ? M.concat(first, second) : second;
+          }
+        };
+      };
+    };
+    exports2.filterFirst = filterFirst;
+    var filterSecond = function(predicate) {
+      return function(M) {
+        return {
+          concat: function(first, second) {
+            return predicate(second) ? M.concat(first, second) : first;
+          }
+        };
+      };
+    };
+    exports2.filterSecond = filterSecond;
+    var endo = function(f) {
+      return function(M) {
+        return {
+          concat: function(first, second) {
+            return M.concat(f(first), f(second));
+          }
+        };
+      };
+    };
+    exports2.endo = endo;
+    var concatAll = function(M) {
+      return function(startWith) {
+        return function(as) {
+          return as.reduce(function(a, acc) {
+            return M.concat(a, acc);
+          }, startWith);
+        };
+      };
+    };
+    exports2.concatAll = concatAll;
+  }
+});
+
+// node_modules/fp-ts/lib/Semigroup.js
+var require_Semigroup = __commonJS({
+  "node_modules/fp-ts/lib/Semigroup.js"(exports2) {
+    "use strict";
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    });
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule)
+        return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod)
+          if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+            __createBinding(result, mod, k);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.semigroupProduct = exports2.semigroupSum = exports2.semigroupString = exports2.getFunctionSemigroup = exports2.semigroupAny = exports2.semigroupAll = exports2.fold = exports2.getIntercalateSemigroup = exports2.getMeetSemigroup = exports2.getJoinSemigroup = exports2.getDualSemigroup = exports2.getStructSemigroup = exports2.getTupleSemigroup = exports2.getFirstSemigroup = exports2.getLastSemigroup = exports2.getObjectSemigroup = exports2.semigroupVoid = exports2.concatAll = exports2.last = exports2.first = exports2.intercalate = exports2.tuple = exports2.struct = exports2.reverse = exports2.constant = exports2.max = exports2.min = void 0;
+    var function_1 = require_function();
+    var _ = __importStar(require_internal());
+    var M = __importStar(require_Magma());
+    var Or = __importStar(require_Ord());
+    var min = function(O) {
+      return {
+        concat: Or.min(O)
+      };
+    };
+    exports2.min = min;
+    var max = function(O) {
+      return {
+        concat: Or.max(O)
+      };
+    };
+    exports2.max = max;
+    var constant = function(a) {
+      return {
+        concat: function() {
+          return a;
+        }
+      };
+    };
+    exports2.constant = constant;
+    exports2.reverse = M.reverse;
+    var struct = function(semigroups) {
+      return {
+        concat: function(first2, second) {
+          var r = {};
+          for (var k in semigroups) {
+            if (_.has.call(semigroups, k)) {
+              r[k] = semigroups[k].concat(first2[k], second[k]);
+            }
+          }
+          return r;
+        }
+      };
+    };
+    exports2.struct = struct;
+    var tuple = function() {
+      var semigroups = [];
+      for (var _i = 0; _i < arguments.length; _i++) {
+        semigroups[_i] = arguments[_i];
+      }
+      return {
+        concat: function(first2, second) {
+          return semigroups.map(function(s, i) {
+            return s.concat(first2[i], second[i]);
+          });
+        }
+      };
+    };
+    exports2.tuple = tuple;
+    var intercalate = function(middle) {
+      return function(S) {
+        return {
+          concat: function(x, y) {
+            return S.concat(x, S.concat(middle, y));
+          }
+        };
+      };
+    };
+    exports2.intercalate = intercalate;
+    var first = function() {
+      return { concat: function_1.identity };
+    };
+    exports2.first = first;
+    var last = function() {
+      return { concat: function(_2, y) {
+        return y;
+      } };
+    };
+    exports2.last = last;
+    exports2.concatAll = M.concatAll;
+    exports2.semigroupVoid = (0, exports2.constant)(void 0);
+    var getObjectSemigroup = function() {
+      return {
+        concat: function(first2, second) {
+          return Object.assign({}, first2, second);
+        }
+      };
+    };
+    exports2.getObjectSemigroup = getObjectSemigroup;
+    exports2.getLastSemigroup = exports2.last;
+    exports2.getFirstSemigroup = exports2.first;
+    exports2.getTupleSemigroup = exports2.tuple;
+    exports2.getStructSemigroup = exports2.struct;
+    exports2.getDualSemigroup = exports2.reverse;
+    exports2.getJoinSemigroup = exports2.max;
+    exports2.getMeetSemigroup = exports2.min;
+    exports2.getIntercalateSemigroup = exports2.intercalate;
+    function fold(S) {
+      var concatAllS = (0, exports2.concatAll)(S);
+      return function(startWith, as) {
+        return as === void 0 ? concatAllS(startWith) : concatAllS(startWith)(as);
+      };
+    }
+    exports2.fold = fold;
+    exports2.semigroupAll = {
+      concat: function(x, y) {
+        return x && y;
+      }
+    };
+    exports2.semigroupAny = {
+      concat: function(x, y) {
+        return x || y;
+      }
+    };
+    exports2.getFunctionSemigroup = function_1.getSemigroup;
+    exports2.semigroupString = {
+      concat: function(x, y) {
+        return x + y;
+      }
+    };
+    exports2.semigroupSum = {
+      concat: function(x, y) {
+        return x + y;
+      }
+    };
+    exports2.semigroupProduct = {
+      concat: function(x, y) {
+        return x * y;
+      }
+    };
+  }
+});
+
+// node_modules/fp-ts/lib/ReadonlyNonEmptyArray.js
+var require_ReadonlyNonEmptyArray = __commonJS({
+  "node_modules/fp-ts/lib/ReadonlyNonEmptyArray.js"(exports2) {
+    "use strict";
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    });
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule)
+        return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod)
+          if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+            __createBinding(result, mod, k);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    var __spreadArray = exports2 && exports2.__spreadArray || function(to, from, pack) {
+      if (pack || arguments.length === 2)
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+          if (ar || !(i in from)) {
+            if (!ar)
+              ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+          }
+        }
+      return to.concat(ar || Array.prototype.slice.call(from));
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.reduceRight = exports2.foldMap = exports2.reduce = exports2.mapWithIndex = exports2.map = exports2.flatten = exports2.duplicate = exports2.extend = exports2.flatMap = exports2.ap = exports2.alt = exports2.altW = exports2.of = exports2.chunksOf = exports2.splitAt = exports2.chop = exports2.chainWithIndex = exports2.intersperse = exports2.prependAll = exports2.unzip = exports2.zip = exports2.zipWith = exports2.modifyAt = exports2.updateAt = exports2.sort = exports2.groupBy = exports2.group = exports2.reverse = exports2.concat = exports2.concatW = exports2.fromArray = exports2.unappend = exports2.unprepend = exports2.range = exports2.replicate = exports2.makeBy = exports2.fromReadonlyArray = exports2.rotate = exports2.union = exports2.sortBy = exports2.uniq = exports2.unsafeUpdateAt = exports2.unsafeInsertAt = exports2.append = exports2.appendW = exports2.prepend = exports2.prependW = exports2.isOutOfBound = exports2.isNonEmpty = exports2.empty = void 0;
+    exports2.groupSort = exports2.chain = exports2.intercalate = exports2.updateLast = exports2.modifyLast = exports2.updateHead = exports2.modifyHead = exports2.matchRight = exports2.matchLeft = exports2.concatAll = exports2.max = exports2.min = exports2.init = exports2.last = exports2.tail = exports2.head = exports2.apS = exports2.bind = exports2.let = exports2.bindTo = exports2.Do = exports2.Comonad = exports2.Alt = exports2.TraversableWithIndex = exports2.Traversable = exports2.FoldableWithIndex = exports2.Foldable = exports2.Monad = exports2.chainFirst = exports2.Chain = exports2.Applicative = exports2.apSecond = exports2.apFirst = exports2.Apply = exports2.FunctorWithIndex = exports2.Pointed = exports2.flap = exports2.Functor = exports2.getUnionSemigroup = exports2.getEq = exports2.getSemigroup = exports2.getShow = exports2.URI = exports2.extract = exports2.traverseWithIndex = exports2.sequence = exports2.traverse = exports2.reduceRightWithIndex = exports2.foldMapWithIndex = exports2.reduceWithIndex = void 0;
+    exports2.readonlyNonEmptyArray = exports2.fold = exports2.prependToAll = exports2.insertAt = exports2.snoc = exports2.cons = exports2.unsnoc = exports2.uncons = exports2.filterWithIndex = exports2.filter = void 0;
+    var Apply_1 = require_Apply();
+    var Chain_1 = require_Chain();
+    var Eq_1 = require_Eq();
+    var function_1 = require_function();
+    var Functor_1 = require_Functor();
+    var _ = __importStar(require_internal());
+    var Ord_1 = require_Ord();
+    var Se = __importStar(require_Semigroup());
+    exports2.empty = _.emptyReadonlyArray;
+    exports2.isNonEmpty = _.isNonEmpty;
+    var isOutOfBound = function(i, as) {
+      return i < 0 || i >= as.length;
+    };
+    exports2.isOutOfBound = isOutOfBound;
+    var prependW = function(head) {
+      return function(tail) {
+        return __spreadArray([head], tail, true);
+      };
+    };
+    exports2.prependW = prependW;
+    exports2.prepend = exports2.prependW;
+    var appendW = function(end) {
+      return function(init2) {
+        return __spreadArray(__spreadArray([], init2, true), [end], false);
+      };
+    };
+    exports2.appendW = appendW;
+    exports2.append = exports2.appendW;
+    var unsafeInsertAt = function(i, a, as) {
+      if ((0, exports2.isNonEmpty)(as)) {
+        var xs = _.fromReadonlyNonEmptyArray(as);
+        xs.splice(i, 0, a);
+        return xs;
+      }
+      return [a];
+    };
+    exports2.unsafeInsertAt = unsafeInsertAt;
+    var unsafeUpdateAt = function(i, a, as) {
+      if (as[i] === a) {
+        return as;
+      } else {
+        var xs = _.fromReadonlyNonEmptyArray(as);
+        xs[i] = a;
+        return xs;
+      }
+    };
+    exports2.unsafeUpdateAt = unsafeUpdateAt;
+    var uniq = function(E) {
+      return function(as) {
+        if (as.length === 1) {
+          return as;
+        }
+        var out = [(0, exports2.head)(as)];
+        var rest = (0, exports2.tail)(as);
+        var _loop_1 = function(a2) {
+          if (out.every(function(o) {
+            return !E.equals(o, a2);
+          })) {
+            out.push(a2);
+          }
+        };
+        for (var _i = 0, rest_1 = rest; _i < rest_1.length; _i++) {
+          var a = rest_1[_i];
+          _loop_1(a);
+        }
+        return out;
+      };
+    };
+    exports2.uniq = uniq;
+    var sortBy = function(ords) {
+      if ((0, exports2.isNonEmpty)(ords)) {
+        var M = (0, Ord_1.getMonoid)();
+        return (0, exports2.sort)(ords.reduce(M.concat, M.empty));
+      }
+      return function_1.identity;
+    };
+    exports2.sortBy = sortBy;
+    var union2 = function(E) {
+      var uniqE = (0, exports2.uniq)(E);
+      return function(second) {
+        return function(first) {
+          return uniqE((0, function_1.pipe)(first, concat(second)));
+        };
+      };
+    };
+    exports2.union = union2;
+    var rotate = function(n) {
+      return function(as) {
+        var len = as.length;
+        var m = Math.round(n) % len;
+        if ((0, exports2.isOutOfBound)(Math.abs(m), as) || m === 0) {
+          return as;
+        }
+        if (m < 0) {
+          var _a = (0, exports2.splitAt)(-m)(as), f = _a[0], s = _a[1];
+          return (0, function_1.pipe)(s, concat(f));
+        } else {
+          return (0, exports2.rotate)(m - len)(as);
+        }
+      };
+    };
+    exports2.rotate = rotate;
+    var fromReadonlyArray = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(as) : _.none;
+    };
+    exports2.fromReadonlyArray = fromReadonlyArray;
+    var makeBy = function(f) {
+      return function(n) {
+        var j = Math.max(0, Math.floor(n));
+        var out = [f(0)];
+        for (var i = 1; i < j; i++) {
+          out.push(f(i));
+        }
+        return out;
+      };
+    };
+    exports2.makeBy = makeBy;
+    var replicate = function(a) {
+      return (0, exports2.makeBy)(function() {
+        return a;
+      });
+    };
+    exports2.replicate = replicate;
+    var range = function(start, end) {
+      return start <= end ? (0, exports2.makeBy)(function(i) {
+        return start + i;
+      })(end - start + 1) : [start];
+    };
+    exports2.range = range;
+    var unprepend = function(as) {
+      return [(0, exports2.head)(as), (0, exports2.tail)(as)];
+    };
+    exports2.unprepend = unprepend;
+    var unappend = function(as) {
+      return [(0, exports2.init)(as), (0, exports2.last)(as)];
+    };
+    exports2.unappend = unappend;
+    var fromArray = function(as) {
+      return (0, exports2.fromReadonlyArray)(as.slice());
+    };
+    exports2.fromArray = fromArray;
+    function concatW(second) {
+      return function(first) {
+        return first.concat(second);
+      };
+    }
+    exports2.concatW = concatW;
+    function concat(x, y) {
+      return y ? x.concat(y) : function(y2) {
+        return y2.concat(x);
+      };
+    }
+    exports2.concat = concat;
+    var reverse = function(as) {
+      return as.length === 1 ? as : __spreadArray([(0, exports2.last)(as)], as.slice(0, -1).reverse(), true);
+    };
+    exports2.reverse = reverse;
+    function group(E) {
+      return function(as) {
+        var len = as.length;
+        if (len === 0) {
+          return exports2.empty;
+        }
+        var out = [];
+        var head = as[0];
+        var nea = [head];
+        for (var i = 1; i < len; i++) {
+          var a = as[i];
+          if (E.equals(a, head)) {
+            nea.push(a);
+          } else {
+            out.push(nea);
+            head = a;
+            nea = [head];
+          }
+        }
+        out.push(nea);
+        return out;
+      };
+    }
+    exports2.group = group;
+    var groupBy = function(f) {
+      return function(as) {
+        var out = {};
+        for (var _i = 0, as_1 = as; _i < as_1.length; _i++) {
+          var a = as_1[_i];
+          var k = f(a);
+          if (_.has.call(out, k)) {
+            out[k].push(a);
+          } else {
+            out[k] = [a];
+          }
+        }
+        return out;
+      };
+    };
+    exports2.groupBy = groupBy;
+    var sort = function(O) {
+      return function(as) {
+        return as.length === 1 ? as : as.slice().sort(O.compare);
+      };
+    };
+    exports2.sort = sort;
+    var updateAt = function(i, a) {
+      return (0, exports2.modifyAt)(i, function() {
+        return a;
+      });
+    };
+    exports2.updateAt = updateAt;
+    var modifyAt = function(i, f) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(i, as) ? _.none : _.some((0, exports2.unsafeUpdateAt)(i, f(as[i]), as));
+      };
+    };
+    exports2.modifyAt = modifyAt;
+    var zipWith = function(as, bs, f) {
+      var cs = [f(as[0], bs[0])];
+      var len = Math.min(as.length, bs.length);
+      for (var i = 1; i < len; i++) {
+        cs[i] = f(as[i], bs[i]);
+      }
+      return cs;
+    };
+    exports2.zipWith = zipWith;
+    function zip2(as, bs) {
+      if (bs === void 0) {
+        return function(bs2) {
+          return zip2(bs2, as);
+        };
+      }
+      return (0, exports2.zipWith)(as, bs, function(a, b) {
+        return [a, b];
+      });
+    }
+    exports2.zip = zip2;
+    var unzip = function(abs) {
+      var fa = [abs[0][0]];
+      var fb = [abs[0][1]];
+      for (var i = 1; i < abs.length; i++) {
+        fa[i] = abs[i][0];
+        fb[i] = abs[i][1];
+      }
+      return [fa, fb];
+    };
+    exports2.unzip = unzip;
+    var prependAll = function(middle) {
+      return function(as) {
+        var out = [middle, as[0]];
+        for (var i = 1; i < as.length; i++) {
+          out.push(middle, as[i]);
+        }
+        return out;
+      };
+    };
+    exports2.prependAll = prependAll;
+    var intersperse = function(middle) {
+      return function(as) {
+        var rest = (0, exports2.tail)(as);
+        return (0, exports2.isNonEmpty)(rest) ? (0, function_1.pipe)(rest, (0, exports2.prependAll)(middle), (0, exports2.prepend)((0, exports2.head)(as))) : as;
+      };
+    };
+    exports2.intersperse = intersperse;
+    var chainWithIndex = function(f) {
+      return function(as) {
+        var out = _.fromReadonlyNonEmptyArray(f(0, (0, exports2.head)(as)));
+        for (var i = 1; i < as.length; i++) {
+          out.push.apply(out, f(i, as[i]));
+        }
+        return out;
+      };
+    };
+    exports2.chainWithIndex = chainWithIndex;
+    var chop = function(f) {
+      return function(as) {
+        var _a = f(as), b = _a[0], rest = _a[1];
+        var out = [b];
+        var next = rest;
+        while ((0, exports2.isNonEmpty)(next)) {
+          var _b = f(next), b_1 = _b[0], rest_2 = _b[1];
+          out.push(b_1);
+          next = rest_2;
+        }
+        return out;
+      };
+    };
+    exports2.chop = chop;
+    var splitAt = function(n) {
+      return function(as) {
+        var m = Math.max(1, n);
+        return m >= as.length ? [as, exports2.empty] : [(0, function_1.pipe)(as.slice(1, m), (0, exports2.prepend)((0, exports2.head)(as))), as.slice(m)];
+      };
+    };
+    exports2.splitAt = splitAt;
+    var chunksOf = function(n) {
+      return (0, exports2.chop)((0, exports2.splitAt)(n));
+    };
+    exports2.chunksOf = chunksOf;
+    var _map = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.map)(f));
+    };
+    var _mapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.mapWithIndex)(f));
+    };
+    var _ap = function(fab, fa) {
+      return (0, function_1.pipe)(fab, (0, exports2.ap)(fa));
+    };
+    var _extend = function(wa, f) {
+      return (0, function_1.pipe)(wa, (0, exports2.extend)(f));
+    };
+    var _reduce = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduce)(b, f));
+    };
+    var _foldMap = function(M) {
+      var foldMapM = (0, exports2.foldMap)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapM(f));
+      };
+    };
+    var _reduceRight = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRight)(b, f));
+    };
+    var _traverse = function(F) {
+      var traverseF = (0, exports2.traverse)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseF(f));
+      };
+    };
+    var _alt = function(fa, that) {
+      return (0, function_1.pipe)(fa, (0, exports2.alt)(that));
+    };
+    var _reduceWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceWithIndex)(b, f));
+    };
+    var _foldMapWithIndex = function(M) {
+      var foldMapWithIndexM = (0, exports2.foldMapWithIndex)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapWithIndexM(f));
+      };
+    };
+    var _reduceRightWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRightWithIndex)(b, f));
+    };
+    var _traverseWithIndex = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseWithIndexF(f));
+      };
+    };
+    exports2.of = _.singleton;
+    var altW = function(that) {
+      return function(as) {
+        return (0, function_1.pipe)(as, concatW(that()));
+      };
+    };
+    exports2.altW = altW;
+    exports2.alt = exports2.altW;
+    var ap = function(as) {
+      return (0, exports2.flatMap)(function(f) {
+        return (0, function_1.pipe)(as, (0, exports2.map)(f));
+      });
+    };
+    exports2.ap = ap;
+    exports2.flatMap = (0, function_1.dual)(2, function(ma, f) {
+      return (0, function_1.pipe)(ma, (0, exports2.chainWithIndex)(function(i, a) {
+        return f(a, i);
+      }));
+    });
+    var extend = function(f) {
+      return function(as) {
+        var next = (0, exports2.tail)(as);
+        var out = [f(as)];
+        while ((0, exports2.isNonEmpty)(next)) {
+          out.push(f(next));
+          next = (0, exports2.tail)(next);
+        }
+        return out;
+      };
+    };
+    exports2.extend = extend;
+    exports2.duplicate = /* @__PURE__ */ (0, exports2.extend)(function_1.identity);
+    exports2.flatten = /* @__PURE__ */ (0, exports2.flatMap)(function_1.identity);
+    var map = function(f) {
+      return (0, exports2.mapWithIndex)(function(_2, a) {
+        return f(a);
+      });
+    };
+    exports2.map = map;
+    var mapWithIndex = function(f) {
+      return function(as) {
+        var out = [f(0, (0, exports2.head)(as))];
+        for (var i = 1; i < as.length; i++) {
+          out.push(f(i, as[i]));
+        }
+        return out;
+      };
+    };
+    exports2.mapWithIndex = mapWithIndex;
+    var reduce = function(b, f) {
+      return (0, exports2.reduceWithIndex)(b, function(_2, b2, a) {
+        return f(b2, a);
+      });
+    };
+    exports2.reduce = reduce;
+    var foldMap = function(S) {
+      return function(f) {
+        return function(as) {
+          return as.slice(1).reduce(function(s, a) {
+            return S.concat(s, f(a));
+          }, f(as[0]));
+        };
+      };
+    };
+    exports2.foldMap = foldMap;
+    var reduceRight = function(b, f) {
+      return (0, exports2.reduceRightWithIndex)(b, function(_2, b2, a) {
+        return f(b2, a);
+      });
+    };
+    exports2.reduceRight = reduceRight;
+    var reduceWithIndex = function(b, f) {
+      return function(as) {
+        return as.reduce(function(b2, a, i) {
+          return f(i, b2, a);
+        }, b);
+      };
+    };
+    exports2.reduceWithIndex = reduceWithIndex;
+    var foldMapWithIndex = function(S) {
+      return function(f) {
+        return function(as) {
+          return as.slice(1).reduce(function(s, a, i) {
+            return S.concat(s, f(i + 1, a));
+          }, f(0, as[0]));
+        };
+      };
+    };
+    exports2.foldMapWithIndex = foldMapWithIndex;
+    var reduceRightWithIndex = function(b, f) {
+      return function(as) {
+        return as.reduceRight(function(b2, a, i) {
+          return f(i, a, b2);
+        }, b);
+      };
+    };
+    exports2.reduceRightWithIndex = reduceRightWithIndex;
+    var traverse = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(f) {
+        return traverseWithIndexF(function(_2, a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.traverse = traverse;
+    var sequence = function(F) {
+      return (0, exports2.traverseWithIndex)(F)(function_1.SK);
+    };
+    exports2.sequence = sequence;
+    var traverseWithIndex = function(F) {
+      return function(f) {
+        return function(as) {
+          var out = F.map(f(0, (0, exports2.head)(as)), exports2.of);
+          for (var i = 1; i < as.length; i++) {
+            out = F.ap(F.map(out, function(bs) {
+              return function(b) {
+                return (0, function_1.pipe)(bs, (0, exports2.append)(b));
+              };
+            }), f(i, as[i]));
+          }
+          return out;
+        };
+      };
+    };
+    exports2.traverseWithIndex = traverseWithIndex;
+    exports2.extract = _.head;
+    exports2.URI = "ReadonlyNonEmptyArray";
+    var getShow = function(S) {
+      return {
+        show: function(as) {
+          return "[".concat(as.map(S.show).join(", "), "]");
+        }
+      };
+    };
+    exports2.getShow = getShow;
+    var getSemigroup = function() {
+      return {
+        concat
+      };
+    };
+    exports2.getSemigroup = getSemigroup;
+    var getEq = function(E) {
+      return (0, Eq_1.fromEquals)(function(xs, ys) {
+        return xs.length === ys.length && xs.every(function(x, i) {
+          return E.equals(x, ys[i]);
+        });
+      });
+    };
+    exports2.getEq = getEq;
+    var getUnionSemigroup = function(E) {
+      var unionE = (0, exports2.union)(E);
+      return {
+        concat: function(first, second) {
+          return unionE(second)(first);
+        }
+      };
+    };
+    exports2.getUnionSemigroup = getUnionSemigroup;
+    exports2.Functor = {
+      URI: exports2.URI,
+      map: _map
+    };
+    exports2.flap = (0, Functor_1.flap)(exports2.Functor);
+    exports2.Pointed = {
+      URI: exports2.URI,
+      of: exports2.of
+    };
+    exports2.FunctorWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex
+    };
+    exports2.Apply = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap
+    };
+    exports2.apFirst = (0, Apply_1.apFirst)(exports2.Apply);
+    exports2.apSecond = (0, Apply_1.apSecond)(exports2.Apply);
+    exports2.Applicative = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of
+    };
+    exports2.Chain = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap
+    };
+    exports2.chainFirst = (0, Chain_1.chainFirst)(exports2.Chain);
+    exports2.Monad = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      chain: exports2.flatMap
+    };
+    exports2.Foldable = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight
+    };
+    exports2.FoldableWithIndex = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex
+    };
+    exports2.Traversable = {
+      URI: exports2.URI,
+      map: _map,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence
+    };
+    exports2.TraversableWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverseWithIndex: _traverseWithIndex
+    };
+    exports2.Alt = {
+      URI: exports2.URI,
+      map: _map,
+      alt: _alt
+    };
+    exports2.Comonad = {
+      URI: exports2.URI,
+      map: _map,
+      extend: _extend,
+      extract: exports2.extract
+    };
+    exports2.Do = (0, exports2.of)(_.emptyRecord);
+    exports2.bindTo = (0, Functor_1.bindTo)(exports2.Functor);
+    var let_ = /* @__PURE__ */ (0, Functor_1.let)(exports2.Functor);
+    exports2.let = let_;
+    exports2.bind = (0, Chain_1.bind)(exports2.Chain);
+    exports2.apS = (0, Apply_1.apS)(exports2.Apply);
+    exports2.head = exports2.extract;
+    exports2.tail = _.tail;
+    var last = function(as) {
+      return as[as.length - 1];
+    };
+    exports2.last = last;
+    var init = function(as) {
+      return as.slice(0, -1);
+    };
+    exports2.init = init;
+    var min = function(O) {
+      var S = Se.min(O);
+      return function(as) {
+        return as.reduce(S.concat);
+      };
+    };
+    exports2.min = min;
+    var max = function(O) {
+      var S = Se.max(O);
+      return function(as) {
+        return as.reduce(S.concat);
+      };
+    };
+    exports2.max = max;
+    var concatAll = function(S) {
+      return function(as) {
+        return as.reduce(S.concat);
+      };
+    };
+    exports2.concatAll = concatAll;
+    var matchLeft = function(f) {
+      return function(as) {
+        return f((0, exports2.head)(as), (0, exports2.tail)(as));
+      };
+    };
+    exports2.matchLeft = matchLeft;
+    var matchRight = function(f) {
+      return function(as) {
+        return f((0, exports2.init)(as), (0, exports2.last)(as));
+      };
+    };
+    exports2.matchRight = matchRight;
+    var modifyHead = function(f) {
+      return function(as) {
+        return __spreadArray([f((0, exports2.head)(as))], (0, exports2.tail)(as), true);
+      };
+    };
+    exports2.modifyHead = modifyHead;
+    var updateHead = function(a) {
+      return (0, exports2.modifyHead)(function() {
+        return a;
+      });
+    };
+    exports2.updateHead = updateHead;
+    var modifyLast = function(f) {
+      return function(as) {
+        return (0, function_1.pipe)((0, exports2.init)(as), (0, exports2.append)(f((0, exports2.last)(as))));
+      };
+    };
+    exports2.modifyLast = modifyLast;
+    var updateLast = function(a) {
+      return (0, exports2.modifyLast)(function() {
+        return a;
+      });
+    };
+    exports2.updateLast = updateLast;
+    var intercalate = function(S) {
+      var concatAllS = (0, exports2.concatAll)(S);
+      return function(middle) {
+        return (0, function_1.flow)((0, exports2.intersperse)(middle), concatAllS);
+      };
+    };
+    exports2.intercalate = intercalate;
+    exports2.chain = exports2.flatMap;
+    function groupSort(O) {
+      var sortO = (0, exports2.sort)(O);
+      var groupO = group(O);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? groupO(sortO(as)) : exports2.empty;
+      };
+    }
+    exports2.groupSort = groupSort;
+    function filter(predicate) {
+      return (0, exports2.filterWithIndex)(function(_2, a) {
+        return predicate(a);
+      });
+    }
+    exports2.filter = filter;
+    var filterWithIndex = function(predicate) {
+      return function(as) {
+        return (0, exports2.fromReadonlyArray)(as.filter(function(a, i) {
+          return predicate(i, a);
+        }));
+      };
+    };
+    exports2.filterWithIndex = filterWithIndex;
+    exports2.uncons = exports2.unprepend;
+    exports2.unsnoc = exports2.unappend;
+    function cons(head, tail) {
+      return tail === void 0 ? (0, exports2.prepend)(head) : (0, function_1.pipe)(tail, (0, exports2.prepend)(head));
+    }
+    exports2.cons = cons;
+    var snoc = function(init2, end) {
+      return (0, function_1.pipe)(init2, concat([end]));
+    };
+    exports2.snoc = snoc;
+    var insertAt = function(i, a) {
+      return function(as) {
+        return i < 0 || i > as.length ? _.none : _.some((0, exports2.unsafeInsertAt)(i, a, as));
+      };
+    };
+    exports2.insertAt = insertAt;
+    exports2.prependToAll = exports2.prependAll;
+    exports2.fold = exports2.concatAll;
+    exports2.readonlyNonEmptyArray = {
+      URI: exports2.URI,
+      of: exports2.of,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      ap: _ap,
+      chain: exports2.flatMap,
+      extend: _extend,
+      extract: exports2.extract,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverseWithIndex: _traverseWithIndex,
+      alt: _alt
+    };
+  }
+});
+
+// node_modules/fp-ts/lib/NonEmptyArray.js
+var require_NonEmptyArray = __commonJS({
+  "node_modules/fp-ts/lib/NonEmptyArray.js"(exports2) {
+    "use strict";
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    });
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule)
+        return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod)
+          if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+            __createBinding(result, mod, k);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    var __spreadArray = exports2 && exports2.__spreadArray || function(to, from, pack) {
+      if (pack || arguments.length === 2)
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+          if (ar || !(i in from)) {
+            if (!ar)
+              ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+          }
+        }
+      return to.concat(ar || Array.prototype.slice.call(from));
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.mapWithIndex = exports2.map = exports2.flatten = exports2.duplicate = exports2.extend = exports2.flatMap = exports2.ap = exports2.alt = exports2.altW = exports2.chunksOf = exports2.splitAt = exports2.chop = exports2.chainWithIndex = exports2.foldMap = exports2.foldMapWithIndex = exports2.intersperse = exports2.prependAll = exports2.unzip = exports2.zip = exports2.zipWith = exports2.of = exports2.copy = exports2.modifyAt = exports2.updateAt = exports2.insertAt = exports2.sort = exports2.groupBy = exports2.group = exports2.reverse = exports2.concat = exports2.concatW = exports2.unappend = exports2.unprepend = exports2.range = exports2.replicate = exports2.makeBy = exports2.fromArray = exports2.fromReadonlyNonEmptyArray = exports2.rotate = exports2.union = exports2.sortBy = exports2.uniq = exports2.unsafeUpdateAt = exports2.unsafeInsertAt = exports2.append = exports2.appendW = exports2.prepend = exports2.prependW = exports2.isOutOfBound = exports2.isNonEmpty = void 0;
+    exports2.chain = exports2.intercalate = exports2.updateLast = exports2.modifyLast = exports2.updateHead = exports2.modifyHead = exports2.matchRight = exports2.matchLeft = exports2.concatAll = exports2.max = exports2.min = exports2.init = exports2.last = exports2.tail = exports2.head = exports2.apS = exports2.bind = exports2.let = exports2.bindTo = exports2.Do = exports2.Comonad = exports2.Alt = exports2.TraversableWithIndex = exports2.Traversable = exports2.FoldableWithIndex = exports2.Foldable = exports2.Monad = exports2.chainFirst = exports2.Chain = exports2.Applicative = exports2.apSecond = exports2.apFirst = exports2.Apply = exports2.FunctorWithIndex = exports2.Pointed = exports2.flap = exports2.Functor = exports2.getUnionSemigroup = exports2.getEq = exports2.getSemigroup = exports2.getShow = exports2.URI = exports2.extract = exports2.traverseWithIndex = exports2.sequence = exports2.traverse = exports2.reduceRightWithIndex = exports2.reduceRight = exports2.reduceWithIndex = exports2.reduce = void 0;
+    exports2.nonEmptyArray = exports2.fold = exports2.prependToAll = exports2.snoc = exports2.cons = exports2.unsnoc = exports2.uncons = exports2.filterWithIndex = exports2.filter = exports2.groupSort = void 0;
+    var Apply_1 = require_Apply();
+    var Chain_1 = require_Chain();
+    var function_1 = require_function();
+    var Functor_1 = require_Functor();
+    var _ = __importStar(require_internal());
+    var Ord_1 = require_Ord();
+    var RNEA = __importStar(require_ReadonlyNonEmptyArray());
+    var isNonEmpty = function(as) {
+      return as.length > 0;
+    };
+    exports2.isNonEmpty = isNonEmpty;
+    var isOutOfBound = function(i, as) {
+      return i < 0 || i >= as.length;
+    };
+    exports2.isOutOfBound = isOutOfBound;
+    var prependW = function(head) {
+      return function(tail2) {
+        return __spreadArray([head], tail2, true);
+      };
+    };
+    exports2.prependW = prependW;
+    exports2.prepend = exports2.prependW;
+    var appendW = function(end) {
+      return function(init2) {
+        return __spreadArray(__spreadArray([], init2, true), [end], false);
+      };
+    };
+    exports2.appendW = appendW;
+    exports2.append = exports2.appendW;
+    var unsafeInsertAt = function(i, a, as) {
+      if ((0, exports2.isNonEmpty)(as)) {
+        var xs = (0, exports2.fromReadonlyNonEmptyArray)(as);
+        xs.splice(i, 0, a);
+        return xs;
+      }
+      return [a];
+    };
+    exports2.unsafeInsertAt = unsafeInsertAt;
+    var unsafeUpdateAt = function(i, a, as) {
+      var xs = (0, exports2.fromReadonlyNonEmptyArray)(as);
+      xs[i] = a;
+      return xs;
+    };
+    exports2.unsafeUpdateAt = unsafeUpdateAt;
+    var uniq = function(E) {
+      return function(as) {
+        if (as.length === 1) {
+          return (0, exports2.copy)(as);
+        }
+        var out = [(0, exports2.head)(as)];
+        var rest = (0, exports2.tail)(as);
+        var _loop_1 = function(a2) {
+          if (out.every(function(o) {
+            return !E.equals(o, a2);
+          })) {
+            out.push(a2);
+          }
+        };
+        for (var _i = 0, rest_1 = rest; _i < rest_1.length; _i++) {
+          var a = rest_1[_i];
+          _loop_1(a);
+        }
+        return out;
+      };
+    };
+    exports2.uniq = uniq;
+    var sortBy = function(ords) {
+      if ((0, exports2.isNonEmpty)(ords)) {
+        var M = (0, Ord_1.getMonoid)();
+        return (0, exports2.sort)(ords.reduce(M.concat, M.empty));
+      }
+      return exports2.copy;
+    };
+    exports2.sortBy = sortBy;
+    var union2 = function(E) {
+      var uniqE = (0, exports2.uniq)(E);
+      return function(second) {
+        return function(first) {
+          return uniqE((0, function_1.pipe)(first, concat(second)));
+        };
+      };
+    };
+    exports2.union = union2;
+    var rotate = function(n) {
+      return function(as) {
+        var len = as.length;
+        var m = Math.round(n) % len;
+        if ((0, exports2.isOutOfBound)(Math.abs(m), as) || m === 0) {
+          return (0, exports2.copy)(as);
+        }
+        if (m < 0) {
+          var _a = (0, exports2.splitAt)(-m)(as), f = _a[0], s = _a[1];
+          return (0, function_1.pipe)(s, concat(f));
+        } else {
+          return (0, exports2.rotate)(m - len)(as);
+        }
+      };
+    };
+    exports2.rotate = rotate;
+    exports2.fromReadonlyNonEmptyArray = _.fromReadonlyNonEmptyArray;
+    var fromArray = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(as) : _.none;
+    };
+    exports2.fromArray = fromArray;
+    var makeBy = function(f) {
+      return function(n) {
+        var j = Math.max(0, Math.floor(n));
+        var out = [f(0)];
+        for (var i = 1; i < j; i++) {
+          out.push(f(i));
+        }
+        return out;
+      };
+    };
+    exports2.makeBy = makeBy;
+    var replicate = function(a) {
+      return (0, exports2.makeBy)(function() {
+        return a;
+      });
+    };
+    exports2.replicate = replicate;
+    var range = function(start, end) {
+      return start <= end ? (0, exports2.makeBy)(function(i) {
+        return start + i;
+      })(end - start + 1) : [start];
+    };
+    exports2.range = range;
+    var unprepend = function(as) {
+      return [(0, exports2.head)(as), (0, exports2.tail)(as)];
+    };
+    exports2.unprepend = unprepend;
+    var unappend = function(as) {
+      return [(0, exports2.init)(as), (0, exports2.last)(as)];
+    };
+    exports2.unappend = unappend;
+    function concatW(second) {
+      return function(first) {
+        return first.concat(second);
+      };
+    }
+    exports2.concatW = concatW;
+    function concat(x, y) {
+      return y ? x.concat(y) : function(y2) {
+        return y2.concat(x);
+      };
+    }
+    exports2.concat = concat;
+    var reverse = function(as) {
+      return __spreadArray([(0, exports2.last)(as)], as.slice(0, -1).reverse(), true);
+    };
+    exports2.reverse = reverse;
+    function group(E) {
+      return function(as) {
+        var len = as.length;
+        if (len === 0) {
+          return [];
+        }
+        var out = [];
+        var head = as[0];
+        var nea = [head];
+        for (var i = 1; i < len; i++) {
+          var a = as[i];
+          if (E.equals(a, head)) {
+            nea.push(a);
+          } else {
+            out.push(nea);
+            head = a;
+            nea = [head];
+          }
+        }
+        out.push(nea);
+        return out;
+      };
+    }
+    exports2.group = group;
+    var groupBy = function(f) {
+      return function(as) {
+        var out = {};
+        for (var _i = 0, as_1 = as; _i < as_1.length; _i++) {
+          var a = as_1[_i];
+          var k = f(a);
+          if (_.has.call(out, k)) {
+            out[k].push(a);
+          } else {
+            out[k] = [a];
+          }
+        }
+        return out;
+      };
+    };
+    exports2.groupBy = groupBy;
+    var sort = function(O) {
+      return function(as) {
+        return as.slice().sort(O.compare);
+      };
+    };
+    exports2.sort = sort;
+    var insertAt = function(i, a) {
+      return function(as) {
+        return i < 0 || i > as.length ? _.none : _.some((0, exports2.unsafeInsertAt)(i, a, as));
+      };
+    };
+    exports2.insertAt = insertAt;
+    var updateAt = function(i, a) {
+      return (0, exports2.modifyAt)(i, function() {
+        return a;
+      });
+    };
+    exports2.updateAt = updateAt;
+    var modifyAt = function(i, f) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(i, as) ? _.none : _.some((0, exports2.unsafeUpdateAt)(i, f(as[i]), as));
+      };
+    };
+    exports2.modifyAt = modifyAt;
+    exports2.copy = exports2.fromReadonlyNonEmptyArray;
+    var of = function(a) {
+      return [a];
+    };
+    exports2.of = of;
+    var zipWith = function(as, bs, f) {
+      var cs = [f(as[0], bs[0])];
+      var len = Math.min(as.length, bs.length);
+      for (var i = 1; i < len; i++) {
+        cs[i] = f(as[i], bs[i]);
+      }
+      return cs;
+    };
+    exports2.zipWith = zipWith;
+    function zip2(as, bs) {
+      if (bs === void 0) {
+        return function(bs2) {
+          return zip2(bs2, as);
+        };
+      }
+      return (0, exports2.zipWith)(as, bs, function(a, b) {
+        return [a, b];
+      });
+    }
+    exports2.zip = zip2;
+    var unzip = function(abs) {
+      var fa = [abs[0][0]];
+      var fb = [abs[0][1]];
+      for (var i = 1; i < abs.length; i++) {
+        fa[i] = abs[i][0];
+        fb[i] = abs[i][1];
+      }
+      return [fa, fb];
+    };
+    exports2.unzip = unzip;
+    var prependAll = function(middle) {
+      return function(as) {
+        var out = [middle, as[0]];
+        for (var i = 1; i < as.length; i++) {
+          out.push(middle, as[i]);
+        }
+        return out;
+      };
+    };
+    exports2.prependAll = prependAll;
+    var intersperse = function(middle) {
+      return function(as) {
+        var rest = (0, exports2.tail)(as);
+        return (0, exports2.isNonEmpty)(rest) ? (0, function_1.pipe)(rest, (0, exports2.prependAll)(middle), (0, exports2.prepend)((0, exports2.head)(as))) : (0, exports2.copy)(as);
+      };
+    };
+    exports2.intersperse = intersperse;
+    exports2.foldMapWithIndex = RNEA.foldMapWithIndex;
+    exports2.foldMap = RNEA.foldMap;
+    var chainWithIndex = function(f) {
+      return function(as) {
+        var out = (0, exports2.fromReadonlyNonEmptyArray)(f(0, (0, exports2.head)(as)));
+        for (var i = 1; i < as.length; i++) {
+          out.push.apply(out, f(i, as[i]));
+        }
+        return out;
+      };
+    };
+    exports2.chainWithIndex = chainWithIndex;
+    var chop = function(f) {
+      return function(as) {
+        var _a = f(as), b = _a[0], rest = _a[1];
+        var out = [b];
+        var next = rest;
+        while ((0, exports2.isNonEmpty)(next)) {
+          var _b = f(next), b_1 = _b[0], rest_2 = _b[1];
+          out.push(b_1);
+          next = rest_2;
+        }
+        return out;
+      };
+    };
+    exports2.chop = chop;
+    var splitAt = function(n) {
+      return function(as) {
+        var m = Math.max(1, n);
+        return m >= as.length ? [(0, exports2.copy)(as), []] : [(0, function_1.pipe)(as.slice(1, m), (0, exports2.prepend)((0, exports2.head)(as))), as.slice(m)];
+      };
+    };
+    exports2.splitAt = splitAt;
+    var chunksOf = function(n) {
+      return (0, exports2.chop)((0, exports2.splitAt)(n));
+    };
+    exports2.chunksOf = chunksOf;
+    var _map = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.map)(f));
+    };
+    var _mapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.mapWithIndex)(f));
+    };
+    var _ap = function(fab, fa) {
+      return (0, function_1.pipe)(fab, (0, exports2.ap)(fa));
+    };
+    var _extend = function(wa, f) {
+      return (0, function_1.pipe)(wa, (0, exports2.extend)(f));
+    };
+    var _reduce = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduce)(b, f));
+    };
+    var _foldMap = function(M) {
+      var foldMapM = (0, exports2.foldMap)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapM(f));
+      };
+    };
+    var _reduceRight = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRight)(b, f));
+    };
+    var _traverse = function(F) {
+      var traverseF = (0, exports2.traverse)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseF(f));
+      };
+    };
+    var _alt = function(fa, that) {
+      return (0, function_1.pipe)(fa, (0, exports2.alt)(that));
+    };
+    var _reduceWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceWithIndex)(b, f));
+    };
+    var _foldMapWithIndex = function(M) {
+      var foldMapWithIndexM = (0, exports2.foldMapWithIndex)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapWithIndexM(f));
+      };
+    };
+    var _reduceRightWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRightWithIndex)(b, f));
+    };
+    var _traverseWithIndex = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseWithIndexF(f));
+      };
+    };
+    var altW = function(that) {
+      return function(as) {
+        return (0, function_1.pipe)(as, concatW(that()));
+      };
+    };
+    exports2.altW = altW;
+    exports2.alt = exports2.altW;
+    var ap = function(as) {
+      return (0, exports2.flatMap)(function(f) {
+        return (0, function_1.pipe)(as, (0, exports2.map)(f));
+      });
+    };
+    exports2.ap = ap;
+    exports2.flatMap = (0, function_1.dual)(2, function(ma, f) {
+      return (0, function_1.pipe)(ma, (0, exports2.chainWithIndex)(function(i, a) {
+        return f(a, i);
+      }));
+    });
+    var extend = function(f) {
+      return function(as) {
+        var next = (0, exports2.tail)(as);
+        var out = [f(as)];
+        while ((0, exports2.isNonEmpty)(next)) {
+          out.push(f(next));
+          next = (0, exports2.tail)(next);
+        }
+        return out;
+      };
+    };
+    exports2.extend = extend;
+    exports2.duplicate = (0, exports2.extend)(function_1.identity);
+    exports2.flatten = (0, exports2.flatMap)(function_1.identity);
+    var map = function(f) {
+      return (0, exports2.mapWithIndex)(function(_2, a) {
+        return f(a);
+      });
+    };
+    exports2.map = map;
+    var mapWithIndex = function(f) {
+      return function(as) {
+        var out = [f(0, (0, exports2.head)(as))];
+        for (var i = 1; i < as.length; i++) {
+          out.push(f(i, as[i]));
+        }
+        return out;
+      };
+    };
+    exports2.mapWithIndex = mapWithIndex;
+    exports2.reduce = RNEA.reduce;
+    exports2.reduceWithIndex = RNEA.reduceWithIndex;
+    exports2.reduceRight = RNEA.reduceRight;
+    exports2.reduceRightWithIndex = RNEA.reduceRightWithIndex;
+    var traverse = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(f) {
+        return traverseWithIndexF(function(_2, a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.traverse = traverse;
+    var sequence = function(F) {
+      return (0, exports2.traverseWithIndex)(F)(function(_2, a) {
+        return a;
+      });
+    };
+    exports2.sequence = sequence;
+    var traverseWithIndex = function(F) {
+      return function(f) {
+        return function(as) {
+          var out = F.map(f(0, (0, exports2.head)(as)), exports2.of);
+          for (var i = 1; i < as.length; i++) {
+            out = F.ap(F.map(out, function(bs) {
+              return function(b) {
+                return (0, function_1.pipe)(bs, (0, exports2.append)(b));
+              };
+            }), f(i, as[i]));
+          }
+          return out;
+        };
+      };
+    };
+    exports2.traverseWithIndex = traverseWithIndex;
+    exports2.extract = RNEA.head;
+    exports2.URI = "NonEmptyArray";
+    exports2.getShow = RNEA.getShow;
+    var getSemigroup = function() {
+      return {
+        concat
+      };
+    };
+    exports2.getSemigroup = getSemigroup;
+    exports2.getEq = RNEA.getEq;
+    var getUnionSemigroup = function(E) {
+      var unionE = (0, exports2.union)(E);
+      return {
+        concat: function(first, second) {
+          return unionE(second)(first);
+        }
+      };
+    };
+    exports2.getUnionSemigroup = getUnionSemigroup;
+    exports2.Functor = {
+      URI: exports2.URI,
+      map: _map
+    };
+    exports2.flap = (0, Functor_1.flap)(exports2.Functor);
+    exports2.Pointed = {
+      URI: exports2.URI,
+      of: exports2.of
+    };
+    exports2.FunctorWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex
+    };
+    exports2.Apply = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap
+    };
+    exports2.apFirst = (0, Apply_1.apFirst)(exports2.Apply);
+    exports2.apSecond = (0, Apply_1.apSecond)(exports2.Apply);
+    exports2.Applicative = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of
+    };
+    exports2.Chain = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap
+    };
+    exports2.chainFirst = /* @__PURE__ */ (0, Chain_1.chainFirst)(exports2.Chain);
+    exports2.Monad = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      chain: exports2.flatMap
+    };
+    exports2.Foldable = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight
+    };
+    exports2.FoldableWithIndex = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex
+    };
+    exports2.Traversable = {
+      URI: exports2.URI,
+      map: _map,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence
+    };
+    exports2.TraversableWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverseWithIndex: _traverseWithIndex
+    };
+    exports2.Alt = {
+      URI: exports2.URI,
+      map: _map,
+      alt: _alt
+    };
+    exports2.Comonad = {
+      URI: exports2.URI,
+      map: _map,
+      extend: _extend,
+      extract: exports2.extract
+    };
+    exports2.Do = (0, exports2.of)(_.emptyRecord);
+    exports2.bindTo = (0, Functor_1.bindTo)(exports2.Functor);
+    var let_ = /* @__PURE__ */ (0, Functor_1.let)(exports2.Functor);
+    exports2.let = let_;
+    exports2.bind = (0, Chain_1.bind)(exports2.Chain);
+    exports2.apS = (0, Apply_1.apS)(exports2.Apply);
+    exports2.head = RNEA.head;
+    var tail = function(as) {
+      return as.slice(1);
+    };
+    exports2.tail = tail;
+    exports2.last = RNEA.last;
+    var init = function(as) {
+      return as.slice(0, -1);
+    };
+    exports2.init = init;
+    exports2.min = RNEA.min;
+    exports2.max = RNEA.max;
+    var concatAll = function(S) {
+      return function(as) {
+        return as.reduce(S.concat);
+      };
+    };
+    exports2.concatAll = concatAll;
+    var matchLeft = function(f) {
+      return function(as) {
+        return f((0, exports2.head)(as), (0, exports2.tail)(as));
+      };
+    };
+    exports2.matchLeft = matchLeft;
+    var matchRight = function(f) {
+      return function(as) {
+        return f((0, exports2.init)(as), (0, exports2.last)(as));
+      };
+    };
+    exports2.matchRight = matchRight;
+    var modifyHead = function(f) {
+      return function(as) {
+        return __spreadArray([f((0, exports2.head)(as))], (0, exports2.tail)(as), true);
+      };
+    };
+    exports2.modifyHead = modifyHead;
+    var updateHead = function(a) {
+      return (0, exports2.modifyHead)(function() {
+        return a;
+      });
+    };
+    exports2.updateHead = updateHead;
+    var modifyLast = function(f) {
+      return function(as) {
+        return (0, function_1.pipe)((0, exports2.init)(as), (0, exports2.append)(f((0, exports2.last)(as))));
+      };
+    };
+    exports2.modifyLast = modifyLast;
+    var updateLast = function(a) {
+      return (0, exports2.modifyLast)(function() {
+        return a;
+      });
+    };
+    exports2.updateLast = updateLast;
+    exports2.intercalate = RNEA.intercalate;
+    exports2.chain = exports2.flatMap;
+    function groupSort(O) {
+      var sortO = (0, exports2.sort)(O);
+      var groupO = group(O);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? groupO(sortO(as)) : [];
+      };
+    }
+    exports2.groupSort = groupSort;
+    function filter(predicate) {
+      return (0, exports2.filterWithIndex)(function(_2, a) {
+        return predicate(a);
+      });
+    }
+    exports2.filter = filter;
+    var filterWithIndex = function(predicate) {
+      return function(as) {
+        return (0, exports2.fromArray)(as.filter(function(a, i) {
+          return predicate(i, a);
+        }));
+      };
+    };
+    exports2.filterWithIndex = filterWithIndex;
+    exports2.uncons = exports2.unprepend;
+    exports2.unsnoc = exports2.unappend;
+    function cons(head, tail2) {
+      return tail2 === void 0 ? (0, exports2.prepend)(head) : (0, function_1.pipe)(tail2, (0, exports2.prepend)(head));
+    }
+    exports2.cons = cons;
+    var snoc = function(init2, end) {
+      return (0, function_1.pipe)(init2, (0, exports2.append)(end));
+    };
+    exports2.snoc = snoc;
+    exports2.prependToAll = exports2.prependAll;
+    exports2.fold = RNEA.concatAll;
+    exports2.nonEmptyArray = {
+      URI: exports2.URI,
+      of: exports2.of,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      ap: _ap,
+      chain: exports2.flatMap,
+      extend: _extend,
+      extract: exports2.extract,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverseWithIndex: _traverseWithIndex,
+      alt: _alt
+    };
+  }
+});
+
+// node_modules/fp-ts/lib/number.js
+var require_number = __commonJS({
+  "node_modules/fp-ts/lib/number.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.Field = exports2.MonoidProduct = exports2.MonoidSum = exports2.SemigroupProduct = exports2.SemigroupSum = exports2.MagmaSub = exports2.Show = exports2.Bounded = exports2.Ord = exports2.Eq = exports2.isNumber = void 0;
+    var isNumber = function(u) {
+      return typeof u === "number";
+    };
+    exports2.isNumber = isNumber;
+    exports2.Eq = {
+      equals: function(first, second) {
+        return first === second;
+      }
+    };
+    exports2.Ord = {
+      equals: exports2.Eq.equals,
+      compare: function(first, second) {
+        return first < second ? -1 : first > second ? 1 : 0;
+      }
+    };
+    exports2.Bounded = {
+      equals: exports2.Eq.equals,
+      compare: exports2.Ord.compare,
+      top: Infinity,
+      bottom: -Infinity
+    };
+    exports2.Show = {
+      show: function(n) {
+        return JSON.stringify(n);
+      }
+    };
+    exports2.MagmaSub = {
+      concat: function(first, second) {
+        return first - second;
+      }
+    };
+    exports2.SemigroupSum = {
+      concat: function(first, second) {
+        return first + second;
+      }
+    };
+    exports2.SemigroupProduct = {
+      concat: function(first, second) {
+        return first * second;
+      }
+    };
+    exports2.MonoidSum = {
+      concat: exports2.SemigroupSum.concat,
+      empty: 0
+    };
+    exports2.MonoidProduct = {
+      concat: exports2.SemigroupProduct.concat,
+      empty: 1
+    };
+    exports2.Field = {
+      add: exports2.SemigroupSum.concat,
+      zero: 0,
+      mul: exports2.SemigroupProduct.concat,
+      one: 1,
+      sub: exports2.MagmaSub.concat,
+      degree: function(_) {
+        return 1;
+      },
+      div: function(first, second) {
+        return first / second;
+      },
+      mod: function(first, second) {
+        return first % second;
+      }
+    };
   }
 });
 
@@ -1136,6 +3155,2393 @@ var require_Witherable = __commonJS({
       };
     }
     exports2.filterE = filterE;
+  }
+});
+
+// node_modules/fp-ts/lib/Zero.js
+var require_Zero = __commonJS({
+  "node_modules/fp-ts/lib/Zero.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.guard = void 0;
+    function guard(F, P) {
+      return function(b) {
+        return b ? P.of(void 0) : F.zero();
+      };
+    }
+    exports2.guard = guard;
+  }
+});
+
+// node_modules/fp-ts/lib/ReadonlyArray.js
+var require_ReadonlyArray = __commonJS({
+  "node_modules/fp-ts/lib/ReadonlyArray.js"(exports2) {
+    "use strict";
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    });
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule)
+        return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod)
+          if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+            __createBinding(result, mod, k);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    var __spreadArray = exports2 && exports2.__spreadArray || function(to, from, pack) {
+      if (pack || arguments.length === 2)
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+          if (ar || !(i in from)) {
+            if (!ar)
+              ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+          }
+        }
+      return to.concat(ar || Array.prototype.slice.call(from));
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.sort = exports2.lefts = exports2.rights = exports2.reverse = exports2.modifyAt = exports2.deleteAt = exports2.updateAt = exports2.insertAt = exports2.findLastIndex = exports2.findLastMap = exports2.findLast = exports2.findFirstMap = exports2.findFirst = exports2.findIndex = exports2.dropLeftWhile = exports2.dropRight = exports2.dropLeft = exports2.spanLeft = exports2.takeLeftWhile = exports2.takeRight = exports2.takeLeft = exports2.init = exports2.tail = exports2.last = exports2.head = exports2.lookup = exports2.isOutOfBound = exports2.size = exports2.scanRight = exports2.scanLeft = exports2.chainWithIndex = exports2.foldRight = exports2.matchRight = exports2.matchRightW = exports2.foldLeft = exports2.matchLeft = exports2.matchLeftW = exports2.match = exports2.matchW = exports2.fromEither = exports2.fromOption = exports2.fromPredicate = exports2.replicate = exports2.makeBy = exports2.appendW = exports2.append = exports2.prependW = exports2.prepend = exports2.isNonEmpty = exports2.isEmpty = void 0;
+    exports2.sequence = exports2.traverse = exports2.reduceRightWithIndex = exports2.reduceRight = exports2.reduceWithIndex = exports2.foldMap = exports2.reduce = exports2.foldMapWithIndex = exports2.duplicate = exports2.extend = exports2.filterWithIndex = exports2.partitionMapWithIndex = exports2.partitionMap = exports2.partitionWithIndex = exports2.partition = exports2.compact = exports2.filterMap = exports2.filterMapWithIndex = exports2.filter = exports2.separate = exports2.mapWithIndex = exports2.map = exports2.flatten = exports2.flatMap = exports2.ap = exports2.alt = exports2.altW = exports2.zero = exports2.of = exports2._chainRecBreadthFirst = exports2._chainRecDepthFirst = exports2.difference = exports2.intersection = exports2.union = exports2.concat = exports2.concatW = exports2.comprehension = exports2.fromOptionK = exports2.chunksOf = exports2.splitAt = exports2.chop = exports2.sortBy = exports2.uniq = exports2.elem = exports2.rotate = exports2.intersperse = exports2.prependAll = exports2.unzip = exports2.zip = exports2.zipWith = void 0;
+    exports2.toArray = exports2.unsafeDeleteAt = exports2.unsafeUpdateAt = exports2.unsafeInsertAt = exports2.fromEitherK = exports2.FromEither = exports2.filterE = exports2.Witherable = exports2.ChainRecBreadthFirst = exports2.chainRecBreadthFirst = exports2.ChainRecDepthFirst = exports2.chainRecDepthFirst = exports2.TraversableWithIndex = exports2.Traversable = exports2.FoldableWithIndex = exports2.Foldable = exports2.FilterableWithIndex = exports2.Filterable = exports2.Compactable = exports2.Extend = exports2.Alternative = exports2.guard = exports2.Zero = exports2.Alt = exports2.Unfoldable = exports2.chainFirst = exports2.Monad = exports2.Chain = exports2.Applicative = exports2.apSecond = exports2.apFirst = exports2.Apply = exports2.FunctorWithIndex = exports2.Pointed = exports2.flap = exports2.Functor = exports2.getDifferenceMagma = exports2.getIntersectionSemigroup = exports2.getUnionMonoid = exports2.getUnionSemigroup = exports2.getOrd = exports2.getEq = exports2.getMonoid = exports2.getSemigroup = exports2.getShow = exports2.URI = exports2.unfold = exports2.wilt = exports2.wither = exports2.traverseWithIndex = void 0;
+    exports2.readonlyArray = exports2.prependToAll = exports2.snoc = exports2.cons = exports2.range = exports2.chain = exports2.apS = exports2.bind = exports2.let = exports2.bindTo = exports2.Do = exports2.intercalate = exports2.exists = exports2.some = exports2.every = exports2.empty = exports2.fromArray = void 0;
+    var Apply_1 = require_Apply();
+    var Chain_1 = require_Chain();
+    var Eq_1 = require_Eq();
+    var FromEither_1 = require_FromEither();
+    var function_1 = require_function();
+    var Functor_1 = require_Functor();
+    var _ = __importStar(require_internal());
+    var N = __importStar(require_number());
+    var Ord_1 = require_Ord();
+    var RNEA = __importStar(require_ReadonlyNonEmptyArray());
+    var Separated_1 = require_Separated();
+    var Witherable_1 = require_Witherable();
+    var Zero_1 = require_Zero();
+    var isEmpty = function(as) {
+      return as.length === 0;
+    };
+    exports2.isEmpty = isEmpty;
+    exports2.isNonEmpty = RNEA.isNonEmpty;
+    exports2.prepend = RNEA.prepend;
+    exports2.prependW = RNEA.prependW;
+    exports2.append = RNEA.append;
+    exports2.appendW = RNEA.appendW;
+    var makeBy = function(n, f) {
+      return n <= 0 ? exports2.empty : RNEA.makeBy(f)(n);
+    };
+    exports2.makeBy = makeBy;
+    var replicate = function(n, a) {
+      return (0, exports2.makeBy)(n, function() {
+        return a;
+      });
+    };
+    exports2.replicate = replicate;
+    function fromPredicate(predicate) {
+      return function(a) {
+        return predicate(a) ? [a] : exports2.empty;
+      };
+    }
+    exports2.fromPredicate = fromPredicate;
+    var fromOption = function(ma) {
+      return _.isNone(ma) ? exports2.empty : [ma.value];
+    };
+    exports2.fromOption = fromOption;
+    var fromEither = function(e) {
+      return _.isLeft(e) ? exports2.empty : [e.right];
+    };
+    exports2.fromEither = fromEither;
+    var matchW = function(onEmpty, onNonEmpty) {
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? onNonEmpty(as) : onEmpty();
+      };
+    };
+    exports2.matchW = matchW;
+    exports2.match = exports2.matchW;
+    var matchLeftW = function(onEmpty, onNonEmpty) {
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? onNonEmpty(RNEA.head(as), RNEA.tail(as)) : onEmpty();
+      };
+    };
+    exports2.matchLeftW = matchLeftW;
+    exports2.matchLeft = exports2.matchLeftW;
+    exports2.foldLeft = exports2.matchLeft;
+    var matchRightW = function(onEmpty, onNonEmpty) {
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? onNonEmpty(RNEA.init(as), RNEA.last(as)) : onEmpty();
+      };
+    };
+    exports2.matchRightW = matchRightW;
+    exports2.matchRight = exports2.matchRightW;
+    exports2.foldRight = exports2.matchRight;
+    var chainWithIndex = function(f) {
+      return function(as) {
+        if ((0, exports2.isEmpty)(as)) {
+          return exports2.empty;
+        }
+        var out = [];
+        for (var i = 0; i < as.length; i++) {
+          out.push.apply(out, f(i, as[i]));
+        }
+        return out;
+      };
+    };
+    exports2.chainWithIndex = chainWithIndex;
+    var scanLeft = function(b, f) {
+      return function(as) {
+        var len = as.length;
+        var out = new Array(len + 1);
+        out[0] = b;
+        for (var i = 0; i < len; i++) {
+          out[i + 1] = f(out[i], as[i]);
+        }
+        return out;
+      };
+    };
+    exports2.scanLeft = scanLeft;
+    var scanRight = function(b, f) {
+      return function(as) {
+        var len = as.length;
+        var out = new Array(len + 1);
+        out[len] = b;
+        for (var i = len - 1; i >= 0; i--) {
+          out[i] = f(as[i], out[i + 1]);
+        }
+        return out;
+      };
+    };
+    exports2.scanRight = scanRight;
+    var size = function(as) {
+      return as.length;
+    };
+    exports2.size = size;
+    exports2.isOutOfBound = RNEA.isOutOfBound;
+    function lookup(i, as) {
+      return as === void 0 ? function(as2) {
+        return lookup(i, as2);
+      } : (0, exports2.isOutOfBound)(i, as) ? _.none : _.some(as[i]);
+    }
+    exports2.lookup = lookup;
+    var head = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(RNEA.head(as)) : _.none;
+    };
+    exports2.head = head;
+    var last = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(RNEA.last(as)) : _.none;
+    };
+    exports2.last = last;
+    var tail = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(RNEA.tail(as)) : _.none;
+    };
+    exports2.tail = tail;
+    var init = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(RNEA.init(as)) : _.none;
+    };
+    exports2.init = init;
+    var takeLeft = function(n) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(n, as) ? as : n === 0 ? exports2.empty : as.slice(0, n);
+      };
+    };
+    exports2.takeLeft = takeLeft;
+    var takeRight = function(n) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(n, as) ? as : n === 0 ? exports2.empty : as.slice(-n);
+      };
+    };
+    exports2.takeRight = takeRight;
+    function takeLeftWhile(predicate) {
+      return function(as) {
+        var out = [];
+        for (var _i = 0, as_1 = as; _i < as_1.length; _i++) {
+          var a = as_1[_i];
+          if (!predicate(a)) {
+            break;
+          }
+          out.push(a);
+        }
+        var len = out.length;
+        return len === as.length ? as : len === 0 ? exports2.empty : out;
+      };
+    }
+    exports2.takeLeftWhile = takeLeftWhile;
+    var spanLeftIndex = function(as, predicate) {
+      var l = as.length;
+      var i = 0;
+      for (; i < l; i++) {
+        if (!predicate(as[i])) {
+          break;
+        }
+      }
+      return i;
+    };
+    function spanLeft(predicate) {
+      return function(as) {
+        var _a = (0, exports2.splitAt)(spanLeftIndex(as, predicate))(as), init2 = _a[0], rest = _a[1];
+        return { init: init2, rest };
+      };
+    }
+    exports2.spanLeft = spanLeft;
+    var dropLeft = function(n) {
+      return function(as) {
+        return n <= 0 || (0, exports2.isEmpty)(as) ? as : n >= as.length ? exports2.empty : as.slice(n, as.length);
+      };
+    };
+    exports2.dropLeft = dropLeft;
+    var dropRight = function(n) {
+      return function(as) {
+        return n <= 0 || (0, exports2.isEmpty)(as) ? as : n >= as.length ? exports2.empty : as.slice(0, as.length - n);
+      };
+    };
+    exports2.dropRight = dropRight;
+    function dropLeftWhile(predicate) {
+      return function(as) {
+        var i = spanLeftIndex(as, predicate);
+        return i === 0 ? as : i === as.length ? exports2.empty : as.slice(i);
+      };
+    }
+    exports2.dropLeftWhile = dropLeftWhile;
+    var findIndex = function(predicate) {
+      return function(as) {
+        for (var i = 0; i < as.length; i++) {
+          if (predicate(as[i])) {
+            return _.some(i);
+          }
+        }
+        return _.none;
+      };
+    };
+    exports2.findIndex = findIndex;
+    function findFirst(predicate) {
+      return function(as) {
+        for (var i = 0; i < as.length; i++) {
+          if (predicate(as[i])) {
+            return _.some(as[i]);
+          }
+        }
+        return _.none;
+      };
+    }
+    exports2.findFirst = findFirst;
+    var findFirstMap = function(f) {
+      return function(as) {
+        for (var i = 0; i < as.length; i++) {
+          var out = f(as[i]);
+          if (_.isSome(out)) {
+            return out;
+          }
+        }
+        return _.none;
+      };
+    };
+    exports2.findFirstMap = findFirstMap;
+    function findLast(predicate) {
+      return function(as) {
+        for (var i = as.length - 1; i >= 0; i--) {
+          if (predicate(as[i])) {
+            return _.some(as[i]);
+          }
+        }
+        return _.none;
+      };
+    }
+    exports2.findLast = findLast;
+    var findLastMap = function(f) {
+      return function(as) {
+        for (var i = as.length - 1; i >= 0; i--) {
+          var out = f(as[i]);
+          if (_.isSome(out)) {
+            return out;
+          }
+        }
+        return _.none;
+      };
+    };
+    exports2.findLastMap = findLastMap;
+    var findLastIndex = function(predicate) {
+      return function(as) {
+        for (var i = as.length - 1; i >= 0; i--) {
+          if (predicate(as[i])) {
+            return _.some(i);
+          }
+        }
+        return _.none;
+      };
+    };
+    exports2.findLastIndex = findLastIndex;
+    var insertAt = function(i, a) {
+      return function(as) {
+        return i < 0 || i > as.length ? _.none : _.some(RNEA.unsafeInsertAt(i, a, as));
+      };
+    };
+    exports2.insertAt = insertAt;
+    var updateAt = function(i, a) {
+      return (0, exports2.modifyAt)(i, function() {
+        return a;
+      });
+    };
+    exports2.updateAt = updateAt;
+    var deleteAt = function(i) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(i, as) ? _.none : _.some((0, exports2.unsafeDeleteAt)(i, as));
+      };
+    };
+    exports2.deleteAt = deleteAt;
+    var modifyAt = function(i, f) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(i, as) ? _.none : _.some((0, exports2.unsafeUpdateAt)(i, f(as[i]), as));
+      };
+    };
+    exports2.modifyAt = modifyAt;
+    var reverse = function(as) {
+      return as.length <= 1 ? as : as.slice().reverse();
+    };
+    exports2.reverse = reverse;
+    var rights = function(as) {
+      var r = [];
+      for (var i = 0; i < as.length; i++) {
+        var a = as[i];
+        if (a._tag === "Right") {
+          r.push(a.right);
+        }
+      }
+      return r;
+    };
+    exports2.rights = rights;
+    var lefts = function(as) {
+      var r = [];
+      for (var i = 0; i < as.length; i++) {
+        var a = as[i];
+        if (a._tag === "Left") {
+          r.push(a.left);
+        }
+      }
+      return r;
+    };
+    exports2.lefts = lefts;
+    var sort = function(O) {
+      return function(as) {
+        return as.length <= 1 ? as : as.slice().sort(O.compare);
+      };
+    };
+    exports2.sort = sort;
+    var zipWith = function(fa, fb, f) {
+      var fc = [];
+      var len = Math.min(fa.length, fb.length);
+      for (var i = 0; i < len; i++) {
+        fc[i] = f(fa[i], fb[i]);
+      }
+      return fc;
+    };
+    exports2.zipWith = zipWith;
+    function zip2(as, bs) {
+      if (bs === void 0) {
+        return function(bs2) {
+          return zip2(bs2, as);
+        };
+      }
+      return (0, exports2.zipWith)(as, bs, function(a, b) {
+        return [a, b];
+      });
+    }
+    exports2.zip = zip2;
+    var unzip = function(as) {
+      var fa = [];
+      var fb = [];
+      for (var i = 0; i < as.length; i++) {
+        fa[i] = as[i][0];
+        fb[i] = as[i][1];
+      }
+      return [fa, fb];
+    };
+    exports2.unzip = unzip;
+    var prependAll = function(middle) {
+      var f = RNEA.prependAll(middle);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : as;
+      };
+    };
+    exports2.prependAll = prependAll;
+    var intersperse = function(middle) {
+      var f = RNEA.intersperse(middle);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : as;
+      };
+    };
+    exports2.intersperse = intersperse;
+    var rotate = function(n) {
+      var f = RNEA.rotate(n);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : as;
+      };
+    };
+    exports2.rotate = rotate;
+    function elem(E) {
+      return function(a, as) {
+        if (as === void 0) {
+          var elemE_1 = elem(E);
+          return function(as2) {
+            return elemE_1(a, as2);
+          };
+        }
+        var predicate = function(element) {
+          return E.equals(element, a);
+        };
+        var i = 0;
+        for (; i < as.length; i++) {
+          if (predicate(as[i])) {
+            return true;
+          }
+        }
+        return false;
+      };
+    }
+    exports2.elem = elem;
+    var uniq = function(E) {
+      var f = RNEA.uniq(E);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : as;
+      };
+    };
+    exports2.uniq = uniq;
+    var sortBy = function(ords) {
+      var f = RNEA.sortBy(ords);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : as;
+      };
+    };
+    exports2.sortBy = sortBy;
+    var chop = function(f) {
+      var g = RNEA.chop(f);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? g(as) : exports2.empty;
+      };
+    };
+    exports2.chop = chop;
+    var splitAt = function(n) {
+      return function(as) {
+        return n >= 1 && (0, exports2.isNonEmpty)(as) ? RNEA.splitAt(n)(as) : (0, exports2.isEmpty)(as) ? [as, exports2.empty] : [exports2.empty, as];
+      };
+    };
+    exports2.splitAt = splitAt;
+    var chunksOf = function(n) {
+      var f = RNEA.chunksOf(n);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : exports2.empty;
+      };
+    };
+    exports2.chunksOf = chunksOf;
+    var fromOptionK = function(f) {
+      return function() {
+        var a = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+          a[_i] = arguments[_i];
+        }
+        return (0, exports2.fromOption)(f.apply(void 0, a));
+      };
+    };
+    exports2.fromOptionK = fromOptionK;
+    function comprehension(input, f, g) {
+      if (g === void 0) {
+        g = function() {
+          return true;
+        };
+      }
+      var go = function(scope, input2) {
+        return (0, exports2.isNonEmpty)(input2) ? (0, exports2.flatMap)(RNEA.head(input2), function(a) {
+          return go((0, function_1.pipe)(scope, (0, exports2.append)(a)), RNEA.tail(input2));
+        }) : g.apply(void 0, scope) ? [f.apply(void 0, scope)] : exports2.empty;
+      };
+      return go(exports2.empty, input);
+    }
+    exports2.comprehension = comprehension;
+    var concatW = function(second) {
+      return function(first) {
+        return (0, exports2.isEmpty)(first) ? second : (0, exports2.isEmpty)(second) ? first : first.concat(second);
+      };
+    };
+    exports2.concatW = concatW;
+    exports2.concat = exports2.concatW;
+    function union2(E) {
+      var unionE = RNEA.union(E);
+      return function(first, second) {
+        if (second === void 0) {
+          var unionE_1 = union2(E);
+          return function(second2) {
+            return unionE_1(second2, first);
+          };
+        }
+        return (0, exports2.isNonEmpty)(first) && (0, exports2.isNonEmpty)(second) ? unionE(second)(first) : (0, exports2.isNonEmpty)(first) ? first : second;
+      };
+    }
+    exports2.union = union2;
+    function intersection2(E) {
+      var elemE = elem(E);
+      return function(xs, ys) {
+        if (ys === void 0) {
+          var intersectionE_1 = intersection2(E);
+          return function(ys2) {
+            return intersectionE_1(ys2, xs);
+          };
+        }
+        return xs.filter(function(a) {
+          return elemE(a, ys);
+        });
+      };
+    }
+    exports2.intersection = intersection2;
+    function difference(E) {
+      var elemE = elem(E);
+      return function(xs, ys) {
+        if (ys === void 0) {
+          var differenceE_1 = difference(E);
+          return function(ys2) {
+            return differenceE_1(ys2, xs);
+          };
+        }
+        return xs.filter(function(a) {
+          return !elemE(a, ys);
+        });
+      };
+    }
+    exports2.difference = difference;
+    var _map = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.map)(f));
+    };
+    var _mapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.mapWithIndex)(f));
+    };
+    var _ap = function(fab, fa) {
+      return (0, function_1.pipe)(fab, (0, exports2.ap)(fa));
+    };
+    var _filter = function(fa, predicate) {
+      return (0, function_1.pipe)(fa, (0, exports2.filter)(predicate));
+    };
+    var _filterMap = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.filterMap)(f));
+    };
+    var _partition = function(fa, predicate) {
+      return (0, function_1.pipe)(fa, (0, exports2.partition)(predicate));
+    };
+    var _partitionMap = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.partitionMap)(f));
+    };
+    var _partitionWithIndex = function(fa, predicateWithIndex) {
+      return (0, function_1.pipe)(fa, (0, exports2.partitionWithIndex)(predicateWithIndex));
+    };
+    var _partitionMapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.partitionMapWithIndex)(f));
+    };
+    var _alt = function(fa, that) {
+      return (0, function_1.pipe)(fa, (0, exports2.alt)(that));
+    };
+    var _reduce = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduce)(b, f));
+    };
+    var _foldMap = function(M) {
+      var foldMapM = (0, exports2.foldMap)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapM(f));
+      };
+    };
+    var _reduceRight = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRight)(b, f));
+    };
+    var _reduceWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceWithIndex)(b, f));
+    };
+    var _foldMapWithIndex = function(M) {
+      var foldMapWithIndexM = (0, exports2.foldMapWithIndex)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapWithIndexM(f));
+      };
+    };
+    var _reduceRightWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRightWithIndex)(b, f));
+    };
+    var _filterMapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.filterMapWithIndex)(f));
+    };
+    var _filterWithIndex = function(fa, predicateWithIndex) {
+      return (0, function_1.pipe)(fa, (0, exports2.filterWithIndex)(predicateWithIndex));
+    };
+    var _extend = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.extend)(f));
+    };
+    var _traverse = function(F) {
+      var traverseF = (0, exports2.traverse)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseF(f));
+      };
+    };
+    var _traverseWithIndex = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseWithIndexF(f));
+      };
+    };
+    var _chainRecDepthFirst = function(a, f) {
+      return (0, function_1.pipe)(a, (0, exports2.chainRecDepthFirst)(f));
+    };
+    exports2._chainRecDepthFirst = _chainRecDepthFirst;
+    var _chainRecBreadthFirst = function(a, f) {
+      return (0, function_1.pipe)(a, (0, exports2.chainRecBreadthFirst)(f));
+    };
+    exports2._chainRecBreadthFirst = _chainRecBreadthFirst;
+    exports2.of = RNEA.of;
+    var zero = function() {
+      return exports2.empty;
+    };
+    exports2.zero = zero;
+    var altW = function(that) {
+      return function(fa) {
+        return fa.concat(that());
+      };
+    };
+    exports2.altW = altW;
+    exports2.alt = exports2.altW;
+    var ap = function(fa) {
+      return (0, exports2.flatMap)(function(f) {
+        return (0, function_1.pipe)(fa, (0, exports2.map)(f));
+      });
+    };
+    exports2.ap = ap;
+    exports2.flatMap = (0, function_1.dual)(2, function(ma, f) {
+      return (0, function_1.pipe)(ma, (0, exports2.chainWithIndex)(function(i, a) {
+        return f(a, i);
+      }));
+    });
+    exports2.flatten = (0, exports2.flatMap)(function_1.identity);
+    var map = function(f) {
+      return function(fa) {
+        return fa.map(function(a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.map = map;
+    var mapWithIndex = function(f) {
+      return function(fa) {
+        return fa.map(function(a, i) {
+          return f(i, a);
+        });
+      };
+    };
+    exports2.mapWithIndex = mapWithIndex;
+    var separate = function(fa) {
+      var left = [];
+      var right = [];
+      for (var _i = 0, fa_1 = fa; _i < fa_1.length; _i++) {
+        var e = fa_1[_i];
+        if (e._tag === "Left") {
+          left.push(e.left);
+        } else {
+          right.push(e.right);
+        }
+      }
+      return (0, Separated_1.separated)(left, right);
+    };
+    exports2.separate = separate;
+    var filter = function(predicate) {
+      return function(as) {
+        return as.filter(predicate);
+      };
+    };
+    exports2.filter = filter;
+    var filterMapWithIndex = function(f) {
+      return function(fa) {
+        var out = [];
+        for (var i = 0; i < fa.length; i++) {
+          var optionB = f(i, fa[i]);
+          if (_.isSome(optionB)) {
+            out.push(optionB.value);
+          }
+        }
+        return out;
+      };
+    };
+    exports2.filterMapWithIndex = filterMapWithIndex;
+    var filterMap = function(f) {
+      return (0, exports2.filterMapWithIndex)(function(_2, a) {
+        return f(a);
+      });
+    };
+    exports2.filterMap = filterMap;
+    exports2.compact = (0, exports2.filterMap)(function_1.identity);
+    var partition = function(predicate) {
+      return (0, exports2.partitionWithIndex)(function(_2, a) {
+        return predicate(a);
+      });
+    };
+    exports2.partition = partition;
+    var partitionWithIndex = function(predicateWithIndex) {
+      return function(as) {
+        var left = [];
+        var right = [];
+        for (var i = 0; i < as.length; i++) {
+          var a = as[i];
+          if (predicateWithIndex(i, a)) {
+            right.push(a);
+          } else {
+            left.push(a);
+          }
+        }
+        return (0, Separated_1.separated)(left, right);
+      };
+    };
+    exports2.partitionWithIndex = partitionWithIndex;
+    var partitionMap = function(f) {
+      return (0, exports2.partitionMapWithIndex)(function(_2, a) {
+        return f(a);
+      });
+    };
+    exports2.partitionMap = partitionMap;
+    var partitionMapWithIndex = function(f) {
+      return function(fa) {
+        var left = [];
+        var right = [];
+        for (var i = 0; i < fa.length; i++) {
+          var e = f(i, fa[i]);
+          if (e._tag === "Left") {
+            left.push(e.left);
+          } else {
+            right.push(e.right);
+          }
+        }
+        return (0, Separated_1.separated)(left, right);
+      };
+    };
+    exports2.partitionMapWithIndex = partitionMapWithIndex;
+    var filterWithIndex = function(predicateWithIndex) {
+      return function(as) {
+        return as.filter(function(a, i) {
+          return predicateWithIndex(i, a);
+        });
+      };
+    };
+    exports2.filterWithIndex = filterWithIndex;
+    var extend = function(f) {
+      return function(wa) {
+        return wa.map(function(_2, i) {
+          return f(wa.slice(i));
+        });
+      };
+    };
+    exports2.extend = extend;
+    exports2.duplicate = (0, exports2.extend)(function_1.identity);
+    var foldMapWithIndex = function(M) {
+      return function(f) {
+        return function(fa) {
+          return fa.reduce(function(b, a, i) {
+            return M.concat(b, f(i, a));
+          }, M.empty);
+        };
+      };
+    };
+    exports2.foldMapWithIndex = foldMapWithIndex;
+    var reduce = function(b, f) {
+      return (0, exports2.reduceWithIndex)(b, function(_2, b2, a) {
+        return f(b2, a);
+      });
+    };
+    exports2.reduce = reduce;
+    var foldMap = function(M) {
+      var foldMapWithIndexM = (0, exports2.foldMapWithIndex)(M);
+      return function(f) {
+        return foldMapWithIndexM(function(_2, a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.foldMap = foldMap;
+    var reduceWithIndex = function(b, f) {
+      return function(fa) {
+        var len = fa.length;
+        var out = b;
+        for (var i = 0; i < len; i++) {
+          out = f(i, out, fa[i]);
+        }
+        return out;
+      };
+    };
+    exports2.reduceWithIndex = reduceWithIndex;
+    var reduceRight = function(b, f) {
+      return (0, exports2.reduceRightWithIndex)(b, function(_2, a, b2) {
+        return f(a, b2);
+      });
+    };
+    exports2.reduceRight = reduceRight;
+    var reduceRightWithIndex = function(b, f) {
+      return function(fa) {
+        return fa.reduceRight(function(b2, a, i) {
+          return f(i, a, b2);
+        }, b);
+      };
+    };
+    exports2.reduceRightWithIndex = reduceRightWithIndex;
+    var traverse = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(f) {
+        return traverseWithIndexF(function(_2, a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.traverse = traverse;
+    var sequence = function(F) {
+      return function(ta) {
+        return _reduce(ta, F.of((0, exports2.zero)()), function(fas, fa) {
+          return F.ap(F.map(fas, function(as) {
+            return function(a) {
+              return (0, function_1.pipe)(as, (0, exports2.append)(a));
+            };
+          }), fa);
+        });
+      };
+    };
+    exports2.sequence = sequence;
+    var traverseWithIndex = function(F) {
+      return function(f) {
+        return (0, exports2.reduceWithIndex)(F.of((0, exports2.zero)()), function(i, fbs, a) {
+          return F.ap(F.map(fbs, function(bs) {
+            return function(b) {
+              return (0, function_1.pipe)(bs, (0, exports2.append)(b));
+            };
+          }), f(i, a));
+        });
+      };
+    };
+    exports2.traverseWithIndex = traverseWithIndex;
+    var wither = function(F) {
+      var _witherF = _wither(F);
+      return function(f) {
+        return function(fa) {
+          return _witherF(fa, f);
+        };
+      };
+    };
+    exports2.wither = wither;
+    var wilt = function(F) {
+      var _wiltF = _wilt(F);
+      return function(f) {
+        return function(fa) {
+          return _wiltF(fa, f);
+        };
+      };
+    };
+    exports2.wilt = wilt;
+    var unfold = function(b, f) {
+      var out = [];
+      var bb = b;
+      while (true) {
+        var mt = f(bb);
+        if (_.isSome(mt)) {
+          var _a = mt.value, a = _a[0], b_1 = _a[1];
+          out.push(a);
+          bb = b_1;
+        } else {
+          break;
+        }
+      }
+      return out;
+    };
+    exports2.unfold = unfold;
+    exports2.URI = "ReadonlyArray";
+    var getShow = function(S) {
+      return {
+        show: function(as) {
+          return "[".concat(as.map(S.show).join(", "), "]");
+        }
+      };
+    };
+    exports2.getShow = getShow;
+    var getSemigroup = function() {
+      return {
+        concat: function(first, second) {
+          return (0, exports2.isEmpty)(first) ? second : (0, exports2.isEmpty)(second) ? first : first.concat(second);
+        }
+      };
+    };
+    exports2.getSemigroup = getSemigroup;
+    var getMonoid = function() {
+      return {
+        concat: (0, exports2.getSemigroup)().concat,
+        empty: exports2.empty
+      };
+    };
+    exports2.getMonoid = getMonoid;
+    var getEq = function(E) {
+      return (0, Eq_1.fromEquals)(function(xs, ys) {
+        return xs.length === ys.length && xs.every(function(x, i) {
+          return E.equals(x, ys[i]);
+        });
+      });
+    };
+    exports2.getEq = getEq;
+    var getOrd = function(O) {
+      return (0, Ord_1.fromCompare)(function(a, b) {
+        var aLen = a.length;
+        var bLen = b.length;
+        var len = Math.min(aLen, bLen);
+        for (var i = 0; i < len; i++) {
+          var ordering = O.compare(a[i], b[i]);
+          if (ordering !== 0) {
+            return ordering;
+          }
+        }
+        return N.Ord.compare(aLen, bLen);
+      });
+    };
+    exports2.getOrd = getOrd;
+    var getUnionSemigroup = function(E) {
+      var unionE = union2(E);
+      return {
+        concat: function(first, second) {
+          return unionE(second)(first);
+        }
+      };
+    };
+    exports2.getUnionSemigroup = getUnionSemigroup;
+    var getUnionMonoid = function(E) {
+      return {
+        concat: (0, exports2.getUnionSemigroup)(E).concat,
+        empty: exports2.empty
+      };
+    };
+    exports2.getUnionMonoid = getUnionMonoid;
+    var getIntersectionSemigroup = function(E) {
+      var intersectionE = intersection2(E);
+      return {
+        concat: function(first, second) {
+          return intersectionE(second)(first);
+        }
+      };
+    };
+    exports2.getIntersectionSemigroup = getIntersectionSemigroup;
+    var getDifferenceMagma = function(E) {
+      var differenceE = difference(E);
+      return {
+        concat: function(first, second) {
+          return differenceE(second)(first);
+        }
+      };
+    };
+    exports2.getDifferenceMagma = getDifferenceMagma;
+    exports2.Functor = {
+      URI: exports2.URI,
+      map: _map
+    };
+    exports2.flap = (0, Functor_1.flap)(exports2.Functor);
+    exports2.Pointed = {
+      URI: exports2.URI,
+      of: exports2.of
+    };
+    exports2.FunctorWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex
+    };
+    exports2.Apply = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap
+    };
+    exports2.apFirst = (0, Apply_1.apFirst)(exports2.Apply);
+    exports2.apSecond = (0, Apply_1.apSecond)(exports2.Apply);
+    exports2.Applicative = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of
+    };
+    exports2.Chain = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap
+    };
+    exports2.Monad = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      chain: exports2.flatMap
+    };
+    exports2.chainFirst = /* @__PURE__ */ (0, Chain_1.chainFirst)(exports2.Chain);
+    exports2.Unfoldable = {
+      URI: exports2.URI,
+      unfold: exports2.unfold
+    };
+    exports2.Alt = {
+      URI: exports2.URI,
+      map: _map,
+      alt: _alt
+    };
+    exports2.Zero = {
+      URI: exports2.URI,
+      zero: exports2.zero
+    };
+    exports2.guard = (0, Zero_1.guard)(exports2.Zero, exports2.Pointed);
+    exports2.Alternative = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      alt: _alt,
+      zero: exports2.zero
+    };
+    exports2.Extend = {
+      URI: exports2.URI,
+      map: _map,
+      extend: _extend
+    };
+    exports2.Compactable = {
+      URI: exports2.URI,
+      compact: exports2.compact,
+      separate: exports2.separate
+    };
+    exports2.Filterable = {
+      URI: exports2.URI,
+      map: _map,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap
+    };
+    exports2.FilterableWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap,
+      partitionMapWithIndex: _partitionMapWithIndex,
+      partitionWithIndex: _partitionWithIndex,
+      filterMapWithIndex: _filterMapWithIndex,
+      filterWithIndex: _filterWithIndex
+    };
+    exports2.Foldable = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight
+    };
+    exports2.FoldableWithIndex = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex
+    };
+    exports2.Traversable = {
+      URI: exports2.URI,
+      map: _map,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence
+    };
+    exports2.TraversableWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      traverseWithIndex: _traverseWithIndex
+    };
+    var chainRecDepthFirst = function(f) {
+      return function(a) {
+        var todo = __spreadArray([], f(a), true);
+        var out = [];
+        while (todo.length > 0) {
+          var e = todo.shift();
+          if (_.isLeft(e)) {
+            todo.unshift.apply(todo, f(e.left));
+          } else {
+            out.push(e.right);
+          }
+        }
+        return out;
+      };
+    };
+    exports2.chainRecDepthFirst = chainRecDepthFirst;
+    exports2.ChainRecDepthFirst = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap,
+      chainRec: exports2._chainRecDepthFirst
+    };
+    var chainRecBreadthFirst = function(f) {
+      return function(a) {
+        var initial = f(a);
+        var todo = [];
+        var out = [];
+        function go(e2) {
+          if (_.isLeft(e2)) {
+            f(e2.left).forEach(function(v) {
+              return todo.push(v);
+            });
+          } else {
+            out.push(e2.right);
+          }
+        }
+        for (var _i = 0, initial_1 = initial; _i < initial_1.length; _i++) {
+          var e = initial_1[_i];
+          go(e);
+        }
+        while (todo.length > 0) {
+          go(todo.shift());
+        }
+        return out;
+      };
+    };
+    exports2.chainRecBreadthFirst = chainRecBreadthFirst;
+    exports2.ChainRecBreadthFirst = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap,
+      chainRec: exports2._chainRecBreadthFirst
+    };
+    var _wither = /* @__PURE__ */ (0, Witherable_1.witherDefault)(exports2.Traversable, exports2.Compactable);
+    var _wilt = /* @__PURE__ */ (0, Witherable_1.wiltDefault)(exports2.Traversable, exports2.Compactable);
+    exports2.Witherable = {
+      URI: exports2.URI,
+      map: _map,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      wither: _wither,
+      wilt: _wilt
+    };
+    exports2.filterE = (0, Witherable_1.filterE)(exports2.Witherable);
+    exports2.FromEither = {
+      URI: exports2.URI,
+      fromEither: exports2.fromEither
+    };
+    exports2.fromEitherK = (0, FromEither_1.fromEitherK)(exports2.FromEither);
+    exports2.unsafeInsertAt = RNEA.unsafeInsertAt;
+    var unsafeUpdateAt = function(i, a, as) {
+      return (0, exports2.isNonEmpty)(as) ? RNEA.unsafeUpdateAt(i, a, as) : as;
+    };
+    exports2.unsafeUpdateAt = unsafeUpdateAt;
+    var unsafeDeleteAt = function(i, as) {
+      var xs = as.slice();
+      xs.splice(i, 1);
+      return xs;
+    };
+    exports2.unsafeDeleteAt = unsafeDeleteAt;
+    var toArray = function(as) {
+      return as.slice();
+    };
+    exports2.toArray = toArray;
+    var fromArray = function(as) {
+      return (0, exports2.isEmpty)(as) ? exports2.empty : as.slice();
+    };
+    exports2.fromArray = fromArray;
+    exports2.empty = RNEA.empty;
+    function every(predicate) {
+      return function(as) {
+        return as.every(predicate);
+      };
+    }
+    exports2.every = every;
+    var some = function(predicate) {
+      return function(as) {
+        return as.some(predicate);
+      };
+    };
+    exports2.some = some;
+    exports2.exists = exports2.some;
+    var intercalate = function(M) {
+      var intercalateM = RNEA.intercalate(M);
+      return function(middle) {
+        return (0, exports2.match)(function() {
+          return M.empty;
+        }, intercalateM(middle));
+      };
+    };
+    exports2.intercalate = intercalate;
+    exports2.Do = (0, exports2.of)(_.emptyRecord);
+    exports2.bindTo = (0, Functor_1.bindTo)(exports2.Functor);
+    var let_ = /* @__PURE__ */ (0, Functor_1.let)(exports2.Functor);
+    exports2.let = let_;
+    exports2.bind = (0, Chain_1.bind)(exports2.Chain);
+    exports2.apS = (0, Apply_1.apS)(exports2.Apply);
+    exports2.chain = exports2.flatMap;
+    exports2.range = RNEA.range;
+    exports2.cons = RNEA.cons;
+    exports2.snoc = RNEA.snoc;
+    exports2.prependToAll = exports2.prependAll;
+    exports2.readonlyArray = {
+      URI: exports2.URI,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      chain: exports2.flatMap,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap,
+      mapWithIndex: _mapWithIndex,
+      partitionMapWithIndex: _partitionMapWithIndex,
+      partitionWithIndex: _partitionWithIndex,
+      filterMapWithIndex: _filterMapWithIndex,
+      filterWithIndex: _filterWithIndex,
+      alt: _alt,
+      zero: exports2.zero,
+      unfold: exports2.unfold,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverseWithIndex: _traverseWithIndex,
+      extend: _extend,
+      wither: _wither,
+      wilt: _wilt
+    };
+  }
+});
+
+// node_modules/fp-ts/lib/Array.js
+var require_Array = __commonJS({
+  "node_modules/fp-ts/lib/Array.js"(exports2) {
+    "use strict";
+    var __createBinding = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0)
+        k2 = k;
+      o[k2] = m[k];
+    });
+    var __setModuleDefault = exports2 && exports2.__setModuleDefault || (Object.create ? function(o, v) {
+      Object.defineProperty(o, "default", { enumerable: true, value: v });
+    } : function(o, v) {
+      o["default"] = v;
+    });
+    var __importStar = exports2 && exports2.__importStar || function(mod) {
+      if (mod && mod.__esModule)
+        return mod;
+      var result = {};
+      if (mod != null) {
+        for (var k in mod)
+          if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+            __createBinding(result, mod, k);
+      }
+      __setModuleDefault(result, mod);
+      return result;
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.lefts = exports2.rights = exports2.reverse = exports2.modifyAt = exports2.deleteAt = exports2.updateAt = exports2.insertAt = exports2.copy = exports2.findLastIndex = exports2.findLastMap = exports2.findLast = exports2.findFirstMap = exports2.findFirst = exports2.findIndex = exports2.dropLeftWhile = exports2.dropRight = exports2.dropLeft = exports2.spanLeft = exports2.takeLeftWhile = exports2.takeRight = exports2.takeLeft = exports2.init = exports2.tail = exports2.last = exports2.head = exports2.lookup = exports2.isOutOfBound = exports2.size = exports2.scanRight = exports2.scanLeft = exports2.chainWithIndex = exports2.foldRight = exports2.matchRight = exports2.matchRightW = exports2.foldLeft = exports2.matchLeft = exports2.matchLeftW = exports2.match = exports2.matchW = exports2.fromEither = exports2.fromOption = exports2.fromPredicate = exports2.replicate = exports2.makeBy = exports2.appendW = exports2.append = exports2.prependW = exports2.prepend = exports2.isNonEmpty = exports2.isEmpty = void 0;
+    exports2.traverseWithIndex = exports2.sequence = exports2.traverse = exports2.reduceRightWithIndex = exports2.reduceRight = exports2.reduceWithIndex = exports2.reduce = exports2.foldMapWithIndex = exports2.foldMap = exports2.duplicate = exports2.extend = exports2.filterWithIndex = exports2.alt = exports2.altW = exports2.partitionMapWithIndex = exports2.partitionMap = exports2.partitionWithIndex = exports2.partition = exports2.filter = exports2.separate = exports2.compact = exports2.filterMap = exports2.filterMapWithIndex = exports2.mapWithIndex = exports2.flatten = exports2.flatMap = exports2.ap = exports2.map = exports2.zero = exports2.of = exports2.difference = exports2.intersection = exports2.union = exports2.concat = exports2.concatW = exports2.comprehension = exports2.fromOptionK = exports2.chunksOf = exports2.splitAt = exports2.chop = exports2.sortBy = exports2.uniq = exports2.elem = exports2.rotate = exports2.intersperse = exports2.prependAll = exports2.unzip = exports2.zip = exports2.zipWith = exports2.sort = void 0;
+    exports2.some = exports2.every = exports2.unsafeDeleteAt = exports2.unsafeUpdateAt = exports2.unsafeInsertAt = exports2.fromEitherK = exports2.FromEither = exports2.filterE = exports2.ChainRecBreadthFirst = exports2.chainRecBreadthFirst = exports2.ChainRecDepthFirst = exports2.chainRecDepthFirst = exports2.Witherable = exports2.TraversableWithIndex = exports2.Traversable = exports2.FoldableWithIndex = exports2.Foldable = exports2.FilterableWithIndex = exports2.Filterable = exports2.Compactable = exports2.Extend = exports2.Alternative = exports2.guard = exports2.Zero = exports2.Alt = exports2.Unfoldable = exports2.Monad = exports2.chainFirst = exports2.Chain = exports2.Applicative = exports2.apSecond = exports2.apFirst = exports2.Apply = exports2.FunctorWithIndex = exports2.Pointed = exports2.flap = exports2.Functor = exports2.getDifferenceMagma = exports2.getIntersectionSemigroup = exports2.getUnionMonoid = exports2.getUnionSemigroup = exports2.getOrd = exports2.getEq = exports2.getMonoid = exports2.getSemigroup = exports2.getShow = exports2.URI = exports2.unfold = exports2.wilt = exports2.wither = void 0;
+    exports2.array = exports2.prependToAll = exports2.snoc = exports2.cons = exports2.empty = exports2.range = exports2.chain = exports2.apS = exports2.bind = exports2.let = exports2.bindTo = exports2.Do = exports2.intercalate = exports2.exists = void 0;
+    var Apply_1 = require_Apply();
+    var Chain_1 = require_Chain();
+    var FromEither_1 = require_FromEither();
+    var function_1 = require_function();
+    var Functor_1 = require_Functor();
+    var _ = __importStar(require_internal());
+    var NEA = __importStar(require_NonEmptyArray());
+    var RA = __importStar(require_ReadonlyArray());
+    var Separated_1 = require_Separated();
+    var Witherable_1 = require_Witherable();
+    var Zero_1 = require_Zero();
+    var isEmpty = function(as) {
+      return as.length === 0;
+    };
+    exports2.isEmpty = isEmpty;
+    exports2.isNonEmpty = NEA.isNonEmpty;
+    exports2.prepend = NEA.prepend;
+    exports2.prependW = NEA.prependW;
+    exports2.append = NEA.append;
+    exports2.appendW = NEA.appendW;
+    var makeBy = function(n, f) {
+      return n <= 0 ? [] : NEA.makeBy(f)(n);
+    };
+    exports2.makeBy = makeBy;
+    var replicate = function(n, a) {
+      return (0, exports2.makeBy)(n, function() {
+        return a;
+      });
+    };
+    exports2.replicate = replicate;
+    function fromPredicate(predicate) {
+      return function(a) {
+        return predicate(a) ? [a] : [];
+      };
+    }
+    exports2.fromPredicate = fromPredicate;
+    var fromOption = function(ma) {
+      return _.isNone(ma) ? [] : [ma.value];
+    };
+    exports2.fromOption = fromOption;
+    var fromEither = function(e) {
+      return _.isLeft(e) ? [] : [e.right];
+    };
+    exports2.fromEither = fromEither;
+    var matchW = function(onEmpty, onNonEmpty) {
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? onNonEmpty(as) : onEmpty();
+      };
+    };
+    exports2.matchW = matchW;
+    exports2.match = exports2.matchW;
+    var matchLeftW = function(onEmpty, onNonEmpty) {
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? onNonEmpty(NEA.head(as), NEA.tail(as)) : onEmpty();
+      };
+    };
+    exports2.matchLeftW = matchLeftW;
+    exports2.matchLeft = exports2.matchLeftW;
+    exports2.foldLeft = exports2.matchLeft;
+    var matchRightW = function(onEmpty, onNonEmpty) {
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? onNonEmpty(NEA.init(as), NEA.last(as)) : onEmpty();
+      };
+    };
+    exports2.matchRightW = matchRightW;
+    exports2.matchRight = exports2.matchRightW;
+    exports2.foldRight = exports2.matchRight;
+    var chainWithIndex = function(f) {
+      return function(as) {
+        var out = [];
+        for (var i = 0; i < as.length; i++) {
+          out.push.apply(out, f(i, as[i]));
+        }
+        return out;
+      };
+    };
+    exports2.chainWithIndex = chainWithIndex;
+    var scanLeft = function(b, f) {
+      return function(as) {
+        var len = as.length;
+        var out = new Array(len + 1);
+        out[0] = b;
+        for (var i = 0; i < len; i++) {
+          out[i + 1] = f(out[i], as[i]);
+        }
+        return out;
+      };
+    };
+    exports2.scanLeft = scanLeft;
+    var scanRight = function(b, f) {
+      return function(as) {
+        var len = as.length;
+        var out = new Array(len + 1);
+        out[len] = b;
+        for (var i = len - 1; i >= 0; i--) {
+          out[i] = f(as[i], out[i + 1]);
+        }
+        return out;
+      };
+    };
+    exports2.scanRight = scanRight;
+    var size = function(as) {
+      return as.length;
+    };
+    exports2.size = size;
+    exports2.isOutOfBound = NEA.isOutOfBound;
+    exports2.lookup = RA.lookup;
+    exports2.head = RA.head;
+    exports2.last = RA.last;
+    var tail = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(NEA.tail(as)) : _.none;
+    };
+    exports2.tail = tail;
+    var init = function(as) {
+      return (0, exports2.isNonEmpty)(as) ? _.some(NEA.init(as)) : _.none;
+    };
+    exports2.init = init;
+    var takeLeft = function(n) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(n, as) ? (0, exports2.copy)(as) : as.slice(0, n);
+      };
+    };
+    exports2.takeLeft = takeLeft;
+    var takeRight = function(n) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(n, as) ? (0, exports2.copy)(as) : n === 0 ? [] : as.slice(-n);
+      };
+    };
+    exports2.takeRight = takeRight;
+    function takeLeftWhile(predicate) {
+      return function(as) {
+        var out = [];
+        for (var _i = 0, as_1 = as; _i < as_1.length; _i++) {
+          var a = as_1[_i];
+          if (!predicate(a)) {
+            break;
+          }
+          out.push(a);
+        }
+        return out;
+      };
+    }
+    exports2.takeLeftWhile = takeLeftWhile;
+    var spanLeftIndex = function(as, predicate) {
+      var l = as.length;
+      var i = 0;
+      for (; i < l; i++) {
+        if (!predicate(as[i])) {
+          break;
+        }
+      }
+      return i;
+    };
+    function spanLeft(predicate) {
+      return function(as) {
+        var _a = (0, exports2.splitAt)(spanLeftIndex(as, predicate))(as), init2 = _a[0], rest = _a[1];
+        return { init: init2, rest };
+      };
+    }
+    exports2.spanLeft = spanLeft;
+    var dropLeft = function(n) {
+      return function(as) {
+        return n <= 0 || (0, exports2.isEmpty)(as) ? (0, exports2.copy)(as) : n >= as.length ? [] : as.slice(n, as.length);
+      };
+    };
+    exports2.dropLeft = dropLeft;
+    var dropRight = function(n) {
+      return function(as) {
+        return n <= 0 || (0, exports2.isEmpty)(as) ? (0, exports2.copy)(as) : n >= as.length ? [] : as.slice(0, as.length - n);
+      };
+    };
+    exports2.dropRight = dropRight;
+    function dropLeftWhile(predicate) {
+      return function(as) {
+        return as.slice(spanLeftIndex(as, predicate));
+      };
+    }
+    exports2.dropLeftWhile = dropLeftWhile;
+    exports2.findIndex = RA.findIndex;
+    function findFirst(predicate) {
+      return RA.findFirst(predicate);
+    }
+    exports2.findFirst = findFirst;
+    exports2.findFirstMap = RA.findFirstMap;
+    function findLast(predicate) {
+      return RA.findLast(predicate);
+    }
+    exports2.findLast = findLast;
+    exports2.findLastMap = RA.findLastMap;
+    exports2.findLastIndex = RA.findLastIndex;
+    var copy = function(as) {
+      return as.slice();
+    };
+    exports2.copy = copy;
+    var insertAt = function(i, a) {
+      return function(as) {
+        return i < 0 || i > as.length ? _.none : _.some((0, exports2.unsafeInsertAt)(i, a, as));
+      };
+    };
+    exports2.insertAt = insertAt;
+    var updateAt = function(i, a) {
+      return (0, exports2.modifyAt)(i, function() {
+        return a;
+      });
+    };
+    exports2.updateAt = updateAt;
+    var deleteAt = function(i) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(i, as) ? _.none : _.some((0, exports2.unsafeDeleteAt)(i, as));
+      };
+    };
+    exports2.deleteAt = deleteAt;
+    var modifyAt = function(i, f) {
+      return function(as) {
+        return (0, exports2.isOutOfBound)(i, as) ? _.none : _.some((0, exports2.unsafeUpdateAt)(i, f(as[i]), as));
+      };
+    };
+    exports2.modifyAt = modifyAt;
+    var reverse = function(as) {
+      return (0, exports2.isEmpty)(as) ? [] : as.slice().reverse();
+    };
+    exports2.reverse = reverse;
+    var rights = function(as) {
+      var r = [];
+      for (var i = 0; i < as.length; i++) {
+        var a = as[i];
+        if (a._tag === "Right") {
+          r.push(a.right);
+        }
+      }
+      return r;
+    };
+    exports2.rights = rights;
+    var lefts = function(as) {
+      var r = [];
+      for (var i = 0; i < as.length; i++) {
+        var a = as[i];
+        if (a._tag === "Left") {
+          r.push(a.left);
+        }
+      }
+      return r;
+    };
+    exports2.lefts = lefts;
+    var sort = function(O) {
+      return function(as) {
+        return as.length <= 1 ? (0, exports2.copy)(as) : as.slice().sort(O.compare);
+      };
+    };
+    exports2.sort = sort;
+    var zipWith = function(fa, fb, f) {
+      var fc = [];
+      var len = Math.min(fa.length, fb.length);
+      for (var i = 0; i < len; i++) {
+        fc[i] = f(fa[i], fb[i]);
+      }
+      return fc;
+    };
+    exports2.zipWith = zipWith;
+    function zip2(as, bs) {
+      if (bs === void 0) {
+        return function(bs2) {
+          return zip2(bs2, as);
+        };
+      }
+      return (0, exports2.zipWith)(as, bs, function(a, b) {
+        return [a, b];
+      });
+    }
+    exports2.zip = zip2;
+    var unzip = function(as) {
+      var fa = [];
+      var fb = [];
+      for (var i = 0; i < as.length; i++) {
+        fa[i] = as[i][0];
+        fb[i] = as[i][1];
+      }
+      return [fa, fb];
+    };
+    exports2.unzip = unzip;
+    var prependAll = function(middle) {
+      var f = NEA.prependAll(middle);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : [];
+      };
+    };
+    exports2.prependAll = prependAll;
+    var intersperse = function(middle) {
+      var f = NEA.intersperse(middle);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : (0, exports2.copy)(as);
+      };
+    };
+    exports2.intersperse = intersperse;
+    var rotate = function(n) {
+      var f = NEA.rotate(n);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : (0, exports2.copy)(as);
+      };
+    };
+    exports2.rotate = rotate;
+    exports2.elem = RA.elem;
+    var uniq = function(E) {
+      var f = NEA.uniq(E);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : (0, exports2.copy)(as);
+      };
+    };
+    exports2.uniq = uniq;
+    var sortBy = function(ords) {
+      var f = NEA.sortBy(ords);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : (0, exports2.copy)(as);
+      };
+    };
+    exports2.sortBy = sortBy;
+    var chop = function(f) {
+      var g = NEA.chop(f);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? g(as) : [];
+      };
+    };
+    exports2.chop = chop;
+    var splitAt = function(n) {
+      return function(as) {
+        return n >= 1 && (0, exports2.isNonEmpty)(as) ? NEA.splitAt(n)(as) : (0, exports2.isEmpty)(as) ? [(0, exports2.copy)(as), []] : [[], (0, exports2.copy)(as)];
+      };
+    };
+    exports2.splitAt = splitAt;
+    var chunksOf = function(n) {
+      var f = NEA.chunksOf(n);
+      return function(as) {
+        return (0, exports2.isNonEmpty)(as) ? f(as) : [];
+      };
+    };
+    exports2.chunksOf = chunksOf;
+    var fromOptionK = function(f) {
+      return function() {
+        var a = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+          a[_i] = arguments[_i];
+        }
+        return (0, exports2.fromOption)(f.apply(void 0, a));
+      };
+    };
+    exports2.fromOptionK = fromOptionK;
+    function comprehension(input, f, g) {
+      if (g === void 0) {
+        g = function() {
+          return true;
+        };
+      }
+      var go = function(scope, input2) {
+        return (0, exports2.isNonEmpty)(input2) ? (0, exports2.flatMap)(NEA.head(input2), function(a) {
+          return go((0, function_1.pipe)(scope, (0, exports2.append)(a)), NEA.tail(input2));
+        }) : g.apply(void 0, scope) ? [f.apply(void 0, scope)] : [];
+      };
+      return go([], input);
+    }
+    exports2.comprehension = comprehension;
+    var concatW = function(second) {
+      return function(first) {
+        return (0, exports2.isEmpty)(first) ? (0, exports2.copy)(second) : (0, exports2.isEmpty)(second) ? (0, exports2.copy)(first) : first.concat(second);
+      };
+    };
+    exports2.concatW = concatW;
+    exports2.concat = exports2.concatW;
+    function union2(E) {
+      var unionE = NEA.union(E);
+      return function(first, second) {
+        if (second === void 0) {
+          var unionE_1 = union2(E);
+          return function(second2) {
+            return unionE_1(second2, first);
+          };
+        }
+        return (0, exports2.isNonEmpty)(first) && (0, exports2.isNonEmpty)(second) ? unionE(second)(first) : (0, exports2.isNonEmpty)(first) ? (0, exports2.copy)(first) : (0, exports2.copy)(second);
+      };
+    }
+    exports2.union = union2;
+    function intersection2(E) {
+      var elemE = (0, exports2.elem)(E);
+      return function(xs, ys) {
+        if (ys === void 0) {
+          var intersectionE_1 = intersection2(E);
+          return function(ys2) {
+            return intersectionE_1(ys2, xs);
+          };
+        }
+        return xs.filter(function(a) {
+          return elemE(a, ys);
+        });
+      };
+    }
+    exports2.intersection = intersection2;
+    function difference(E) {
+      var elemE = (0, exports2.elem)(E);
+      return function(xs, ys) {
+        if (ys === void 0) {
+          var differenceE_1 = difference(E);
+          return function(ys2) {
+            return differenceE_1(ys2, xs);
+          };
+        }
+        return xs.filter(function(a) {
+          return !elemE(a, ys);
+        });
+      };
+    }
+    exports2.difference = difference;
+    var _map = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.map)(f));
+    };
+    var _mapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.mapWithIndex)(f));
+    };
+    var _ap = function(fab, fa) {
+      return (0, function_1.pipe)(fab, (0, exports2.ap)(fa));
+    };
+    var _filter = function(fa, predicate) {
+      return (0, function_1.pipe)(fa, (0, exports2.filter)(predicate));
+    };
+    var _filterMap = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.filterMap)(f));
+    };
+    var _partition = function(fa, predicate) {
+      return (0, function_1.pipe)(fa, (0, exports2.partition)(predicate));
+    };
+    var _partitionMap = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.partitionMap)(f));
+    };
+    var _partitionWithIndex = function(fa, predicateWithIndex) {
+      return (0, function_1.pipe)(fa, (0, exports2.partitionWithIndex)(predicateWithIndex));
+    };
+    var _partitionMapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.partitionMapWithIndex)(f));
+    };
+    var _alt = function(fa, that) {
+      return (0, function_1.pipe)(fa, (0, exports2.alt)(that));
+    };
+    var _reduce = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduce)(b, f));
+    };
+    var _foldMap = function(M) {
+      var foldMapM = (0, exports2.foldMap)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapM(f));
+      };
+    };
+    var _reduceRight = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRight)(b, f));
+    };
+    var _reduceWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceWithIndex)(b, f));
+    };
+    var _foldMapWithIndex = function(M) {
+      var foldMapWithIndexM = (0, exports2.foldMapWithIndex)(M);
+      return function(fa, f) {
+        return (0, function_1.pipe)(fa, foldMapWithIndexM(f));
+      };
+    };
+    var _reduceRightWithIndex = function(fa, b, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.reduceRightWithIndex)(b, f));
+    };
+    var _filterMapWithIndex = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.filterMapWithIndex)(f));
+    };
+    var _filterWithIndex = function(fa, predicateWithIndex) {
+      return (0, function_1.pipe)(fa, (0, exports2.filterWithIndex)(predicateWithIndex));
+    };
+    var _extend = function(fa, f) {
+      return (0, function_1.pipe)(fa, (0, exports2.extend)(f));
+    };
+    var _traverse = function(F) {
+      var traverseF = (0, exports2.traverse)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseF(f));
+      };
+    };
+    var _traverseWithIndex = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(ta, f) {
+        return (0, function_1.pipe)(ta, traverseWithIndexF(f));
+      };
+    };
+    var _chainRecDepthFirst = RA._chainRecDepthFirst;
+    var _chainRecBreadthFirst = RA._chainRecBreadthFirst;
+    exports2.of = NEA.of;
+    var zero = function() {
+      return [];
+    };
+    exports2.zero = zero;
+    var map = function(f) {
+      return function(fa) {
+        return fa.map(function(a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.map = map;
+    var ap = function(fa) {
+      return (0, exports2.flatMap)(function(f) {
+        return (0, function_1.pipe)(fa, (0, exports2.map)(f));
+      });
+    };
+    exports2.ap = ap;
+    exports2.flatMap = (0, function_1.dual)(2, function(ma, f) {
+      return (0, function_1.pipe)(ma, (0, exports2.chainWithIndex)(function(i, a) {
+        return f(a, i);
+      }));
+    });
+    exports2.flatten = (0, exports2.flatMap)(function_1.identity);
+    var mapWithIndex = function(f) {
+      return function(fa) {
+        return fa.map(function(a, i) {
+          return f(i, a);
+        });
+      };
+    };
+    exports2.mapWithIndex = mapWithIndex;
+    var filterMapWithIndex = function(f) {
+      return function(fa) {
+        var out = [];
+        for (var i = 0; i < fa.length; i++) {
+          var optionB = f(i, fa[i]);
+          if (_.isSome(optionB)) {
+            out.push(optionB.value);
+          }
+        }
+        return out;
+      };
+    };
+    exports2.filterMapWithIndex = filterMapWithIndex;
+    var filterMap = function(f) {
+      return (0, exports2.filterMapWithIndex)(function(_2, a) {
+        return f(a);
+      });
+    };
+    exports2.filterMap = filterMap;
+    exports2.compact = (0, exports2.filterMap)(function_1.identity);
+    var separate = function(fa) {
+      var left = [];
+      var right = [];
+      for (var _i = 0, fa_1 = fa; _i < fa_1.length; _i++) {
+        var e = fa_1[_i];
+        if (e._tag === "Left") {
+          left.push(e.left);
+        } else {
+          right.push(e.right);
+        }
+      }
+      return (0, Separated_1.separated)(left, right);
+    };
+    exports2.separate = separate;
+    var filter = function(predicate) {
+      return function(as) {
+        return as.filter(predicate);
+      };
+    };
+    exports2.filter = filter;
+    var partition = function(predicate) {
+      return (0, exports2.partitionWithIndex)(function(_2, a) {
+        return predicate(a);
+      });
+    };
+    exports2.partition = partition;
+    var partitionWithIndex = function(predicateWithIndex) {
+      return function(as) {
+        var left = [];
+        var right = [];
+        for (var i = 0; i < as.length; i++) {
+          var b = as[i];
+          if (predicateWithIndex(i, b)) {
+            right.push(b);
+          } else {
+            left.push(b);
+          }
+        }
+        return (0, Separated_1.separated)(left, right);
+      };
+    };
+    exports2.partitionWithIndex = partitionWithIndex;
+    var partitionMap = function(f) {
+      return (0, exports2.partitionMapWithIndex)(function(_2, a) {
+        return f(a);
+      });
+    };
+    exports2.partitionMap = partitionMap;
+    var partitionMapWithIndex = function(f) {
+      return function(fa) {
+        var left = [];
+        var right = [];
+        for (var i = 0; i < fa.length; i++) {
+          var e = f(i, fa[i]);
+          if (e._tag === "Left") {
+            left.push(e.left);
+          } else {
+            right.push(e.right);
+          }
+        }
+        return (0, Separated_1.separated)(left, right);
+      };
+    };
+    exports2.partitionMapWithIndex = partitionMapWithIndex;
+    var altW = function(that) {
+      return function(fa) {
+        return fa.concat(that());
+      };
+    };
+    exports2.altW = altW;
+    exports2.alt = exports2.altW;
+    var filterWithIndex = function(predicateWithIndex) {
+      return function(as) {
+        return as.filter(function(b, i) {
+          return predicateWithIndex(i, b);
+        });
+      };
+    };
+    exports2.filterWithIndex = filterWithIndex;
+    var extend = function(f) {
+      return function(wa) {
+        return wa.map(function(_2, i) {
+          return f(wa.slice(i));
+        });
+      };
+    };
+    exports2.extend = extend;
+    exports2.duplicate = (0, exports2.extend)(function_1.identity);
+    exports2.foldMap = RA.foldMap;
+    exports2.foldMapWithIndex = RA.foldMapWithIndex;
+    exports2.reduce = RA.reduce;
+    exports2.reduceWithIndex = RA.reduceWithIndex;
+    exports2.reduceRight = RA.reduceRight;
+    exports2.reduceRightWithIndex = RA.reduceRightWithIndex;
+    var traverse = function(F) {
+      var traverseWithIndexF = (0, exports2.traverseWithIndex)(F);
+      return function(f) {
+        return traverseWithIndexF(function(_2, a) {
+          return f(a);
+        });
+      };
+    };
+    exports2.traverse = traverse;
+    var sequence = function(F) {
+      return function(ta) {
+        return _reduce(ta, F.of((0, exports2.zero)()), function(fas, fa) {
+          return F.ap(F.map(fas, function(as) {
+            return function(a) {
+              return (0, function_1.pipe)(as, (0, exports2.append)(a));
+            };
+          }), fa);
+        });
+      };
+    };
+    exports2.sequence = sequence;
+    var traverseWithIndex = function(F) {
+      return function(f) {
+        return (0, exports2.reduceWithIndex)(F.of((0, exports2.zero)()), function(i, fbs, a) {
+          return F.ap(F.map(fbs, function(bs) {
+            return function(b) {
+              return (0, function_1.pipe)(bs, (0, exports2.append)(b));
+            };
+          }), f(i, a));
+        });
+      };
+    };
+    exports2.traverseWithIndex = traverseWithIndex;
+    var wither = function(F) {
+      var _witherF = _wither(F);
+      return function(f) {
+        return function(fa) {
+          return _witherF(fa, f);
+        };
+      };
+    };
+    exports2.wither = wither;
+    var wilt = function(F) {
+      var _wiltF = _wilt(F);
+      return function(f) {
+        return function(fa) {
+          return _wiltF(fa, f);
+        };
+      };
+    };
+    exports2.wilt = wilt;
+    var unfold = function(b, f) {
+      var out = [];
+      var bb = b;
+      while (true) {
+        var mt = f(bb);
+        if (_.isSome(mt)) {
+          var _a = mt.value, a = _a[0], b_1 = _a[1];
+          out.push(a);
+          bb = b_1;
+        } else {
+          break;
+        }
+      }
+      return out;
+    };
+    exports2.unfold = unfold;
+    exports2.URI = "Array";
+    exports2.getShow = RA.getShow;
+    var getSemigroup = function() {
+      return {
+        concat: function(first, second) {
+          return first.concat(second);
+        }
+      };
+    };
+    exports2.getSemigroup = getSemigroup;
+    var getMonoid = function() {
+      return {
+        concat: (0, exports2.getSemigroup)().concat,
+        empty: []
+      };
+    };
+    exports2.getMonoid = getMonoid;
+    exports2.getEq = RA.getEq;
+    exports2.getOrd = RA.getOrd;
+    var getUnionSemigroup = function(E) {
+      var unionE = union2(E);
+      return {
+        concat: function(first, second) {
+          return unionE(second)(first);
+        }
+      };
+    };
+    exports2.getUnionSemigroup = getUnionSemigroup;
+    var getUnionMonoid = function(E) {
+      return {
+        concat: (0, exports2.getUnionSemigroup)(E).concat,
+        empty: []
+      };
+    };
+    exports2.getUnionMonoid = getUnionMonoid;
+    var getIntersectionSemigroup = function(E) {
+      var intersectionE = intersection2(E);
+      return {
+        concat: function(first, second) {
+          return intersectionE(second)(first);
+        }
+      };
+    };
+    exports2.getIntersectionSemigroup = getIntersectionSemigroup;
+    var getDifferenceMagma = function(E) {
+      var differenceE = difference(E);
+      return {
+        concat: function(first, second) {
+          return differenceE(second)(first);
+        }
+      };
+    };
+    exports2.getDifferenceMagma = getDifferenceMagma;
+    exports2.Functor = {
+      URI: exports2.URI,
+      map: _map
+    };
+    exports2.flap = (0, Functor_1.flap)(exports2.Functor);
+    exports2.Pointed = {
+      URI: exports2.URI,
+      of: exports2.of
+    };
+    exports2.FunctorWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex
+    };
+    exports2.Apply = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap
+    };
+    exports2.apFirst = (0, Apply_1.apFirst)(exports2.Apply);
+    exports2.apSecond = (0, Apply_1.apSecond)(exports2.Apply);
+    exports2.Applicative = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of
+    };
+    exports2.Chain = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap
+    };
+    exports2.chainFirst = /* @__PURE__ */ (0, Chain_1.chainFirst)(exports2.Chain);
+    exports2.Monad = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      chain: exports2.flatMap
+    };
+    exports2.Unfoldable = {
+      URI: exports2.URI,
+      unfold: exports2.unfold
+    };
+    exports2.Alt = {
+      URI: exports2.URI,
+      map: _map,
+      alt: _alt
+    };
+    exports2.Zero = {
+      URI: exports2.URI,
+      zero: exports2.zero
+    };
+    exports2.guard = (0, Zero_1.guard)(exports2.Zero, exports2.Pointed);
+    exports2.Alternative = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      alt: _alt,
+      zero: exports2.zero
+    };
+    exports2.Extend = {
+      URI: exports2.URI,
+      map: _map,
+      extend: _extend
+    };
+    exports2.Compactable = {
+      URI: exports2.URI,
+      compact: exports2.compact,
+      separate: exports2.separate
+    };
+    exports2.Filterable = {
+      URI: exports2.URI,
+      map: _map,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap
+    };
+    exports2.FilterableWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap,
+      partitionMapWithIndex: _partitionMapWithIndex,
+      partitionWithIndex: _partitionWithIndex,
+      filterMapWithIndex: _filterMapWithIndex,
+      filterWithIndex: _filterWithIndex
+    };
+    exports2.Foldable = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight
+    };
+    exports2.FoldableWithIndex = {
+      URI: exports2.URI,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex
+    };
+    exports2.Traversable = {
+      URI: exports2.URI,
+      map: _map,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence
+    };
+    exports2.TraversableWithIndex = {
+      URI: exports2.URI,
+      map: _map,
+      mapWithIndex: _mapWithIndex,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      traverseWithIndex: _traverseWithIndex
+    };
+    var _wither = /* @__PURE__ */ (0, Witherable_1.witherDefault)(exports2.Traversable, exports2.Compactable);
+    var _wilt = /* @__PURE__ */ (0, Witherable_1.wiltDefault)(exports2.Traversable, exports2.Compactable);
+    exports2.Witherable = {
+      URI: exports2.URI,
+      map: _map,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      wither: _wither,
+      wilt: _wilt
+    };
+    exports2.chainRecDepthFirst = RA.chainRecDepthFirst;
+    exports2.ChainRecDepthFirst = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap,
+      chainRec: _chainRecDepthFirst
+    };
+    exports2.chainRecBreadthFirst = RA.chainRecBreadthFirst;
+    exports2.ChainRecBreadthFirst = {
+      URI: exports2.URI,
+      map: _map,
+      ap: _ap,
+      chain: exports2.flatMap,
+      chainRec: _chainRecBreadthFirst
+    };
+    exports2.filterE = (0, Witherable_1.filterE)(exports2.Witherable);
+    exports2.FromEither = {
+      URI: exports2.URI,
+      fromEither: exports2.fromEither
+    };
+    exports2.fromEitherK = (0, FromEither_1.fromEitherK)(exports2.FromEither);
+    exports2.unsafeInsertAt = NEA.unsafeInsertAt;
+    var unsafeUpdateAt = function(i, a, as) {
+      return (0, exports2.isNonEmpty)(as) ? NEA.unsafeUpdateAt(i, a, as) : [];
+    };
+    exports2.unsafeUpdateAt = unsafeUpdateAt;
+    var unsafeDeleteAt = function(i, as) {
+      var xs = as.slice();
+      xs.splice(i, 1);
+      return xs;
+    };
+    exports2.unsafeDeleteAt = unsafeDeleteAt;
+    exports2.every = RA.every;
+    var some = function(predicate) {
+      return function(as) {
+        return as.some(predicate);
+      };
+    };
+    exports2.some = some;
+    exports2.exists = exports2.some;
+    exports2.intercalate = RA.intercalate;
+    exports2.Do = (0, exports2.of)(_.emptyRecord);
+    exports2.bindTo = (0, Functor_1.bindTo)(exports2.Functor);
+    var let_ = /* @__PURE__ */ (0, Functor_1.let)(exports2.Functor);
+    exports2.let = let_;
+    exports2.bind = (0, Chain_1.bind)(exports2.Chain);
+    exports2.apS = (0, Apply_1.apS)(exports2.Apply);
+    exports2.chain = exports2.flatMap;
+    exports2.range = NEA.range;
+    exports2.empty = [];
+    exports2.cons = NEA.cons;
+    exports2.snoc = NEA.snoc;
+    exports2.prependToAll = exports2.prependAll;
+    exports2.array = {
+      URI: exports2.URI,
+      compact: exports2.compact,
+      separate: exports2.separate,
+      map: _map,
+      ap: _ap,
+      of: exports2.of,
+      chain: exports2.flatMap,
+      filter: _filter,
+      filterMap: _filterMap,
+      partition: _partition,
+      partitionMap: _partitionMap,
+      mapWithIndex: _mapWithIndex,
+      partitionMapWithIndex: _partitionMapWithIndex,
+      partitionWithIndex: _partitionWithIndex,
+      filterMapWithIndex: _filterMapWithIndex,
+      filterWithIndex: _filterWithIndex,
+      alt: _alt,
+      zero: exports2.zero,
+      unfold: exports2.unfold,
+      reduce: _reduce,
+      foldMap: _foldMap,
+      reduceRight: _reduceRight,
+      traverse: _traverse,
+      sequence: exports2.sequence,
+      reduceWithIndex: _reduceWithIndex,
+      foldMapWithIndex: _foldMapWithIndex,
+      reduceRightWithIndex: _reduceRightWithIndex,
+      traverseWithIndex: _traverseWithIndex,
+      extend: _extend,
+      wither: _wither,
+      wilt: _wilt
+    };
+  }
+});
+
+// node_modules/fp-ts/lib/Applicative.js
+var require_Applicative = __commonJS({
+  "node_modules/fp-ts/lib/Applicative.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.getApplicativeComposition = exports2.getApplicativeMonoid = void 0;
+    var Apply_1 = require_Apply();
+    var function_1 = require_function();
+    var Functor_1 = require_Functor();
+    function getApplicativeMonoid(F) {
+      var f = (0, Apply_1.getApplySemigroup)(F);
+      return function(M) {
+        return {
+          concat: f(M).concat,
+          empty: F.of(M.empty)
+        };
+      };
+    }
+    exports2.getApplicativeMonoid = getApplicativeMonoid;
+    function getApplicativeComposition(F, G) {
+      var map = (0, Functor_1.getFunctorComposition)(F, G).map;
+      var _ap = (0, Apply_1.ap)(F, G);
+      return {
+        map,
+        of: function(a) {
+          return F.of(G.of(a));
+        },
+        ap: function(fgab, fga) {
+          return (0, function_1.pipe)(fgab, _ap(fga));
+        }
+      };
+    }
+    exports2.getApplicativeComposition = getApplicativeComposition;
+  }
+});
+
+// node_modules/fp-ts/lib/ChainRec.js
+var require_ChainRec = __commonJS({
+  "node_modules/fp-ts/lib/ChainRec.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.tailRec = void 0;
+    var tailRec = function(startWith, f) {
+      var ab = f(startWith);
+      while (ab._tag === "Left") {
+        ab = f(ab.left);
+      }
+      return ab.right;
+    };
+    exports2.tailRec = tailRec;
   }
 });
 
@@ -2681,7 +7087,7 @@ var require_lib = __commonJS({
       }(Type)
     );
     exports2.PartialType = PartialType;
-    function partial(props, name) {
+    function partial2(props, name) {
       if (name === void 0) {
         name = getPartialTypeName(getInterfaceTypeName(props));
       }
@@ -2742,7 +7148,7 @@ var require_lib = __commonJS({
         return s;
       }, props);
     }
-    exports2.partial = partial;
+    exports2.partial = partial2;
     var DictionaryType = (
       /** @class */
       function(_super) {
@@ -2777,7 +7183,7 @@ var require_lib = __commonJS({
       }(Type)
     );
     exports2.UnionType = UnionType;
-    function union(codecs, name) {
+    function union2(codecs, name) {
       if (name === void 0) {
         name = getUnionName(codecs);
       }
@@ -2847,7 +7253,7 @@ var require_lib = __commonJS({
         }, codecs);
       }
     }
-    exports2.union = union;
+    exports2.union = union2;
     var IntersectionType = (
       /** @class */
       function(_super) {
@@ -2862,7 +7268,7 @@ var require_lib = __commonJS({
       }(Type)
     );
     exports2.IntersectionType = IntersectionType;
-    function intersection(codecs, name) {
+    function intersection2(codecs, name) {
       if (name === void 0) {
         name = "(".concat(codecs.map(function(type4) {
           return type4.name;
@@ -2892,7 +7298,7 @@ var require_lib = __commonJS({
         }));
       }, codecs);
     }
-    exports2.intersection = intersection;
+    exports2.intersection = intersection2;
     var TupleType = (
       /** @class */
       function(_super) {
@@ -3133,7 +7539,7 @@ var require_lib = __commonJS({
       if (name === void 0) {
         name = getUnionName(codecs);
       }
-      var U = union(codecs, name);
+      var U = union2(codecs, name);
       if (U instanceof TaggedUnionType) {
         return U;
       } else {
@@ -5908,7 +10314,7 @@ var require_built2 = __commonJS({
 var require_old = __commonJS({
   "node_modules/redis-errors/lib/old.js"(exports2, module2) {
     "use strict";
-    var assert = require("assert");
+    var assert2 = require("assert");
     var util = require("util");
     function RedisError(message) {
       Object.defineProperty(this, "message", {
@@ -5925,8 +10331,8 @@ var require_old = __commonJS({
       writable: true
     });
     function ParserError(message, buffer, offset) {
-      assert(buffer);
-      assert.strictEqual(typeof offset, "number");
+      assert2(buffer);
+      assert2.strictEqual(typeof offset, "number");
       Object.defineProperty(this, "message", {
         value: message || "",
         configurable: true,
@@ -6004,7 +10410,7 @@ var require_old = __commonJS({
 var require_modern = __commonJS({
   "node_modules/redis-errors/lib/modern.js"(exports2, module2) {
     "use strict";
-    var assert = require("assert");
+    var assert2 = require("assert");
     var RedisError = class extends Error {
       get name() {
         return this.constructor.name;
@@ -6012,8 +10418,8 @@ var require_modern = __commonJS({
     };
     var ParserError = class extends RedisError {
       constructor(message, buffer, offset) {
-        assert(buffer);
-        assert.strictEqual(typeof offset, "number");
+        assert2(buffer);
+        assert2.strictEqual(typeof offset, "number");
         const tmp = Error.stackTraceLimit;
         Error.stackTraceLimit = 2;
         super(message);
@@ -6842,13 +11248,13 @@ var require_common = __commonJS({
         createDebug.names = [];
         createDebug.skips = [];
         let i;
-        const split = (typeof namespaces === "string" ? namespaces : "").split(/[\s,]+/);
-        const len = split.length;
+        const split2 = (typeof namespaces === "string" ? namespaces : "").split(/[\s,]+/);
+        const len = split2.length;
         for (i = 0; i < len; i++) {
-          if (!split[i]) {
+          if (!split2[i]) {
             continue;
           }
-          namespaces = split[i].replace(/\*/g, ".*?");
+          namespaces = split2[i].replace(/\*/g, ".*?");
           if (namespaces[0] === "-") {
             createDebug.skips.push(new RegExp("^" + namespaces.slice(1) + "$"));
           } else {
@@ -10958,7 +15364,7 @@ var require_parser = __commonJS({
     function parseSimpleNumbers(parser) {
       const length = parser.buffer.length - 1;
       var offset = parser.offset;
-      var number = 0;
+      var number2 = 0;
       var sign = 1;
       if (parser.buffer[offset] === 45) {
         sign = -1;
@@ -10968,15 +15374,15 @@ var require_parser = __commonJS({
         const c1 = parser.buffer[offset++];
         if (c1 === 13) {
           parser.offset = offset + 1;
-          return sign * number;
+          return sign * number2;
         }
-        number = number * 10 + (c1 - 48);
+        number2 = number2 * 10 + (c1 - 48);
       }
     }
     function parseStringNumbers(parser) {
       const length = parser.buffer.length - 1;
       var offset = parser.offset;
-      var number = 0;
+      var number2 = 0;
       var res = "";
       if (parser.buffer[offset] === 45) {
         res += "-";
@@ -10986,17 +15392,17 @@ var require_parser = __commonJS({
         var c1 = parser.buffer[offset++];
         if (c1 === 13) {
           parser.offset = offset + 1;
-          if (number !== 0) {
-            res += number;
+          if (number2 !== 0) {
+            res += number2;
           }
           return res;
-        } else if (number > 429496728) {
-          res += number * 10 + (c1 - 48);
-          number = 0;
-        } else if (c1 === 48 && number === 0) {
+        } else if (number2 > 429496728) {
+          res += number2 * 10 + (c1 - 48);
+          number2 = 0;
+        } else if (c1 === 48 && number2 === 0) {
           res += 0;
         } else {
-          number = number * 10 + (c1 - 48);
+          number2 = number2 * 10 + (c1 - 48);
         }
       }
     }
@@ -11018,14 +15424,14 @@ var require_parser = __commonJS({
     function parseLength(parser) {
       const length = parser.buffer.length - 1;
       var offset = parser.offset;
-      var number = 0;
+      var number2 = 0;
       while (offset < length) {
         const c1 = parser.buffer[offset++];
         if (c1 === 13) {
           parser.offset = offset + 1;
-          return number;
+          return number2;
         }
-        number = number * 10 + (c1 - 48);
+        number2 = number2 * 10 + (c1 - 48);
       }
     }
     function parseInteger(parser) {
@@ -12575,6 +16981,7 @@ var require_built3 = __commonJS({
 });
 
 // src/20231030171900-merge-solutions-into-exercises.ts
+var import_Array = __toESM(require_Array(), 1);
 var t2 = __toESM(require_lib(), 1);
 
 // src/utils/api-cache.ts
@@ -12658,14 +17065,28 @@ function createMigration(exports2, {
 }
 
 // src/20231030171900-merge-solutions-into-exercises.ts
+var import_assert = __toESM(require("assert"), 1);
 var SolutionContentDecoder = t2.type({
   plugin: t2.literal("solution"),
-  state: t2.record(t2.string, t2.unknown)
+  state: t2.intersection([
+    t2.type({
+      steps: t2.type({
+        plugin: t2.literal("rows")
+      }),
+      strategy: t2.type({
+        // TODO: We need another migration to fix solutions with a box
+        // as a strategy
+        plugin: t2.union([t2.literal("text"), t2.literal("box")])
+      })
+    }),
+    t2.partial({ licenseId: t2.number })
+  ])
 });
 var ExerciseContentDecoder = t2.type({
   plugin: t2.literal("exercise"),
   state: t2.record(t2.string, t2.unknown)
 });
+var RowPluginDecoder = t2.type({ plugin: t2.literal("rows") });
 createMigration(exports, {
   up: async (db) => {
     const apiCache = new ApiCache();
@@ -12675,9 +17096,7 @@ createMigration(exports, {
       const lastId = entities.at(-1)?.entityId ?? 0;
       entities = await db.runSql(
         `select
-           entity.id as entityId,
-           entity.license_id as licenseId,
-           entity.current_revision_id as currentRevisionId
+           entity.id as entityId
          from entity
          join type on entity.type_id = type.id
          where type.name = "text-exercise"
@@ -12687,85 +17106,230 @@ createMigration(exports, {
         batchSize
       );
       for (const entity of entities) {
-        await updateExercise(db, apiCache, entity);
+        await updateExercise(db, apiCache, entity.entityId);
       }
     } while (entities.length > 0);
     await apiCache.quit();
   }
 });
-async function updateExercise(db, apiCache, exercise) {
-  if (exercise.currentRevisionId == null)
-    return;
-  const solution = await getSolution(db, exercise);
-  if (solution === null)
-    return;
-  const exerciseContent = await getContent(db, exercise);
-  if (t2.type({ plugin: t2.literal("rows") }).is(exerciseContent))
-    return;
-  if (!ExerciseContentDecoder.is(exerciseContent)) {
-    throw new Error(
-      `Illegal content for exercise ${exercise.entityId} with current revision ${exercise.currentRevisionId}`
+async function updateExercise(db, apiCache, exerciseId) {
+  const exercise = await loadEntityTree(db, exerciseId);
+  const exerciseRevisions = transformEntity(exercise);
+  let base = mapTree(() => null, exercise);
+  if (exerciseRevisions.length > 0) {
+    (0, import_assert.default)(
+      exerciseRevisions[0].value != null,
+      `Exercise ${exerciseId} has solution before first revision`
     );
   }
-  if (exerciseContent.state.solution != null)
-    return;
-  const solutionContent = await getContent(db, solution);
-  if (solutionContent == null)
-    return;
-  if (!SolutionContentDecoder.is(solutionContent)) {
-    throw new Error(
-      `Illegal content for solution ${solution.entityId} with current revision ${solution.currentRevisionId}`
+  for (const revision of exerciseRevisions) {
+    base = concatTree((a, b) => b == null ? a : b, base, revision);
+    const exercise2 = base.value;
+    const solution = base.children.at(0)?.value ?? null;
+    let exerciseContent = JSON.parse(
+      exercise2?.revision?.content ?? "null"
     );
+    const solutionContentText = solution?.revision?.content ?? null;
+    if (solutionContentText === null || solutionContentText === "")
+      continue;
+    let solutionContent = JSON.parse(solutionContentText);
+    if (solutionContent == null || solution == null)
+      continue;
+    (0, import_assert.default)(exercise2 != null, "Illegal state: Exercise is null");
+    (0, import_assert.default)(exerciseContent != null, "Illegal state: Exercise is null");
+    if (RowPluginDecoder.is(exerciseContent)) {
+      exerciseContent = {
+        plugin: "exercise",
+        state: { content: exerciseContent }
+      };
+    }
+    if (!ExerciseContentDecoder.is(exerciseContent)) {
+      throw new Error(
+        `Illegal content for exercise ${exerciseId} with current revision ${revision.value?.id}`
+      );
+    }
+    if (exerciseContent.state.solution != null)
+      continue;
+    if (RowPluginDecoder.is(solutionContent)) {
+      solutionContent = {
+        plugin: "solution",
+        state: {
+          strategy: { plugin: "text" },
+          steps: solutionContent
+        }
+      };
+    }
+    if (!SolutionContentDecoder.is(solutionContent)) {
+      throw new Error(
+        `Illegal content for solution ${solution?.id} with current revision ${solution?.revision?.id}`
+      );
+    }
+    if (exercise2.licenseId !== solution.licenseId) {
+      solutionContent.state["licenseId"] = solution.licenseId;
+    }
+    exerciseContent.state["solution"] = solutionContent;
+    if (revision.value != null) {
+      await db.runSql(
+        ` update entity_revision_field set value = ?
+          where entity_revision_id = ? and field = "content"`,
+        JSON.stringify(exerciseContent),
+        revision.value.revision.id
+      );
+      await apiCache.deleteUuid(revision.value.revision.id);
+    } else {
+      const revisionToOvertake = getValues(revision).filter(isNotNull).at(0);
+      (0, import_assert.default)(revisionToOvertake !== void 0);
+      await db.runSql(
+        ` update entity_revision set repository_id = ?
+          where id = ?`,
+        exerciseId,
+        revisionToOvertake.revision.id
+      );
+      await db.runSql(
+        ` update entity_revision_field set value = ?
+          where entity_revision_id = ? and field = "content"`,
+        JSON.stringify(exerciseContent),
+        revisionToOvertake.revision.id
+      );
+      await apiCache.deleteUuid(revisionToOvertake.revision.id);
+    }
   }
-  if (exercise.licenseId !== solution.licenseId) {
-    solutionContent.state["licenseId"] = solution.licenseId;
-  }
-  exerciseContent.state["solution"] = solutionContent;
-  await db.runSql(
-    ` update entity_revision_field set value = ?
-      where entity_revision_id = ? and field = "content"`,
-    JSON.stringify(exerciseContent),
-    exercise.currentRevisionId
-  );
-  await apiCache.deleteUuid(exercise.currentRevisionId);
 }
-async function getSolution(db, entity) {
-  const result = await db.runSql(
-    ` select
-        solution.id as entityId,
-        solution.license_id as licenseId,
-        solution.current_revision_id as currentRevisionId
+function transformEntity(entity) {
+  let rest = entity;
+  let result = [];
+  while (getValues(rest).some((entity2) => entity2.revisions.length > 0)) {
+    const dates = getValues(rest).map((entity2) => entity2.revisions.at(0)?.date ?? null).filter(isNotNull);
+    const minDate = dates.reduce((a, b) => a <= b ? a : b);
+    const splitResult = split(rest, minDate);
+    result.push(splitResult.current);
+    rest = splitResult.rest;
+  }
+  return result;
+}
+function split(node, date) {
+  let currentValue;
+  let restValue;
+  if (node.value.revisions.length > 0 && node.value.revisions[0].date.getTime() < date.getTime() + 10) {
+    const base = {
+      id: node.value.id,
+      licenseId: node.value.licenseId,
+      typeName: node.value.typeName
+    };
+    currentValue = { ...base, revision: node.value.revisions[0] };
+    restValue = { ...base, revisions: node.value.revisions.slice(1) };
+  } else {
+    currentValue = null;
+    restValue = node.value;
+  }
+  const children = node.children.map((child) => split(child, date));
+  const currentChildren = children.map((x) => x.current);
+  const restChildren = children.map((x) => x.rest);
+  return {
+    current: { value: currentValue, children: currentChildren },
+    rest: { value: restValue, children: restChildren }
+  };
+}
+async function loadEntityTree(db, entityId) {
+  const entity = await loadEntity(db, entityId);
+  let childIds = [];
+  if (entity.typeName === "text-exercise" /* ExerciseType */) {
+    childIds = await loadChildrenIds({
+      db,
+      entityId,
+      childType: "text-solution" /* SolutionType */,
+      limit: 1
+    });
+  }
+  const children = await Promise.all(
+    childIds.map((childId) => loadEntityTree(db, childId))
+  );
+  return { value: entity, children };
+}
+async function loadChildrenIds({
+  db,
+  entityId,
+  childType,
+  limit
+}) {
+  let sqlCommand = `
+      select child_id as childId
       from entity_link
-      join entity solution on solution.id = entity_link.child_id
-      join type solution_type on solution.type_id = solution_type.id
-      where
-        solution_type.name = "text-solution"
-        and entity_link.parent_id = ?
-      limit 1`,
-    entity.entityId
-  );
-  if (result.length === 1) {
-    return result[0];
-  } else if (result.length === 0) {
-    return null;
-  } else {
-    throw new Error(`Exercise ${entity.entityId} has more than one solution`);
-  }
-}
-async function getContent(db, entity) {
-  if (entity.currentRevisionId == null)
-    return null;
+      join entity child on child.id = entity_link.child_id
+      join type child_type on child_type.id = child.type_id
+      where parent_id = ? and child_type.name = ?`;
+  if (limit != null)
+    sqlCommand += ` limit ${limit}`;
   const result = await db.runSql(
-    ` select value as content
-      from entity_revision_field
-      where entity_revision_id = ? and field = "content"`,
-    entity.currentRevisionId
+    sqlCommand,
+    entityId,
+    childType
   );
-  if (result.length === 1) {
-    return JSON.parse(result[0].content);
-  } else {
-    throw new Error(
-      `Revision ${entity.currentRevisionId} has more than one or no content`
-    );
-  }
+  return result.map((row) => row.childId);
+}
+async function loadEntity(db, entityId) {
+  const entityBaseResult = await db.runSql(
+    ` select
+        entity.id as id,
+        entity.license_id as licenseId,
+        type.name as typeName
+      from entity
+      join type on entity.type_id = type.id
+      where entity.id = ?`,
+    entityId
+  );
+  const entityBase = pickFirst(entityBaseResult);
+  (0, import_assert.default)(
+    isTypeName(entityBase.typeName),
+    `Entity ${entityId} has unsupported type name`
+  );
+  const revisions = await loadRevisions(db, entityId);
+  return { ...entityBase, revisions };
+}
+async function loadRevisions(db, entityId) {
+  return await db.runSql(
+    ` select
+          entity_revision.id,
+          entity_revision.date,
+          entity_revision_field.value as content
+      from entity_revision
+      left join entity_revision_field on
+          entity_revision_field.entity_revision_id = entity_revision.id
+          and entity_revision_field.field = "content"
+      where entity_revision.repository_id = ?
+      order by entity_revision.date`,
+    entityId
+  );
+}
+function mapTree(mapper, node) {
+  return {
+    value: mapper(node.value),
+    children: node.children.map((child) => mapTree(mapper, child))
+  };
+}
+function concatTree(concat, x, y) {
+  return {
+    value: concat(x.value, y.value),
+    children: (0, import_Array.zip)(x.children, y.children).map(
+      ([x2, y2]) => concatTree(concat, x2, y2)
+    )
+  };
+}
+function getValues(node) {
+  return [node.value, ...node.children.flatMap(getValues)];
+}
+function pickFirst(elements) {
+  (0, import_assert.default)(elements.length === 1, "List has more than one element");
+  return elements[0];
+}
+var TypeName = /* @__PURE__ */ ((TypeName2) => {
+  TypeName2["ExerciseType"] = "text-exercise";
+  TypeName2["SolutionType"] = "text-solution";
+  return TypeName2;
+})(TypeName || {});
+function isTypeName(values) {
+  return Object.values(TypeName).includes(values);
+}
+function isNotNull(value) {
+  return value != null;
 }
