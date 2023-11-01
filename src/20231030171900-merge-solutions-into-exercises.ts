@@ -1,3 +1,4 @@
+import { zip } from 'fp-ts/Array'
 import * as t from 'io-ts'
 
 import { Database, createMigration } from './utils'
@@ -48,13 +49,7 @@ createMigration(exports, {
 
       for (const entity of entities) {
         await updateExercise(db, apiCache, entity.entityId)
-
-        // TODO
-        break
       }
-
-      // TODO
-      break
     } while (entities.length > 0)
 
     await apiCache.quit()
@@ -71,23 +66,114 @@ async function updateExercise(
   exerciseId: number,
 ) {
   const exercise = await loadEntityTree(db, exerciseId)
-  const newRevisions = transformEntity(exercise)
+  const exerciseRevisions = transformEntity(exercise)
 
-  for (const revision of newRevisions) {
-    console.log('---')
-    printTree((x) => (x == null ? 'null' : x.id), revision.current)
+  let base: TreeNode<EntityWithRevision | null> = mapTree(() => null, exercise)
+
+  if (exerciseRevisions.length > 0) {
+    assert(
+      exerciseRevisions[0].value != null,
+      `Exercise ${exerciseId} has solution before first revision`,
+    )
+  }
+
+  for (const revision of exerciseRevisions) {
+    base = concatTree((a, b) => (b == null ? a : b), base, revision)
+
+    const exercise = base.value
+    const solution = base.children.at(0)?.value ?? null
+    let exerciseContent = JSON.parse(
+      exercise?.revision?.content ?? 'null',
+    ) as unknown
+    const solutionContentText = solution?.revision?.content ?? null
+
+    // Some revisions for solutions have an empty string
+    if (solutionContentText === null || solutionContentText === '') continue
+    let solutionContent = JSON.parse(solutionContentText)
+
+    // No need for a migration
+    if (solutionContent == null || solution == null) continue
+
+    assert(exercise != null, 'Illegal state: Exercise is null')
+    assert(exerciseContent != null, 'Illegal state: Exercise is null')
+
+    if (RowPluginDecoder.is(exerciseContent)) {
+      exerciseContent = {
+        plugin: 'exercise',
+        state: { content: exerciseContent },
+      }
+    }
+
+    if (!ExerciseContentDecoder.is(exerciseContent)) {
+      throw new Error(
+        `Illegal content for exercise ${exerciseId} with current revision ${revision.value?.id}`,
+      )
+    }
+
+    // Do not migrate again
+    if (exerciseContent.state.solution != null) continue
+
+    if (RowPluginDecoder.is(solutionContent)) {
+      solutionContent = {
+        plugin: 'solution',
+        state: {
+          strategy: { plugin: 'text' },
+          steps: solutionContent,
+        },
+      }
+    }
+
+    if (!SolutionContentDecoder.is(solutionContent)) {
+      throw new Error(
+        `Illegal content for solution ${solution?.id} with current revision ${solution?.revision?.id}`,
+      )
+    }
+
+    if (exercise.licenseId !== solution.licenseId) {
+      solutionContent.state['licenseId'] = solution.licenseId
+    }
+
+    exerciseContent.state['solution'] = solutionContent
+
+    if (revision.value != null) {
+      await db.runSql(
+        ` update entity_revision_field set value = ?
+          where entity_revision_id = ? and field = "content"`,
+        JSON.stringify(exerciseContent),
+        revision.value.revision.id,
+      )
+
+      await apiCache.deleteUuid(revision.value.revision.id)
+    } else {
+      const revisionToOvertake = getValues(revision).filter(isNotNull).at(0)
+
+      assert(revisionToOvertake !== undefined)
+
+      // TODO: Check before deletion how to really overtake a revision
+      await db.runSql(
+        ` update entity_revision set repository_id = ?
+          where id = ?`,
+        exerciseId,
+        revisionToOvertake.revision.id,
+      )
+
+      await db.runSql(
+        ` update entity_revision_field set value = ?
+          where entity_revision_id = ? and field = "content"`,
+        JSON.stringify(exerciseContent),
+        revisionToOvertake.revision.id,
+      )
+
+      await apiCache.deleteUuid(revisionToOvertake.revision.id)
+    }
   }
 }
 
 function transformEntity(
   entity: TreeNode<EntityWithRevisions>,
-): TransformResult[] {
-  let previous: TreeNode<EntityWithRevision | null> = mapTree(
-    () => null,
-    entity,
-  )
+): TreeNode<EntityWithRevision | null>[] {
   let rest = entity
-  let result: TransformResult[] = []
+  let result: TreeNode<EntityWithRevision | null>[] = []
 
   while (getValues(rest).some((entity) => entity.revisions.length > 0)) {
     const dates = getValues(rest)
@@ -97,18 +183,12 @@ function transformEntity(
 
     const splitResult = split(rest, minDate)
 
-    result.push({ previous, current: splitResult.current })
+    result.push(splitResult.current)
 
-    previous = splitResult.current
     rest = splitResult.rest
   }
 
   return result
-}
-
-interface TransformResult {
-  previous: TreeNode<EntityWithRevision | null>
-  current: TreeNode<EntityWithRevision | null>
 }
 
 function split(
@@ -247,6 +327,19 @@ function mapTree<A, B>(mapper: (x: A) => B, node: TreeNode<A>): TreeNode<B> {
   return {
     value: mapper(node.value),
     children: node.children.map((child) => mapTree(mapper, child)),
+  }
+}
+
+function concatTree<A>(
+  concat: (x: A, y: A) => A,
+  x: TreeNode<A>,
+  y: TreeNode<A>,
+): TreeNode<A> {
+  return {
+    value: concat(x.value, y.value),
+    children: zip(x.children, y.children).map(([x, y]) =>
+      concatTree(concat, x, y),
+    ),
   }
 }
 
