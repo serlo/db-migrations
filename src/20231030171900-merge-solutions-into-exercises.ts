@@ -281,7 +281,11 @@ async function loadChildrenIds({
       from entity_link
       join entity child on child.id = entity_link.child_id
       join type child_type on child_type.id = child.type_id
-      where parent_id = ? and child_type.name = ?`
+      join uuid uuid_child on uuid_child.id = child.id
+      where
+        parent_id = ? and child_type.name = ?
+        and uuid_child.trashed = 0
+      order by entity_link.order ASC`
 
   if (limit != null) sqlCommand += ` limit ${limit}`
 
