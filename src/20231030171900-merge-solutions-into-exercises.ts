@@ -136,7 +136,8 @@ async function updateExercise(
     exerciseContent.state['solution'] = solutionContent
 
     if (revision.value != null) {
-      await db.runSql(
+      await migrate(
+        db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         JSON.stringify(exerciseContent),
@@ -157,7 +158,8 @@ async function updateExercise(
         revisionToOvertake.revision.id,
       )
 
-      await db.runSql(
+      await migrate(
+        db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         JSON.stringify(exerciseContent),
@@ -389,6 +391,14 @@ function isTypeName(values: string): values is TypeName {
 
 function isNotNull<A>(value: A | null): value is A {
   return value != null
+}
+
+async function migrate(
+  db: Database,
+  sql: string,
+  ...args: unknown[]
+): Promise<void> {
+  await db.runSql(sql, ...args)
 }
 
 function printTree<V>(mapper: (x: V) => unknown, node: TreeNode<V>, level = 0) {
