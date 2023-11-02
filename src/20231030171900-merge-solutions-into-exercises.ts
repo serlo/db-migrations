@@ -151,7 +151,8 @@ async function updateExercise(
       assert(revisionToOvertake !== undefined)
 
       // TODO: Check before deletion how to really overtake a revision
-      await db.runSql(
+      await migrate(
+        db,
         ` update entity_revision set repository_id = ?
           where id = ?`,
         exerciseId,
