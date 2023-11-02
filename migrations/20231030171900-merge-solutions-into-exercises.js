@@ -16988,7 +16988,9 @@ var t2 = __toESM(require_lib(), 1);
 var import_ioredis = __toESM(require_built3(), 1);
 var ApiCache = class {
   redis;
-  constructor() {
+  enableLogging;
+  constructor(args) {
+    this.enableLogging = args?.enableLogging ?? true;
     if (typeof process.env.REDIS_URL === "string") {
       this.redis = new import_ioredis.default(process.env.REDIS_URL);
     } else {
@@ -17000,7 +17002,9 @@ var ApiCache = class {
   }
   async deleteUuid(uuid) {
     await this.redis.del(`de.serlo.org/api/uuid/${uuid}`);
-    console.log(`INFO: API cache for UUID ${uuid} deleted`);
+    if (this.enableLogging) {
+      console.log(`INFO: API cache for UUID ${uuid} deleted`);
+    }
   }
 };
 
@@ -17089,7 +17093,7 @@ var ExerciseContentDecoder = t2.type({
 var RowPluginDecoder = t2.type({ plugin: t2.literal("rows") });
 createMigration(exports, {
   up: async (db) => {
-    const apiCache = new ApiCache();
+    const apiCache = new ApiCache({ enableLogging: false });
     const batchSize = 5e3;
     let entities = [];
     do {
@@ -17145,7 +17149,7 @@ async function updateExercise(db, apiCache, exerciseId) {
     }
     if (!ExerciseContentDecoder.is(exerciseContent)) {
       throw new Error(
-        `Illegal content for exercise ${exerciseId} with current revision ${revision.value?.id}`
+        `Illegal content for exercise ${exerciseId} with current revision ${exercise2.revision.id}`
       );
     }
     if (exerciseContent.state.solution != null)
@@ -17169,7 +17173,8 @@ async function updateExercise(db, apiCache, exerciseId) {
     }
     exerciseContent.state["solution"] = solutionContent;
     if (revision.value != null) {
-      await db.runSql(
+      await migrate(
+        db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         JSON.stringify(exerciseContent),
@@ -17179,18 +17184,29 @@ async function updateExercise(db, apiCache, exerciseId) {
     } else {
       const revisionToOvertake = getValues(revision).filter(isNotNull).at(0);
       (0, import_assert.default)(revisionToOvertake !== void 0);
-      await db.runSql(
+      await migrate(
+        db,
         ` update entity_revision set repository_id = ?
           where id = ?`,
         exerciseId,
         revisionToOvertake.revision.id
       );
-      await db.runSql(
+      if (revisionToOvertake.currentRevisionId === revisionToOvertake.revision.id) {
+        await migrate(
+          db,
+          ` update entity set current_revision_id = NULL
+            where id = ?`,
+          revisionToOvertake.id
+        );
+      }
+      await migrate(
+        db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         JSON.stringify(exerciseContent),
         revisionToOvertake.revision.id
       );
+      await apiCache.deleteUuid(solution.id);
       await apiCache.deleteUuid(revisionToOvertake.revision.id);
     }
   }
@@ -17214,7 +17230,8 @@ function split(node, date) {
     const base = {
       id: node.value.id,
       licenseId: node.value.licenseId,
-      typeName: node.value.typeName
+      typeName: node.value.typeName,
+      currentRevisionId: node.value.currentRevisionId
     };
     currentValue = { ...base, revision: node.value.revisions[0] };
     restValue = { ...base, revisions: node.value.revisions.slice(1) };
@@ -17257,7 +17274,11 @@ async function loadChildrenIds({
       from entity_link
       join entity child on child.id = entity_link.child_id
       join type child_type on child_type.id = child.type_id
-      where parent_id = ? and child_type.name = ?`;
+      join uuid uuid_child on uuid_child.id = child.id
+      where
+        parent_id = ? and child_type.name = ?
+        and uuid_child.trashed = 0
+      order by entity_link.order ASC`;
   if (limit != null)
     sqlCommand += ` limit ${limit}`;
   const result = await db.runSql(
@@ -17272,6 +17293,7 @@ async function loadEntity(db, entityId) {
     ` select
         entity.id as id,
         entity.license_id as licenseId,
+        entity.current_revision_id as currentRevisionId,
         type.name as typeName
       from entity
       join type on entity.type_id = type.id
@@ -17332,4 +17354,7 @@ function isTypeName(values) {
 }
 function isNotNull(value) {
   return value != null;
+}
+async function migrate(db, sql, ...args) {
+  await db.runSql(sql, ...args);
 }
