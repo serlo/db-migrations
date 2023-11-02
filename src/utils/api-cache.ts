@@ -15,8 +15,8 @@ export class ApiCache {
     await this.redis.quit()
   }
 
-  public async deleteUuid(uuid: number) {
+  public async deleteUuid(uuid: number, logging = true) {
     await this.redis.del(`de.serlo.org/api/uuid/${uuid}`)
-    console.log(`INFO: API cache for UUID ${uuid} deleted`)
+    if (logging) console.log(`INFO: API cache for UUID ${uuid} deleted`)
   }
 }

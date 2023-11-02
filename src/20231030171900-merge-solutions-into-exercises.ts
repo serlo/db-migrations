@@ -144,7 +144,7 @@ async function updateExercise(
         revision.value.revision.id,
       )
 
-      await apiCache.deleteUuid(revision.value.revision.id)
+      await apiCache.deleteUuid(revision.value.revision.id, false)
     } else {
       const revisionToOvertake = getValues(revision).filter(isNotNull).at(0)
 
@@ -166,7 +166,7 @@ async function updateExercise(
         revisionToOvertake.revision.id,
       )
 
-      await apiCache.deleteUuid(revisionToOvertake.revision.id)
+      await apiCache.deleteUuid(revisionToOvertake.revision.id, false)
     }
   }
 }
