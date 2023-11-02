@@ -29,7 +29,7 @@ const RowPluginDecoder = t.type({ plugin: t.literal('rows') })
 
 createMigration(exports, {
   up: async (db) => {
-    const apiCache = new ApiCache()
+    const apiCache = new ApiCache({ enableLogging: false })
     const batchSize = 5000
     let entities: Row[] = []
 
@@ -144,7 +144,7 @@ async function updateExercise(
         revision.value.revision.id,
       )
 
-      await apiCache.deleteUuid(revision.value.revision.id, false)
+      await apiCache.deleteUuid(revision.value.revision.id)
     } else {
       const revisionToOvertake = getValues(revision).filter(isNotNull).at(0)
 
@@ -166,7 +166,7 @@ async function updateExercise(
         revisionToOvertake.revision.id,
       )
 
-      await apiCache.deleteUuid(revisionToOvertake.revision.id, false)
+      await apiCache.deleteUuid(revisionToOvertake.revision.id)
     }
   }
 }
