@@ -106,7 +106,7 @@ async function updateExercise(
 
     if (!ExerciseContentDecoder.is(exerciseContent)) {
       throw new Error(
-        `Illegal content for exercise ${exerciseId} with current revision ${revision.value?.id}`,
+        `Illegal content for exercise ${exerciseId} with current revision ${exercise.revision.id}`,
       )
     }
 
