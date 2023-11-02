@@ -150,7 +150,6 @@ async function updateExercise(
 
       assert(revisionToOvertake !== undefined)
 
-      // TODO: Check before deletion how to really overtake a revision
       await migrate(
         db,
         ` update entity_revision set repository_id = ?
@@ -158,6 +157,17 @@ async function updateExercise(
         exerciseId,
         revisionToOvertake.revision.id,
       )
+
+      if (
+        revisionToOvertake.currentRevisionId === revisionToOvertake.revision.id
+      ) {
+        await migrate(
+          db,
+          ` update entity set current_revision_id = NULL
+            where id = ?`,
+          revisionToOvertake.id,
+        )
+      }
 
       await migrate(
         db,
@@ -167,6 +177,7 @@ async function updateExercise(
         revisionToOvertake.revision.id,
       )
 
+      await apiCache.deleteUuid(solution.id)
       await apiCache.deleteUuid(revisionToOvertake.revision.id)
     }
   }
@@ -212,6 +223,7 @@ function split(
       id: node.value.id,
       licenseId: node.value.licenseId,
       typeName: node.value.typeName,
+      currentRevisionId: node.value.currentRevisionId,
     }
     currentValue = { ...base, revision: node.value.revisions[0] }
     restValue = { ...base, revisions: node.value.revisions.slice(1) }
@@ -290,6 +302,7 @@ async function loadEntity(
     ` select
         entity.id as id,
         entity.license_id as licenseId,
+        entity.current_revision_id as currentRevisionId,
         type.name as typeName
       from entity
       join type on entity.type_id = type.id
@@ -378,6 +391,7 @@ interface Revision {
 interface EntityBase {
   id: number
   licenseId: number
+  currentRevisionId: number | null
   typeName: TypeName
 }
 
