@@ -40,7 +40,7 @@ createMigration(exports, {
            entity.id as entityId
          from entity
          join type on entity.type_id = type.id
-         where type.name = "text-exercise"
+         where type.name in ("text-exercise", "grouped-text-exercise")
          and entity.id > ?
          order by entity.id limit ?`,
         lastId,
@@ -249,7 +249,10 @@ async function loadEntityTree(
   const entity = await loadEntity(db, entityId)
   let childIds: number[] = []
 
-  if (entity.typeName === TypeName.ExerciseType) {
+  if (
+    entity.typeName === TypeName.ExerciseType ||
+    entity.typeName === TypeName.GroupedExerciseType
+  ) {
     childIds = await loadChildrenIds({
       db,
       entityId: entityId,
@@ -401,6 +404,7 @@ interface EntityBase {
 
 enum TypeName {
   ExerciseType = 'text-exercise',
+  GroupedExerciseType = 'grouped-text-exercise',
   SolutionType = 'text-solution',
 }
 
