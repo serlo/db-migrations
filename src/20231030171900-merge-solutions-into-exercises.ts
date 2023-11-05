@@ -431,17 +431,3 @@ async function migrate(
 ): Promise<void> {
   await db.runSql(sql, ...args)
 }
-
-function printTree<V>(mapper: (x: V) => unknown, node: TreeNode<V>, level = 0) {
-  let result = ''
-
-  for (let i = 0; i < level; i++) result += ' '
-
-  result += String(mapper(node.value))
-
-  console.log(result)
-
-  for (const child of node.children) {
-    printTree(mapper, child, level + 1)
-  }
-}
