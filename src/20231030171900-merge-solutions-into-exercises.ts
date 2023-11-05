@@ -70,6 +70,11 @@ async function updateExercise(
   exerciseId: number,
 ) {
   const exercise = await loadEntityTree(db, exerciseId)
+
+  // When an exercise does not have any revision there is no transformation
+  // possible even if the solution has revisions.
+  if (exercise.value.revisions.length === 0) return
+
   const exerciseRevisions = transformEntity(exercise)
 
   let base: TreeNode<EntityWithRevision | null> = mapTree(() => null, exercise)
