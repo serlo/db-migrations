@@ -79,10 +79,9 @@ async function updateExercise(
 
   let base: TreeNode<EntityWithRevision | null> = mapTree(() => null, exercise)
 
-  if (exerciseRevisions.length > 0) {
-    assert(
-      exerciseRevisions[0].value != null,
-      `Exercise ${exerciseId} has solution before first revision`,
+  if (exerciseRevisions.length > 0 && exerciseRevisions[0].value == null) {
+    console.log(
+      `Warning: Exercise ${exerciseId} has solution before first revision`,
     )
   }
 
