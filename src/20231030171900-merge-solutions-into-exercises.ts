@@ -15,7 +15,11 @@ const SolutionContentDecoder = t.type({
       strategy: t.type({
         // TODO: We need another migration to fix solutions with a box
         // as a strategy
-        plugin: t.union([t.literal('text'), t.literal('box')]),
+        plugin: t.union([
+          t.literal('text'),
+          t.literal('box'),
+          t.literal('image'),
+        ]),
       }),
     }),
     t.partial({ licenseId: t.number }),
