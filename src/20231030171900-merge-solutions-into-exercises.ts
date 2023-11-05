@@ -85,10 +85,17 @@ async function updateExercise(
     )
   }
 
+  const baseExercise = exerciseRevisions.filter((r) => r.value != null).at(0)
+
+  assert(
+    baseExercise?.value != null,
+    `Illegal state: baseExercise is null for ${exerciseId}`,
+  )
+
   for (const revision of exerciseRevisions) {
     base = concatTree((a, b) => (b == null ? a : b), base, revision)
 
-    const exercise = base.value
+    const exercise = base.value ?? baseExercise.value
     const solution = base.children.at(0)?.value ?? null
     let exerciseContent = JSON.parse(
       exercise?.revision?.content ?? 'null',
@@ -102,7 +109,6 @@ async function updateExercise(
     // No need for a migration
     if (solutionContent == null || solution == null) continue
 
-    assert(exercise != null, 'Illegal state: Exercise is null')
     assert(exerciseContent != null, 'Illegal state: Exercise is null')
 
     if (RowPluginDecoder.is(exerciseContent)) {
