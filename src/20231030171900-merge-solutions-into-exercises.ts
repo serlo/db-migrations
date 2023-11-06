@@ -75,6 +75,9 @@ async function updateExercise(
   // possible even if the solution has revisions.
   if (exercise.value.revisions.length === 0) return
 
+  // Skip when exercise or grouped exercise entity does not have any solution
+  if (exercise.children.length === 0) return
+
   const exerciseRevisions = transformEntity(exercise)
 
   let base: TreeNode<EntityWithRevision | null> = mapTree(() => null, exercise)
