@@ -22,6 +22,10 @@ export class ApiCache {
     await this.redis.del('serlo.org/unrevised')
   }
 
+  public async deleteThreadIds(uuid: number) {
+    await this.redis.del(`de.serlo.org/api/threads/${uuid}`)
+  }
+
   public async deleteUuid(uuid: number) {
     await this.redis.del(`de.serlo.org/api/uuid/${uuid}`)
 

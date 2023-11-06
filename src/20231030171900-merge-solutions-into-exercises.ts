@@ -234,6 +234,9 @@ async function moveCommentsFromSolutionToExercise({
     exercise.id,
     solution.id,
   )
+
+  await apiCache.deleteUuid(exercise.id)
+  await apiCache.deleteUuid(solution.id)
 }
 
 function transformEntity(
