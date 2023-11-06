@@ -72,7 +72,21 @@ async function updateExercise(
   apiCache: ApiCache,
   exerciseId: number,
 ) {
-  const exerciseNode = await loadEntityTree(db, exerciseId)
+  // Load the tree of the exercise. It is either only the exercise (without the
+  // solution / without any children):
+  //
+  //    [ exercise ]
+  //
+  // or it an exercise with a solution (children of root is a singleton list):
+  //
+  //    [ exercise ]
+  //      └ [ solution ]
+  //
+  // Next to the entity in the node the list of revisions are stored:
+  //
+  //    [ exercise ]:      [ e1, e2, e3, ...]
+  //      └ [ solution ]   [ s1, s2, s3, ...]
+  const exerciseNode = await loadEntityNode(db, exerciseId)
 
   // When an exercise does not have any revision there is no transformation
   // possible even if the solution has revisions.
@@ -84,43 +98,70 @@ async function updateExercise(
   // Skip when exercise or grouped exercise entity does not have any solution
   if (solution === null) return
 
-  const exerciseRevisions = transformEntity(exerciseNode)
+  // From the tree of revisions we calculate the list of overall edits
+  // to the exercise and its solution. We represent an edit as a tree with the
+  // same structure as the exercise. The value for exercise / solution is
+  // a revision (type `EntityWithRevision`) when the exercise / solution was
+  // edited or `null` when it was not edited. So let's assume the entity
+  // tree with the revisions has the structure
+  //
+  //    [ exercise ]       [ edit_on_date1 | edit_on_date2 ]
+  //      └ [ solution ]   [ edit_on_date1 | edit_on_date3 ]
+  //
+  // Then the list of edits are
+  //
+  // [ edit_on_date1 ]     | [ edit_on_date2 ] | [ null ]
+  //   └ [ edit_on_date2 ] |   └ [ null ]      |   └ [ edit_on_date3 ]
+  const edits = getEdits(exerciseNode)
 
-  let baseNode: TreeNode<EntityWithRevision | null> = mapTree(
+  if (edits.length > 0 && edits[0].value == null) {
+    console.log(
+      `Warning: Exercise ${exerciseId} has a revision for a solution before first revision of the exercise`,
+    )
+  }
+
+  // When the solution has a revision before the exercise we use the first
+  // revision of the exercise as the content for the exercise
+  const fallbackExercise = edits.filter((r) => r.value != null).at(0)
+
+  assert(
+    fallbackExercise?.value != null,
+    `Illegal state: baseExercise is null for ${exerciseId}`,
+  )
+
+  // Here we store the current version of the exercise after each edit. We
+  // start with exercise = solution = null
+  let currentVersion: TreeNode<EntityWithRevision | null> = mapTree(
     () => null,
     exerciseNode,
   )
 
-  if (exerciseRevisions.length > 0 && exerciseRevisions[0].value == null) {
-    console.log(
-      `Warning: Exercise ${exerciseId} has solution before first revision`,
+  for (const edit of edits) {
+    // Add the edit to the current version
+    currentVersion = concatTree(
+      (a, b) => (b == null ? a : b),
+      currentVersion,
+      edit,
     )
-  }
 
-  const baseExercise = exerciseRevisions.filter((r) => r.value != null).at(0)
+    const currentExercise = currentVersion.value ?? fallbackExercise.value
+    const currentSolution = currentVersion.children.at(0)?.value ?? null
 
-  assert(
-    baseExercise?.value != null,
-    `Illegal state: baseExercise is null for ${exerciseId}`,
-  )
-
-  for (const revision of exerciseRevisions) {
-    baseNode = concatTree((a, b) => (b == null ? a : b), baseNode, revision)
-
-    const exercise = baseNode.value ?? baseExercise.value
-    const solution = baseNode.children.at(0)?.value ?? null
     let exerciseContent = JSON.parse(
-      exercise?.revision?.content ?? 'null',
+      currentExercise?.revision?.content ?? 'null',
     ) as unknown
-    const solutionContentText = solution?.revision?.content ?? null
+    const solutionContentText = currentSolution?.revision?.content ?? null
 
-    // Some revisions for solutions have an empty string
+    // When the solution is empty we do not need to migrate anything...
+    //
+    // Note: Some revisions for solutions have an empty string
     if (solutionContentText === null || solutionContentText === '') continue
     let solutionContent = JSON.parse(solutionContentText)
 
     // No need for a migration
-    if (solutionContent == null || solution == null) continue
+    if (solutionContent == null || currentSolution == null) continue
 
+    // Should not happen with our fallback exercise...
     assert(exerciseContent != null, 'Illegal state: Exercise is null')
 
     if (RowPluginDecoder.is(exerciseContent)) {
@@ -132,11 +173,12 @@ async function updateExercise(
 
     if (!ExerciseContentDecoder.is(exerciseContent)) {
       throw new Error(
-        `Illegal content for exercise ${exerciseId} with current revision ${exercise.revision.id}`,
+        `Illegal content for exercise ${exerciseId} with current revision ${currentExercise.revision.id}`,
       )
     }
 
-    // Do not migrate again
+    // When we already have added a solution to the exercise -> Do not update
+    // again
     if (exerciseContent.state.solution != null) continue
 
     if (RowPluginDecoder.is(solutionContent)) {
@@ -151,29 +193,35 @@ async function updateExercise(
 
     if (!SolutionContentDecoder.is(solutionContent)) {
       throw new Error(
-        `Illegal content for solution ${solution?.id} with current revision ${solution?.revision?.id}`,
+        `Illegal content for solution ${currentSolution?.id} with current revision ${currentSolution?.revision?.id}`,
       )
     }
 
-    if (exercise.licenseId !== solution.licenseId) {
-      solutionContent.state['licenseId'] = solution.licenseId
+    if (currentExercise.licenseId !== currentSolution.licenseId) {
+      solutionContent.state['licenseId'] = currentSolution.licenseId
     }
 
     exerciseContent.state['solution'] = solutionContent
 
-    if (revision.value != null) {
+    if (edit.value != null) {
+      // In this edit an exercise revision was added -> We can change the
+      // content of it
+      //
       await migrate(
         db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         JSON.stringify(exerciseContent),
-        revision.value.revision.id,
+        edit.value.revision.id,
       )
 
-      await apiCache.deleteUuid(revision.value.revision.id)
+      await apiCache.deleteUuid(edit.value.revision.id)
     } else {
-      const revisionToOvertake = getValues(revision).filter(isNotNull).at(0)
+      // In this edit the exercise was not changed -> Let's use the revision
+      // of the solution and change it to a revision of the exercise.
+      const revisionToOvertake = getValues(edit).filter(isNotNull).at(0)
 
+      // This should not happen
       assert(revisionToOvertake !== undefined)
 
       await migrate(
@@ -184,6 +232,8 @@ async function updateExercise(
         revisionToOvertake.revision.id,
       )
 
+      // We need to update the current revision of the solution -> Otherwise
+      // staging would try to load the revision which results in an error
       if (
         revisionToOvertake.currentRevisionId === revisionToOvertake.revision.id
       ) {
@@ -203,7 +253,7 @@ async function updateExercise(
         revisionToOvertake.revision.id,
       )
 
-      await apiCache.deleteUuid(solution.id)
+      await apiCache.deleteUuid(currentSolution.id)
       await apiCache.deleteUuid(revisionToOvertake.revision.id)
     }
   }
@@ -262,14 +312,10 @@ async function moveCommentsFromSolutionToExercise({
   exercise: EntityBase
   solution: EntityBase
 }) {
-  const comments = await db.runSql<{ id: number }[]>(
+  const commentsOfSolution = await db.runSql<{ id: number }[]>(
     `select id from comment where uuid_id = ?`,
     solution.id,
   )
-
-  for (const comment of comments) {
-    await apiCache.deleteUuid(comment.id)
-  }
 
   await db.runSql(
     `update comment set uuid_id = ? where uuid_id = ?`,
@@ -277,41 +323,57 @@ async function moveCommentsFromSolutionToExercise({
     solution.id,
   )
 
+  for (const comment of commentsOfSolution) {
+    await apiCache.deleteUuid(comment.id)
+  }
+
   await apiCache.deleteThreadIds(exercise.id)
   await apiCache.deleteThreadIds(solution.id)
 }
 
-function transformEntity(
+/**
+ * Returns list of all edits by the following algorithm:
+ *
+ *    while (there are still revisions in the exercise or the solution) {
+ *      // 1. Take the min date of all revisions
+ *
+ *      // 2. For exercise and solutions split the first revision from it's
+ *      //    list of revisions if it's date is less than minDate + 10 seconds
+ *    }
+ */
+function getEdits(
   entity: TreeNode<EntityWithRevisions>,
 ): TreeNode<EntityWithRevision | null>[] {
-  let rest = entity
-  let result: TreeNode<EntityWithRevision | null>[] = []
+  let remainingRevisions = entity
+  let edits: TreeNode<EntityWithRevision | null>[] = []
 
-  while (getValues(rest).some((entity) => entity.revisions.length > 0)) {
-    const dates = getValues(rest)
+  while (
+    getValues(remainingRevisions).some((entity) => entity.revisions.length > 0)
+  ) {
+    const firstDates = getValues(remainingRevisions)
       .map((entity) => entity.revisions.at(0)?.date ?? null)
       .filter(isNotNull)
-    const minDate = dates.reduce((a, b) => (a <= b ? a : b))
+    const minDate = firstDates.reduce((a, b) => (a <= b ? a : b))
 
-    const splitResult = split(rest, minDate)
+    const nextEdit = splitNextEdit(remainingRevisions, minDate)
 
-    result.push(splitResult.current)
+    edits.push(nextEdit.nextEdit)
 
-    rest = splitResult.rest
+    remainingRevisions = nextEdit.remainingRevisions
   }
 
-  return result
+  return edits
 }
 
-function split(
+function splitNextEdit(
   node: TreeNode<EntityWithRevisions>,
   date: Date,
 ): {
-  current: TreeNode<EntityWithRevision | null>
-  rest: TreeNode<EntityWithRevisions>
+  nextEdit: TreeNode<EntityWithRevision | null>
+  remainingRevisions: TreeNode<EntityWithRevisions>
 } {
-  let currentValue: EntityWithRevision | null
-  let restValue: EntityWithRevisions
+  let nextEditRevision: EntityWithRevision | null
+  let remainingRevisions: EntityWithRevisions
 
   if (
     node.value.revisions.length > 0 &&
@@ -323,24 +385,27 @@ function split(
       typeName: node.value.typeName,
       currentRevisionId: node.value.currentRevisionId,
     }
-    currentValue = { ...base, revision: node.value.revisions[0] }
-    restValue = { ...base, revisions: node.value.revisions.slice(1) }
+    nextEditRevision = { ...base, revision: node.value.revisions[0] }
+    remainingRevisions = { ...base, revisions: node.value.revisions.slice(1) }
   } else {
-    currentValue = null
-    restValue = node.value
+    nextEditRevision = null
+    remainingRevisions = node.value
   }
 
-  const children = node.children.map((child) => split(child, date))
-  const currentChildren = children.map((x) => x.current)
-  const restChildren = children.map((x) => x.rest)
+  const children = node.children.map((child) => splitNextEdit(child, date))
+  const nextEditChildren = children.map((x) => x.nextEdit)
+  const remainingRevisionsChildren = children.map((x) => x.remainingRevisions)
 
   return {
-    current: { value: currentValue, children: currentChildren },
-    rest: { value: restValue, children: restChildren },
+    nextEdit: { value: nextEditRevision, children: nextEditChildren },
+    remainingRevisions: {
+      value: remainingRevisions,
+      children: remainingRevisionsChildren,
+    },
   }
 }
 
-async function loadEntityTree(
+async function loadEntityNode(
   db: Database,
   entityId: number,
 ): Promise<TreeNode<EntityWithRevisions>> {
@@ -360,7 +425,7 @@ async function loadEntityTree(
   }
 
   const children = await Promise.all(
-    childIds.map((childId) => loadEntityTree(db, childId)),
+    childIds.map((childId) => loadEntityNode(db, childId)),
   )
 
   return { value: entity, children }
@@ -416,12 +481,13 @@ async function loadEntity(
       where entity.id = ?`,
     entityId,
   )
-  const entityBase = pickFirst(entityBaseResult)
+  const entityBase = pickSingleton(entityBaseResult)
 
   assert(
     isTypeName(entityBase.typeName),
     `Entity ${entityId} has unsupported type name`,
   )
+
   const revisions = await loadRevisions(db, entityId)
 
   return { ...entityBase, revisions }
@@ -446,6 +512,10 @@ async function loadRevisions(
   )
 }
 
+/**
+ * Lifts a function from the value of the tree to the tree itself. Similar to
+ * how `map` is defined for lists.
+ */
 function mapTree<A, B>(mapper: (x: A) => B, node: TreeNode<A>): TreeNode<B> {
   return {
     value: mapper(node.value),
@@ -453,11 +523,23 @@ function mapTree<A, B>(mapper: (x: A) => B, node: TreeNode<A>): TreeNode<B> {
   }
 }
 
+/**
+ * Lifts an operation on the value of a tree to the tree itself. When `concat`
+ * for example is an operation on a type `A`, then `concatTree` can be used
+ * to get an operation on `TreeNode<A>` by applying `concat` to all values.
+ * Thereby we check that both trees have the same structure.
+ */
 function concatTree<A>(
   concat: (x: A, y: A) => A,
   x: TreeNode<A>,
   y: TreeNode<A>,
 ): TreeNode<A> {
+  // In our case the structure of both trees should always be the same.
+  assert(
+    x.children.length === y.children.length,
+    'Illegal state: Both nodes should have the same number of children.',
+  )
+
   return {
     value: concat(x.value, y.value),
     children: zip(x.children, y.children).map(([x, y]) =>
@@ -470,7 +552,7 @@ function getValues<V>(node: TreeNode<V>): V[] {
   return [node.value, ...node.children.flatMap(getValues)]
 }
 
-function pickFirst<A>(elements: A[]): A {
+function pickSingleton<A>(elements: A[]): A {
   assert(elements.length === 1, 'List has more than one element')
 
   return elements[0]
@@ -516,6 +598,8 @@ function isNotNull<A>(value: A | null): value is A {
   return value != null
 }
 
+// I added this function so that I can easily outcomment all mutations in order
+// to avoid a rollback of the DB. -- Kulla
 async function migrate(
   db: Database,
   sql: string,
