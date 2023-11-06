@@ -350,7 +350,7 @@ async function loadEntityTree(
     entity.typeName === TypeName.ExerciseType ||
     entity.typeName === TypeName.GroupedExerciseType
   ) {
-    childIds = await loadChildrenIds({
+    childIds = await loadEntityChildrenIds({
       db,
       entityId: entityId,
       childType: TypeName.SolutionType,
@@ -365,7 +365,7 @@ async function loadEntityTree(
   return { value: entity, children }
 }
 
-async function loadChildrenIds({
+async function loadEntityChildrenIds({
   db,
   entityId,
   childType,
@@ -377,17 +377,19 @@ async function loadChildrenIds({
   limit?: number
 }): Promise<number[]> {
   let sqlCommand = `
-      select child_id as childId
+      select entity_link.child_id as childId
       from entity_link
       join entity child on child.id = entity_link.child_id
       join type child_type on child_type.id = child.type_id
-      join uuid uuid_child on uuid_child.id = child.id
+      join uuid child_uuid on child_uuid.id = child.id
       where
-        parent_id = ? and child_type.name = ?
-        and uuid_child.trashed = 0
+        entity_link.parent_id = ? and child_type.name = ?
+        and child_uuid.trashed = 0
       order by entity_link.order ASC`
 
-  if (limit != null) sqlCommand += ` limit ${limit}`
+  if (limit != null) {
+    sqlCommand += ` limit ${limit}`
+  }
 
   const result = await db.runSql<{ childId: number }[]>(
     sqlCommand,
