@@ -14,7 +14,7 @@ const SolutionContentDecoder = t.type({
       }),
       strategy: t.type({
         // TODO: We need another migration to fix solutions with a box
-        // as a strategy
+        // or an image as strategy
         plugin: t.union([
           t.literal('text'),
           t.literal('box'),
@@ -34,11 +34,13 @@ const RowPluginDecoder = t.type({ plugin: t.literal('rows') })
 createMigration(exports, {
   up: async (db) => {
     const apiCache = new ApiCache({ enableLogging: false })
+
     const batchSize = 5000
     let entities: Row[] = []
 
     do {
-      const lastId = entities.at(-1)?.entityId ?? 0
+      const lastUpdatedEntityId = entities.at(-1)?.entityId ?? 0
+
       entities = await db.runSql<Row[]>(
         `select
            entity.id as entityId
@@ -47,7 +49,7 @@ createMigration(exports, {
          where type.name in ("text-exercise", "grouped-text-exercise")
          and entity.id > ?
          order by entity.id limit ?`,
-        lastId,
+        lastUpdatedEntityId,
         batchSize,
       )
 
@@ -57,7 +59,6 @@ createMigration(exports, {
     } while (entities.length > 0)
 
     await apiCache.deleteUnrevisedRevisions()
-
     await apiCache.quit()
 
     interface Row {
