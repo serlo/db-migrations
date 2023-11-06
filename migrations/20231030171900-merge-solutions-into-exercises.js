@@ -17274,8 +17274,8 @@ async function moveCommentsFromSolutionToExercise({
     exercise.id,
     solution.id
   );
-  await apiCache.deleteUuid(exercise.id);
-  await apiCache.deleteUuid(solution.id);
+  await apiCache.deleteThreadIds(exercise.id);
+  await apiCache.deleteThreadIds(solution.id);
 }
 function transformEntity(entity) {
   let rest = entity;
