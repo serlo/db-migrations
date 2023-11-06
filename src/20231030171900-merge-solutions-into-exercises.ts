@@ -56,7 +56,7 @@ createMigration(exports, {
       }
     } while (entities.length > 0)
 
-    await apiCache.deleteCachedUnrevisedRevisions()
+    await apiCache.deleteUnrevisedRevisions()
 
     await apiCache.quit()
 

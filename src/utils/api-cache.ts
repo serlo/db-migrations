@@ -18,7 +18,7 @@ export class ApiCache {
     await this.redis.quit()
   }
 
-  public async deleteCachedUnrevisedRevisions() {
+  public async deleteUnrevisedRevisions() {
     await this.redis.del('serlo.org/unrevised')
   }
 
