@@ -207,6 +207,38 @@ async function updateExercise(
     exercise: exercise.value,
     solution: exercise.children[0].value,
   })
+
+  await updateCurrentRevisionOfExercise({
+    db,
+    apiCache,
+    exercise: exercise.value,
+    solution: exercise.children[0].value,
+  })
+}
+
+async function updateCurrentRevisionOfExercise({
+  db,
+  apiCache,
+  exercise,
+  solution,
+}: {
+  db: Database
+  apiCache: ApiCache
+  exercise: EntityBase
+  solution: EntityBase
+}) {
+  if (
+    solution.currentRevisionId != null &&
+    solution.currentRevisionId > (exercise.currentRevisionId ?? 0)
+  ) {
+    await db.runSql(
+      `update entity set current_revision_id = ? where id = ?`,
+      solution.currentRevisionId,
+      exercise.id,
+    )
+
+    await apiCache.deleteUuid(exercise.id)
+  }
 }
 
 async function moveCommentsFromSolutionToExercise({
