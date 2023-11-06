@@ -198,6 +198,31 @@ async function updateExercise(
       await apiCache.deleteUuid(revisionToOvertake.revision.id)
     }
   }
+
+  await moveCommentsFromSolutionToExercise({
+    db,
+    apiCache,
+    exercise: exercise.value,
+    solution: exercise.children[0].value,
+  })
+}
+
+async function moveCommentsFromSolutionToExercise({
+  db,
+  apiCache,
+  exercise,
+  solution,
+}: {
+  db: Database
+  apiCache: ApiCache
+  exercise: EntityBase
+  solution: EntityBase
+}) {
+  await db.runSql(
+    `update comment set uuid_id = ? where uuid_id = ?`,
+    exercise.id,
+    solution.id,
+  )
 }
 
 function transformEntity(
