@@ -218,6 +218,15 @@ async function moveCommentsFromSolutionToExercise({
   exercise: EntityBase
   solution: EntityBase
 }) {
+  const comments = await db.runSql<{ id: number }[]>(
+    `select id from comment where uuid_id = ?`,
+    solution.id,
+  )
+
+  for (const comment of comments) {
+    await apiCache.deleteUuid(comment.id)
+  }
+
   await db.runSql(
     `update comment set uuid_id = ? where uuid_id = ?`,
     exercise.id,
