@@ -17000,6 +17000,12 @@ var ApiCache = class {
   async quit() {
     await this.redis.quit();
   }
+  async deleteUnrevisedRevisions() {
+    await this.redis.del("serlo.org/unrevised");
+  }
+  async deleteThreadIds(uuid) {
+    await this.redis.del(`de.serlo.org/api/threads/${uuid}`);
+  }
   async deleteUuid(uuid) {
     await this.redis.del(`de.serlo.org/api/uuid/${uuid}`);
     if (this.enableLogging) {
@@ -17080,7 +17086,11 @@ var SolutionContentDecoder = t2.type({
       strategy: t2.type({
         // TODO: We need another migration to fix solutions with a box
         // as a strategy
-        plugin: t2.union([t2.literal("text"), t2.literal("box")])
+        plugin: t2.union([
+          t2.literal("text"),
+          t2.literal("box"),
+          t2.literal("image")
+        ])
       })
     }),
     t2.partial({ licenseId: t2.number })
@@ -17103,7 +17113,7 @@ createMigration(exports, {
            entity.id as entityId
          from entity
          join type on entity.type_id = type.id
-         where type.name = "text-exercise"
+         where type.name in ("text-exercise", "grouped-text-exercise")
          and entity.id > ?
          order by entity.id limit ?`,
         lastId,
@@ -17113,22 +17123,31 @@ createMigration(exports, {
         await updateExercise(db, apiCache, entity.entityId);
       }
     } while (entities.length > 0);
+    await apiCache.deleteUnrevisedRevisions();
     await apiCache.quit();
   }
 });
 async function updateExercise(db, apiCache, exerciseId) {
   const exercise = await loadEntityTree(db, exerciseId);
+  if (exercise.value.revisions.length === 0)
+    return;
+  if (exercise.children.length === 0)
+    return;
   const exerciseRevisions = transformEntity(exercise);
   let base = mapTree(() => null, exercise);
-  if (exerciseRevisions.length > 0) {
-    (0, import_assert.default)(
-      exerciseRevisions[0].value != null,
-      `Exercise ${exerciseId} has solution before first revision`
+  if (exerciseRevisions.length > 0 && exerciseRevisions[0].value == null) {
+    console.log(
+      `Warning: Exercise ${exerciseId} has solution before first revision`
     );
   }
+  const baseExercise = exerciseRevisions.filter((r) => r.value != null).at(0);
+  (0, import_assert.default)(
+    baseExercise?.value != null,
+    `Illegal state: baseExercise is null for ${exerciseId}`
+  );
   for (const revision of exerciseRevisions) {
     base = concatTree((a, b) => b == null ? a : b, base, revision);
-    const exercise2 = base.value;
+    const exercise2 = base.value ?? baseExercise.value;
     const solution = base.children.at(0)?.value ?? null;
     let exerciseContent = JSON.parse(
       exercise2?.revision?.content ?? "null"
@@ -17139,7 +17158,6 @@ async function updateExercise(db, apiCache, exerciseId) {
     let solutionContent = JSON.parse(solutionContentText);
     if (solutionContent == null || solution == null)
       continue;
-    (0, import_assert.default)(exercise2 != null, "Illegal state: Exercise is null");
     (0, import_assert.default)(exerciseContent != null, "Illegal state: Exercise is null");
     if (RowPluginDecoder.is(exerciseContent)) {
       exerciseContent = {
@@ -17210,6 +17228,54 @@ async function updateExercise(db, apiCache, exerciseId) {
       await apiCache.deleteUuid(revisionToOvertake.revision.id);
     }
   }
+  await moveCommentsFromSolutionToExercise({
+    db,
+    apiCache,
+    exercise: exercise.value,
+    solution: exercise.children[0].value
+  });
+  await updateCurrentRevisionOfExercise({
+    db,
+    apiCache,
+    exercise: exercise.value,
+    solution: exercise.children[0].value
+  });
+}
+async function updateCurrentRevisionOfExercise({
+  db,
+  apiCache,
+  exercise,
+  solution
+}) {
+  if (solution.currentRevisionId != null && solution.currentRevisionId > (exercise.currentRevisionId ?? 0)) {
+    await db.runSql(
+      `update entity set current_revision_id = ? where id = ?`,
+      solution.currentRevisionId,
+      exercise.id
+    );
+    await apiCache.deleteUuid(exercise.id);
+  }
+}
+async function moveCommentsFromSolutionToExercise({
+  db,
+  apiCache,
+  exercise,
+  solution
+}) {
+  const comments = await db.runSql(
+    `select id from comment where uuid_id = ?`,
+    solution.id
+  );
+  for (const comment of comments) {
+    await apiCache.deleteUuid(comment.id);
+  }
+  await db.runSql(
+    `update comment set uuid_id = ? where uuid_id = ?`,
+    exercise.id,
+    solution.id
+  );
+  await apiCache.deleteUuid(exercise.id);
+  await apiCache.deleteUuid(solution.id);
 }
 function transformEntity(entity) {
   let rest = entity;
@@ -17250,7 +17316,7 @@ function split(node, date) {
 async function loadEntityTree(db, entityId) {
   const entity = await loadEntity(db, entityId);
   let childIds = [];
-  if (entity.typeName === "text-exercise" /* ExerciseType */) {
+  if (entity.typeName === "text-exercise" /* ExerciseType */ || entity.typeName === "grouped-text-exercise" /* GroupedExerciseType */) {
     childIds = await loadChildrenIds({
       db,
       entityId,
@@ -17346,6 +17412,7 @@ function pickFirst(elements) {
 }
 var TypeName = /* @__PURE__ */ ((TypeName2) => {
   TypeName2["ExerciseType"] = "text-exercise";
+  TypeName2["GroupedExerciseType"] = "grouped-text-exercise";
   TypeName2["SolutionType"] = "text-solution";
   return TypeName2;
 })(TypeName || {});
