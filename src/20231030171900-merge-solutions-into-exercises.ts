@@ -56,6 +56,8 @@ createMigration(exports, {
       }
     } while (entities.length > 0)
 
+    await apiCache.deleteCachedUnrevisedRevisions()
+
     await apiCache.quit()
 
     interface Row {
