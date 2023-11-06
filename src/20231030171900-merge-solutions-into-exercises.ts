@@ -71,18 +71,24 @@ async function updateExercise(
   apiCache: ApiCache,
   exerciseId: number,
 ) {
-  const exercise = await loadEntityTree(db, exerciseId)
+  const exerciseNode = await loadEntityTree(db, exerciseId)
 
   // When an exercise does not have any revision there is no transformation
   // possible even if the solution has revisions.
-  if (exercise.value.revisions.length === 0) return
+  if (exerciseNode.value.revisions.length === 0) return
+
+  const exercise = exerciseNode.value
+  const solution = exerciseNode.children.at(0)?.value ?? null
 
   // Skip when exercise or grouped exercise entity does not have any solution
-  if (exercise.children.length === 0) return
+  if (solution === null) return
 
-  const exerciseRevisions = transformEntity(exercise)
+  const exerciseRevisions = transformEntity(exerciseNode)
 
-  let base: TreeNode<EntityWithRevision | null> = mapTree(() => null, exercise)
+  let baseNode: TreeNode<EntityWithRevision | null> = mapTree(
+    () => null,
+    exerciseNode,
+  )
 
   if (exerciseRevisions.length > 0 && exerciseRevisions[0].value == null) {
     console.log(
@@ -98,10 +104,10 @@ async function updateExercise(
   )
 
   for (const revision of exerciseRevisions) {
-    base = concatTree((a, b) => (b == null ? a : b), base, revision)
+    baseNode = concatTree((a, b) => (b == null ? a : b), baseNode, revision)
 
-    const exercise = base.value ?? baseExercise.value
-    const solution = base.children.at(0)?.value ?? null
+    const exercise = baseNode.value ?? baseExercise.value
+    const solution = baseNode.children.at(0)?.value ?? null
     let exerciseContent = JSON.parse(
       exercise?.revision?.content ?? 'null',
     ) as unknown
@@ -204,16 +210,19 @@ async function updateExercise(
   await moveCommentsFromSolutionToExercise({
     db,
     apiCache,
-    exercise: exercise.value,
-    solution: exercise.children[0].value,
+    exercise,
+    solution,
   })
 
   await updateCurrentRevisionOfExercise({
     db,
     apiCache,
-    exercise: exercise.value,
-    solution: exercise.children[0].value,
+    exercise,
+    solution,
   })
+
+  await apiCache.deleteUuid(exercise.id)
+  await apiCache.deleteUuid(solution.id)
 }
 
 async function updateCurrentRevisionOfExercise({
