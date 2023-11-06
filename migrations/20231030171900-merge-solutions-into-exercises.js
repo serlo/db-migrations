@@ -11248,13 +11248,13 @@ var require_common = __commonJS({
         createDebug.names = [];
         createDebug.skips = [];
         let i;
-        const split2 = (typeof namespaces === "string" ? namespaces : "").split(/[\s,]+/);
-        const len = split2.length;
+        const split = (typeof namespaces === "string" ? namespaces : "").split(/[\s,]+/);
+        const len = split.length;
         for (i = 0; i < len; i++) {
-          if (!split2[i]) {
+          if (!split[i]) {
             continue;
           }
-          namespaces = split2[i].replace(/\*/g, ".*?");
+          namespaces = split[i].replace(/\*/g, ".*?");
           if (namespaces[0] === "-") {
             createDebug.skips.push(new RegExp("^" + namespaces.slice(1) + "$"));
           } else {
@@ -17085,7 +17085,7 @@ var SolutionContentDecoder = t2.type({
       }),
       strategy: t2.type({
         // TODO: We need another migration to fix solutions with a box
-        // as a strategy
+        // or an image as strategy
         plugin: t2.union([
           t2.literal("text"),
           t2.literal("box"),
@@ -17107,7 +17107,7 @@ createMigration(exports, {
     const batchSize = 5e3;
     let entities = [];
     do {
-      const lastId = entities.at(-1)?.entityId ?? 0;
+      const lastUpdatedEntityId = entities.at(-1)?.entityId ?? 0;
       entities = await db.runSql(
         `select
            entity.id as entityId
@@ -17116,7 +17116,7 @@ createMigration(exports, {
          where type.name in ("text-exercise", "grouped-text-exercise")
          and entity.id > ?
          order by entity.id limit ?`,
-        lastId,
+        lastUpdatedEntityId,
         batchSize
       );
       for (const entity of entities) {
@@ -17128,35 +17128,44 @@ createMigration(exports, {
   }
 });
 async function updateExercise(db, apiCache, exerciseId) {
-  const exercise = await loadEntityTree(db, exerciseId);
-  if (exercise.value.revisions.length === 0)
+  const exerciseNode = await loadEntityNode(db, exerciseId);
+  if (exerciseNode.value.revisions.length === 0)
     return;
-  if (exercise.children.length === 0)
+  const exercise = exerciseNode.value;
+  const solution = exerciseNode.children.at(0)?.value ?? null;
+  if (solution === null)
     return;
-  const exerciseRevisions = transformEntity(exercise);
-  let base = mapTree(() => null, exercise);
-  if (exerciseRevisions.length > 0 && exerciseRevisions[0].value == null) {
+  const edits = getEdits(exerciseNode);
+  if (edits.length > 0 && edits[0].value == null) {
     console.log(
-      `Warning: Exercise ${exerciseId} has solution before first revision`
+      `Warning: Exercise ${exerciseId} has a revision for a solution before first revision of the exercise`
     );
   }
-  const baseExercise = exerciseRevisions.filter((r) => r.value != null).at(0);
+  const fallbackExercise = edits.filter((r) => r.value != null).at(0);
   (0, import_assert.default)(
-    baseExercise?.value != null,
+    fallbackExercise?.value != null,
     `Illegal state: baseExercise is null for ${exerciseId}`
   );
-  for (const revision of exerciseRevisions) {
-    base = concatTree((a, b) => b == null ? a : b, base, revision);
-    const exercise2 = base.value ?? baseExercise.value;
-    const solution = base.children.at(0)?.value ?? null;
-    let exerciseContent = JSON.parse(
-      exercise2?.revision?.content ?? "null"
+  let currentVersion = mapTree(
+    () => null,
+    exerciseNode
+  );
+  for (const edit of edits) {
+    currentVersion = concatTree(
+      (a, b) => b == null ? a : b,
+      currentVersion,
+      edit
     );
-    const solutionContentText = solution?.revision?.content ?? null;
+    const currentExercise = currentVersion.value ?? fallbackExercise.value;
+    const currentSolution = currentVersion.children.at(0)?.value ?? null;
+    let exerciseContent = JSON.parse(
+      currentExercise?.revision?.content ?? "null"
+    );
+    const solutionContentText = currentSolution?.revision?.content ?? null;
     if (solutionContentText === null || solutionContentText === "")
       continue;
     let solutionContent = JSON.parse(solutionContentText);
-    if (solutionContent == null || solution == null)
+    if (solutionContent == null || currentSolution == null)
       continue;
     (0, import_assert.default)(exerciseContent != null, "Illegal state: Exercise is null");
     if (RowPluginDecoder.is(exerciseContent)) {
@@ -17167,7 +17176,7 @@ async function updateExercise(db, apiCache, exerciseId) {
     }
     if (!ExerciseContentDecoder.is(exerciseContent)) {
       throw new Error(
-        `Illegal content for exercise ${exerciseId} with current revision ${exercise2.revision.id}`
+        `Illegal content for exercise ${exerciseId} with current revision ${currentExercise.revision.id}`
       );
     }
     if (exerciseContent.state.solution != null)
@@ -17183,24 +17192,24 @@ async function updateExercise(db, apiCache, exerciseId) {
     }
     if (!SolutionContentDecoder.is(solutionContent)) {
       throw new Error(
-        `Illegal content for solution ${solution?.id} with current revision ${solution?.revision?.id}`
+        `Illegal content for solution ${currentSolution?.id} with current revision ${currentSolution?.revision?.id}`
       );
     }
-    if (exercise2.licenseId !== solution.licenseId) {
-      solutionContent.state["licenseId"] = solution.licenseId;
+    if (currentExercise.licenseId !== currentSolution.licenseId) {
+      solutionContent.state["licenseId"] = currentSolution.licenseId;
     }
     exerciseContent.state["solution"] = solutionContent;
-    if (revision.value != null) {
+    if (edit.value != null) {
       await migrate(
         db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         JSON.stringify(exerciseContent),
-        revision.value.revision.id
+        edit.value.revision.id
       );
-      await apiCache.deleteUuid(revision.value.revision.id);
+      await apiCache.deleteUuid(edit.value.revision.id);
     } else {
-      const revisionToOvertake = getValues(revision).filter(isNotNull).at(0);
+      const revisionToOvertake = getValues(edit).filter(isNotNull).at(0);
       (0, import_assert.default)(revisionToOvertake !== void 0);
       await migrate(
         db,
@@ -17224,22 +17233,24 @@ async function updateExercise(db, apiCache, exerciseId) {
         JSON.stringify(exerciseContent),
         revisionToOvertake.revision.id
       );
-      await apiCache.deleteUuid(solution.id);
+      await apiCache.deleteUuid(currentSolution.id);
       await apiCache.deleteUuid(revisionToOvertake.revision.id);
     }
   }
   await moveCommentsFromSolutionToExercise({
     db,
     apiCache,
-    exercise: exercise.value,
-    solution: exercise.children[0].value
+    exercise,
+    solution
   });
   await updateCurrentRevisionOfExercise({
     db,
     apiCache,
-    exercise: exercise.value,
-    solution: exercise.children[0].value
+    exercise,
+    solution
   });
+  await apiCache.deleteUuid(exercise.id);
+  await apiCache.deleteUuid(solution.id);
 }
 async function updateCurrentRevisionOfExercise({
   db,
@@ -17262,36 +17273,36 @@ async function moveCommentsFromSolutionToExercise({
   exercise,
   solution
 }) {
-  const comments = await db.runSql(
+  const commentsOfSolution = await db.runSql(
     `select id from comment where uuid_id = ?`,
     solution.id
   );
-  for (const comment of comments) {
-    await apiCache.deleteUuid(comment.id);
-  }
   await db.runSql(
     `update comment set uuid_id = ? where uuid_id = ?`,
     exercise.id,
     solution.id
   );
+  for (const comment of commentsOfSolution) {
+    await apiCache.deleteUuid(comment.id);
+  }
   await apiCache.deleteThreadIds(exercise.id);
   await apiCache.deleteThreadIds(solution.id);
 }
-function transformEntity(entity) {
-  let rest = entity;
-  let result = [];
-  while (getValues(rest).some((entity2) => entity2.revisions.length > 0)) {
-    const dates = getValues(rest).map((entity2) => entity2.revisions.at(0)?.date ?? null).filter(isNotNull);
-    const minDate = dates.reduce((a, b) => a <= b ? a : b);
-    const splitResult = split(rest, minDate);
-    result.push(splitResult.current);
-    rest = splitResult.rest;
+function getEdits(entity) {
+  let remainingRevisions = entity;
+  let edits = [];
+  while (getValues(remainingRevisions).some((entity2) => entity2.revisions.length > 0)) {
+    const firstDates = getValues(remainingRevisions).map((entity2) => entity2.revisions.at(0)?.date ?? null).filter(isNotNull);
+    const minDate = firstDates.reduce((a, b) => a <= b ? a : b);
+    const nextEdit = splitNextEdit(remainingRevisions, minDate);
+    edits.push(nextEdit.nextEdit);
+    remainingRevisions = nextEdit.remainingRevisions;
   }
-  return result;
+  return edits;
 }
-function split(node, date) {
-  let currentValue;
-  let restValue;
+function splitNextEdit(node, date) {
+  let nextEditRevision;
+  let remainingRevisions;
   if (node.value.revisions.length > 0 && node.value.revisions[0].date.getTime() < date.getTime() + 10) {
     const base = {
       id: node.value.id,
@@ -17299,25 +17310,28 @@ function split(node, date) {
       typeName: node.value.typeName,
       currentRevisionId: node.value.currentRevisionId
     };
-    currentValue = { ...base, revision: node.value.revisions[0] };
-    restValue = { ...base, revisions: node.value.revisions.slice(1) };
+    nextEditRevision = { ...base, revision: node.value.revisions[0] };
+    remainingRevisions = { ...base, revisions: node.value.revisions.slice(1) };
   } else {
-    currentValue = null;
-    restValue = node.value;
+    nextEditRevision = null;
+    remainingRevisions = node.value;
   }
-  const children = node.children.map((child) => split(child, date));
-  const currentChildren = children.map((x) => x.current);
-  const restChildren = children.map((x) => x.rest);
+  const children = node.children.map((child) => splitNextEdit(child, date));
+  const nextEditChildren = children.map((x) => x.nextEdit);
+  const remainingRevisionsChildren = children.map((x) => x.remainingRevisions);
   return {
-    current: { value: currentValue, children: currentChildren },
-    rest: { value: restValue, children: restChildren }
+    nextEdit: { value: nextEditRevision, children: nextEditChildren },
+    remainingRevisions: {
+      value: remainingRevisions,
+      children: remainingRevisionsChildren
+    }
   };
 }
-async function loadEntityTree(db, entityId) {
+async function loadEntityNode(db, entityId) {
   const entity = await loadEntity(db, entityId);
   let childIds = [];
   if (entity.typeName === "text-exercise" /* ExerciseType */ || entity.typeName === "grouped-text-exercise" /* GroupedExerciseType */) {
-    childIds = await loadChildrenIds({
+    childIds = await loadEntityChildrenIds({
       db,
       entityId,
       childType: "text-solution" /* SolutionType */,
@@ -17325,28 +17339,29 @@ async function loadEntityTree(db, entityId) {
     });
   }
   const children = await Promise.all(
-    childIds.map((childId) => loadEntityTree(db, childId))
+    childIds.map((childId) => loadEntityNode(db, childId))
   );
   return { value: entity, children };
 }
-async function loadChildrenIds({
+async function loadEntityChildrenIds({
   db,
   entityId,
   childType,
   limit
 }) {
   let sqlCommand = `
-      select child_id as childId
+      select entity_link.child_id as childId
       from entity_link
       join entity child on child.id = entity_link.child_id
       join type child_type on child_type.id = child.type_id
-      join uuid uuid_child on uuid_child.id = child.id
+      join uuid child_uuid on child_uuid.id = child.id
       where
-        parent_id = ? and child_type.name = ?
-        and uuid_child.trashed = 0
+        entity_link.parent_id = ? and child_type.name = ?
+        and child_uuid.trashed = 0
       order by entity_link.order ASC`;
-  if (limit != null)
+  if (limit != null) {
     sqlCommand += ` limit ${limit}`;
+  }
   const result = await db.runSql(
     sqlCommand,
     entityId,
@@ -17366,7 +17381,7 @@ async function loadEntity(db, entityId) {
       where entity.id = ?`,
     entityId
   );
-  const entityBase = pickFirst(entityBaseResult);
+  const entityBase = pickSingleton(entityBaseResult);
   (0, import_assert.default)(
     isTypeName(entityBase.typeName),
     `Entity ${entityId} has unsupported type name`
@@ -17396,6 +17411,10 @@ function mapTree(mapper, node) {
   };
 }
 function concatTree(concat, x, y) {
+  (0, import_assert.default)(
+    x.children.length === y.children.length,
+    "Illegal state: Both nodes should have the same number of children."
+  );
   return {
     value: concat(x.value, y.value),
     children: (0, import_Array.zip)(x.children, y.children).map(
@@ -17406,7 +17425,7 @@ function concatTree(concat, x, y) {
 function getValues(node) {
   return [node.value, ...node.children.flatMap(getValues)];
 }
-function pickFirst(elements) {
+function pickSingleton(elements) {
   (0, import_assert.default)(elements.length === 1, "List has more than one element");
   return elements[0];
 }
