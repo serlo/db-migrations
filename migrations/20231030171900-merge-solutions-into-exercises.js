@@ -17218,13 +17218,19 @@ async function updateExercise(db, apiCache, exerciseId) {
         exerciseId,
         revisionToOvertake.revision.id
       );
-      if (revisionToOvertake.currentRevisionId === revisionToOvertake.revision.id) {
+      if (solution.currentRevisionId === revisionToOvertake.revision.id) {
         await migrate(
           db,
           ` update entity set current_revision_id = NULL
             where id = ?`,
           revisionToOvertake.id
         );
+        await updateCurrentRevisionOfExercise({
+          db,
+          apiCache,
+          exercise,
+          solution
+        });
       }
       await migrate(
         db,
@@ -17238,12 +17244,6 @@ async function updateExercise(db, apiCache, exerciseId) {
     }
   }
   await moveCommentsFromSolutionToExercise({
-    db,
-    apiCache,
-    exercise,
-    solution
-  });
-  await updateCurrentRevisionOfExercise({
     db,
     apiCache,
     exercise,

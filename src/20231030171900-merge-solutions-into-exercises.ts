@@ -234,15 +234,23 @@ async function updateExercise(
 
       // We need to update the current revision of the solution -> Otherwise
       // staging would try to load the revision which results in an error
-      if (
-        revisionToOvertake.currentRevisionId === revisionToOvertake.revision.id
-      ) {
+      if (solution.currentRevisionId === revisionToOvertake.revision.id) {
         await migrate(
           db,
           ` update entity set current_revision_id = NULL
             where id = ?`,
           revisionToOvertake.id,
         )
+
+        // Update the current revision of the exercise since we know that
+        // we have added a new revision to the exercise which was already
+        // reviewed
+        await updateCurrentRevisionOfExercise({
+          db,
+          apiCache,
+          exercise,
+          solution,
+        })
       }
 
       await migrate(
@@ -259,13 +267,6 @@ async function updateExercise(
   }
 
   await moveCommentsFromSolutionToExercise({
-    db,
-    apiCache,
-    exercise,
-    solution,
-  })
-
-  await updateCurrentRevisionOfExercise({
     db,
     apiCache,
     exercise,
