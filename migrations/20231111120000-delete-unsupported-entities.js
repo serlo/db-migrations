@@ -12695,6 +12695,9 @@ createMigration(exports, {
     console.log(`INFO: ${entitiesToDelete.length} entities deleted`);
     await deleteUuids(db, apiCache, revisionsToDelete);
     console.log(`INFO: ${revisionsToDelete.length} revisions deleted`);
+    await db.runSql(
+      `delete from type where name in ${toSqlTuple(unsupportedEntityTypes)}`
+    );
     await apiCache.quit();
   }
 });
