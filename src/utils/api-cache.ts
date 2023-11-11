@@ -5,7 +5,7 @@ export class ApiCache {
   private enableLogging: boolean
 
   constructor(args?: { enableLogging?: boolean }) {
-    this.enableLogging = args?.enableLogging ?? true
+    this.enableLogging = args?.enableLogging ?? false
 
     if (typeof process.env.REDIS_URL === 'string') {
       this.redis = new Redis(process.env.REDIS_URL)
