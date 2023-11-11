@@ -28,9 +28,11 @@ createMigration(exports, {
     `)
 
     await deleteUuids(db, entitiesToDelete)
+    console.log(`INFO: ${entitiesToDelete.length} entities deleted`)
 
     // Let's avoid having revisions not pointing to an apropriate entity
     await deleteUuids(db, revisionsToDelete)
+    console.log(`INFO: ${revisionsToDelete.length} revisions deleted`)
   },
 })
 
