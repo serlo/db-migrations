@@ -1,4 +1,4 @@
-import { Database, createMigration } from './utils'
+import { ApiCache, Database, createMigration } from './utils'
 
 const unsupportedEntityTypes = [
   'input-expression-equal-match-challenge',
@@ -13,6 +13,8 @@ const unsupportedEntityTypes = [
 
 createMigration(exports, {
   up: async (db) => {
+    const apiCache = new ApiCache()
+
     const entitiesToDelete: { id: number }[] = await db.runSql(`
       select entity.id as id
       from entity
@@ -27,12 +29,14 @@ createMigration(exports, {
       where type.name in ${toSqlTuple(unsupportedEntityTypes)}
     `)
 
-    await deleteUuids(db, entitiesToDelete)
+    await deleteUuids(db, apiCache, entitiesToDelete)
     console.log(`INFO: ${entitiesToDelete.length} entities deleted`)
 
     // Let's avoid having revisions not pointing to an apropriate entity
-    await deleteUuids(db, revisionsToDelete)
+    await deleteUuids(db, apiCache, revisionsToDelete)
     console.log(`INFO: ${revisionsToDelete.length} revisions deleted`)
+
+    await apiCache.quit()
   },
 })
 
@@ -40,9 +44,17 @@ function toSqlTuple(elements: Array<string | number>): string {
   return '(' + elements.map((e) => JSON.stringify(e)).join(', ') + ')'
 }
 
-async function deleteUuids(db: Database, uuids: { id: number }[]) {
+async function deleteUuids(
+  db: Database,
+  apiCache: ApiCache,
+  uuids: { id: number }[],
+) {
   if (uuids.length > 0) {
     const ids = uuids.map((uuid) => uuid.id)
     await db.runSql(`DELETE FROM uuid WHERE id IN ${toSqlTuple(ids)}`)
+
+    for (const id of ids) {
+      await apiCache.deleteUuid(id)
+    }
   }
 }
