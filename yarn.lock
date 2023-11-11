@@ -942,10 +942,10 @@ __metadata:
   dependencies:
     "@jest/types": ^29.6.3
     "@serlo/markdown": Entkenntnis/tmp-serlo-markdown
-    "@types/jest": ^29.5.7
-    "@types/node": ^18.18.8
-    "@types/ramda": ^0.29.7
-    "@types/semver": ^7.5.4
+    "@types/jest": ^29.5.8
+    "@types/node": ^18.18.9
+    "@types/ramda": ^0.29.8
+    "@types/semver": ^7.5.5
     date-fns: ^2.30.0
     db-migrate: ^0.11.14
     db-migrate-mysql: ^2.3.2
@@ -1103,13 +1103,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.7":
-  version: 29.5.7
-  resolution: "@types/jest@npm:29.5.7"
+"@types/jest@npm:^29.5.8":
+  version: 29.5.8
+  resolution: "@types/jest@npm:29.5.8"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: e28624ccb0ef1255a03fbbb4b5bc3e5cbcdc450d39e0739985ff679b124198f808c38c8c3e67859c6efc0e848196deeb8cfed028e12a821c511dfc1112a2d6e9
+  checksum: ca8438a5b4c098c8c023e9d5b279ea306494a1d0b5291cfb498100fa780377145f068b2a021d545b0398bbe0328dcc37044dd3aaf3c6c0fe9b0bef7b46a63453
   languageName: node
   linkType: hard
 
@@ -1134,12 +1134,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.18.8":
-  version: 18.18.8
-  resolution: "@types/node@npm:18.18.8"
+"@types/node@npm:^18.18.9":
+  version: 18.18.9
+  resolution: "@types/node@npm:18.18.9"
   dependencies:
     undici-types: ~5.26.4
-  checksum: d6a82bfc28bca8e4e32ffc9526798d1aea62f6993ea3a535cd3f47ac3f725a48efe3f484d68168dd154af0001c89935e4e1d77e7b1809c3824c6382bf99b86f6
+  checksum: 629ce20357586144031cb43d601617eef45e59460dea6b1e123f708e6885664f44d54f65e5b72b2614af5b8613f3652ced832649c0b991accbc6a85139befa51
   languageName: node
   linkType: hard
 
@@ -1150,19 +1150,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ramda@npm:^0.29.7":
-  version: 0.29.7
-  resolution: "@types/ramda@npm:0.29.7"
+"@types/ramda@npm:^0.29.8":
+  version: 0.29.8
+  resolution: "@types/ramda@npm:0.29.8"
   dependencies:
     types-ramda: ^0.29.5
-  checksum: 0f714c9ecedf53a67eb41d7a206aa2db0e696e612be19f9723e8f83f33ab8a0457ec3d1da83db02bdbbed1f00df1e0fc49adc088abf4b2f677ccf43c13a03afb
+  checksum: 9883baa6b19290822753332af90aaa8c0f612c87c740b1a64067524b2afee1871200d85b5ae4ae3b10627435fa045c314a615fec3e53d222c99f0aa6193cd271
   languageName: node
   linkType: hard
 
-"@types/semver@npm:^7.5.4":
-  version: 7.5.4
-  resolution: "@types/semver@npm:7.5.4"
-  checksum: 120c0189f6fec5f2d12d0d71ac8a4cfa952dc17fa3d842e8afddb82bba8828a4052f8799c1653e2b47ae1977435f38e8985658fde971905ce5afb8e23ee97ecf
+"@types/semver@npm:^7.5.5":
+  version: 7.5.5
+  resolution: "@types/semver@npm:7.5.5"
+  checksum: 533e6c93d1262d65f449423d94a445f7f3db0672e7429f21b6a1636d6051dbab3a2989ddcda9b79c69bb37830931d09fc958a65305a891357f5cea3257c297f5
   languageName: node
   linkType: hard
 
