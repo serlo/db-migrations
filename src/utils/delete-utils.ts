@@ -44,7 +44,7 @@ export async function deleteUuids(
       select distinct event_log.id as id
       from event_log
       left join event_parameter on event_parameter.log_id = event_log.id
-      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event.parameter_id
+      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event_parameter.id
       where
         event_log.uuid_id in ${toSqlTuple(uuids)}
         or event_parameter_uuid.uuid_id in ${toSqlTuple(uuids)}
