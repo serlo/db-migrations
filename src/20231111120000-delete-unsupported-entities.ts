@@ -42,11 +42,12 @@ createMigration(exports, {
     await deleteUuids(db, apiCache, entitiesToDelete)
     console.log(`INFO: ${entitiesToDelete.length} entities deleted`)
 
-    // Let's avoid having revisions not pointing to an apropriate entity
+    // Necessary to delete cache entries as well
     await deleteUuids(db, apiCache, revisionsToDelete)
     console.log(`INFO: ${revisionsToDelete.length} revisions deleted`)
 
-    await deleteEventLogs(db, eventLogsToDelete)
+    // Necessary to delete cache entries as well
+    await deleteEventLogs(db, apiCache, eventLogsToDelete)
     console.log(`INFO: ${eventLogsToDelete.length} event logs deleted`)
 
     await db.runSql(
@@ -78,14 +79,15 @@ async function deleteUuids(
 
 async function deleteEventLogs(
   db: Database,
-  // apiCache: ApiCache,
+  apiCache: ApiCache,
   event_logs: { id: number }[],
 ) {
   if (event_logs.length > 0) {
     const ids = event_logs.map((event_log) => event_log.id)
     await db.runSql(`DELETE FROM event_log WHERE id IN ${toSqlTuple(ids)}`)
-
-    // TODO: Not sure if event logs are cached
+    for (const eventId of ids) {
+      await apiCache.deleteEvent(eventId)
+    }
   }
 }
 
