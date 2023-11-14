@@ -1,4 +1,4 @@
-import { ApiCache, Database, createMigration } from './utils'
+import { ApiCache, Database, createMigration, toSqlTuple } from './utils'
 
 const unsupportedEntityTypes = [
   'input-expression-equal-match-challenge',
@@ -43,10 +43,6 @@ createMigration(exports, {
     await apiCache.quit()
   },
 })
-
-function toSqlTuple(elements: Array<string | number>): string {
-  return '(' + elements.map((e) => JSON.stringify(e)).join(', ') + ')'
-}
 
 async function deleteUuids(
   db: Database,
