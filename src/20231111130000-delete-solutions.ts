@@ -1,3 +1,4 @@
+/** TODO: uncomment when it is to be deployed in production
 import { ApiCache, Database, createMigration } from './utils'
 
 const unsupportedEntityTypes = ['text-solution']
@@ -53,3 +54,4 @@ async function deleteUuids(
     }
   }
 }
+*/
