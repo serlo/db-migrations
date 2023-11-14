@@ -89,6 +89,8 @@ async function deleteEventLogs(
       await apiCache.deleteEvent(eventId)
     }
   }
+
+  await apiCache.deleteAllNotifications()
 }
 
 function getUuidsToDelete(
