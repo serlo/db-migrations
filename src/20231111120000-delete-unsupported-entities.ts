@@ -28,21 +28,15 @@ createMigration(exports, {
       join type on entity.type_id = type.id
       where type.name in ${toSqlTuple(unsupportedEntityTypes)}
     `)
+    const uuidsToDelete = getUuidsToDelete(entitiesToDelete, revisionsToDelete)
     const eventLogsToDelete: { id: number }[] = await db.runSql(`
-      select event_log.id as id
+      select distinct event_log.id as id
       from event_log
-      where event_log.uuid_id in ${getUuidsToDelete(
-        entitiesToDelete,
-        revisionsToDelete,
-      )}
-    `)
-    const eventUuidParametersToDelete: { id: number }[] = await db.runSql(`
-      select event_parameter_uuid.id as id
-      from event_parameter_uuid
-      where event_parameter_uuid.uuid_id in ${getUuidsToDelete(
-        entitiesToDelete,
-        revisionsToDelete,
-      )}
+      left join event_parameter on event_parameter.log_id = event_log.id
+      left join event_parameter_uuid on event_parameter_uuid.event_parameter_id = event.parameter_id
+      where
+        event_log.uuid_id in ${uuidsToDelete}
+        or event_parameter_uuid.uuid_id in ${uuidsToDelete}
     `)
 
     await deleteUuids(db, apiCache, entitiesToDelete)
@@ -54,11 +48,6 @@ createMigration(exports, {
 
     await deleteEventLogs(db, eventLogsToDelete)
     console.log(`INFO: ${eventLogsToDelete.length} event logs deleted`)
-
-    await deleteEventParameterUuids(db, eventUuidParametersToDelete)
-    console.log(
-      `INFO: ${eventUuidParametersToDelete.length} event parameter uuids deleted`,
-    )
 
     await db.runSql(
       `delete from type where name in ${toSqlTuple(unsupportedEntityTypes)}`,
@@ -97,21 +86,6 @@ async function deleteEventLogs(
     await db.runSql(`DELETE FROM event_log WHERE id IN ${toSqlTuple(ids)}`)
 
     // TODO: Not sure if event logs are cached
-  }
-}
-
-async function deleteEventParameterUuids(
-  db: Database,
-  // apiCache: ApiCache,
-  event_parameter_uuids: { id: number }[],
-) {
-  if (event_parameter_uuids.length > 0) {
-    const ids = event_parameter_uuids.map((uuid) => uuid.id)
-    await db.runSql(
-      `DELETE FROM event_parameter_uuid WHERE id IN ${toSqlTuple(ids)}`,
-    )
-
-    // TODO: Not sure if event parameter uuids are cached
   }
 }
 
