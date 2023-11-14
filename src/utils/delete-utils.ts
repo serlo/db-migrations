@@ -10,18 +10,18 @@ export async function deleteUnsupportedEntityTypes(args: {
   const { db, apiCache, unsupportedEntityTypes } = args
 
   const entitiesToDelete: { id: number }[] = await db.runSql(`
-      select entity.id as id
-      from entity
-      join type on entity.type_id = type.id
-      where type.name in ${toSqlTuple(unsupportedEntityTypes)}
-    `)
+    select entity.id as id
+    from entity
+    join type on entity.type_id = type.id
+    where type.name in ${toSqlTuple(unsupportedEntityTypes)}
+  `)
   const revisionsToDelete: { id: number }[] = await db.runSql(`
-      select entity_revision.id as id
-      from entity_revision
-      join entity on entity_revision.repository_id = entity.id
-      join type on entity.type_id = type.id
-      where type.name in ${toSqlTuple(unsupportedEntityTypes)}
-    `)
+    select entity_revision.id as id
+    from entity_revision
+    join entity on entity_revision.repository_id = entity.id
+    join type on entity.type_id = type.id
+    where type.name in ${toSqlTuple(unsupportedEntityTypes)}
+  `)
 
   await deleteUuids(db, apiCache, [...entitiesToDelete, ...revisionsToDelete])
   console.log(`INFO: ${entitiesToDelete.length} entities deleted`)
