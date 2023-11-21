@@ -1,6 +1,6 @@
 module.exports = {
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true, isolatedModules: true }],
+    '^.+\\.tsx?$': ['ts-jest', { isolatedModules: true }],
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx', '.mts'],
   setupFiles: ['dotenv/config'],
