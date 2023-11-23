@@ -10,16 +10,9 @@ const root = path.join(__dirname, '..')
 const src = path.join(root, 'src')
 const dist = path.join(root, process.env.BUILD_OUTDIR ?? 'dist')
 
-exec()
-  .then(() => {
-    process.exit(0)
-  })
-  .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+await main()
 
-async function exec() {
+async function main() {
   for (const arg of process.argv.slice(2)) {
     const file = path.resolve(arg)
 
