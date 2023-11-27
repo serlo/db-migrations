@@ -52,7 +52,7 @@
     "@types/jest": "^29.5.10",
     "@types/node": "^18.18.13",
     "@types/ramda": "^0.29.9",
-    "@types/semver": "^7.5.5",
+    "@types/semver": "^7.5.6",
     "date-fns": "^2.30.0",
     "depcheck": "^1.4.7",
     "dotenv": "^16.3.1",
