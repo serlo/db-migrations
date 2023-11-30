@@ -24,6 +24,11 @@ createMigration(module.exports, {
       DROP TABLE IF EXISTS
         ad,
         ad_page,
+        attachment_container,
+        attachment_file,
+        blog_post,
+        comment_vote,
+        flag,
         instance_permission,
         language,
         metadata,
