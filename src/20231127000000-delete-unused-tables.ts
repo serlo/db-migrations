@@ -10,13 +10,13 @@ createMigration(module.exports, {
     `)
     if (result[0]['count'] > 0) {
       await db.runSql(`
-          ALTER TABLE instance
-          DROP FOREIGN KEY fk_instance_language1;
-        `)
+        ALTER TABLE instance
+        DROP FOREIGN KEY fk_instance_language1;
+      `)
       await db.runSql(`
-          ALTER TABLE instance
-          DROP COLUMN language_id;
-        `)
+        ALTER TABLE instance
+        DROP COLUMN language_id;
+      `)
     }
 
     // now delete the tables
@@ -24,6 +24,11 @@ createMigration(module.exports, {
       DROP TABLE IF EXISTS
         ad,
         ad_page,
+        attachment_container,
+        attachment_file,
+        blog_post,
+        comment_vote,
+        flag,
         instance_permission,
         language,
         metadata,
@@ -44,6 +49,12 @@ createMigration(module.exports, {
         session,
         term_taxonomy_comment, 
         user_field;
+    `)
+
+    // remove the deleted content with UUID also from the uuid table
+    await db.runSql(`
+      DELETE FROM uuid 
+      WHERE discriminator IN ('attachment', 'blogPost');
     `)
   },
 })
