@@ -26,6 +26,18 @@ export class ApiCache {
     await this.redis.del(`de.serlo.org/api/threads/${uuid}`)
   }
 
+  public async deleteEvent(eventId: number) {
+    await this.redis.del(`de.serlo.org/api/event/${eventId}`)
+  }
+
+  public async deleteAllNotifications() {
+    const keys = await this.redis.keys('de.serlo.org/api/notifications/*')
+
+    for (const key of keys) {
+      await this.redis.del(key)
+    }
+  }
+
   public async deleteUuid(uuid: number) {
     await this.redis.del(`de.serlo.org/api/uuid/${uuid}`)
 
