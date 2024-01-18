@@ -2,7 +2,7 @@ import { createMigration } from './utils'
 
 createMigration(exports, {
   up: async (db) => {
-    const uuidsToDelete: { uuid_id: number }[] = await db.runSql(`
+    const uuidsToDelete: { id: number }[] = await db.runSql(`
       SELECT id
       FROM entity
       WHERE id NOT IN (SELECT child_id FROM entity_link)
@@ -10,7 +10,7 @@ createMigration(exports, {
       `)
     if (uuidsToDelete.length > 0) {
       const uuidsToDeleteSeparatedByComma = uuidsToDelete
-        .map((item) => item.uuid_id)
+        .map((item) => item.id)
         .join(', ')
       await db.runSql(`
         DELETE FROM uuid 
