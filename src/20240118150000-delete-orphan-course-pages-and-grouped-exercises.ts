@@ -13,6 +13,6 @@ createMigration(exports, {
         AND id NOT IN (SELECT child_id FROM entity_link)
         AND id NOT IN (SELECT entity_id FROM term_taxonomy_entity)
       )
-    `);
+    `)
   },
 })
