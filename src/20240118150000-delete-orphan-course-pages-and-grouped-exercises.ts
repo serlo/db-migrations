@@ -5,7 +5,10 @@ createMigration(exports, {
     const uuidsToDelete: { id: number }[] = await db.runSql(`
       SELECT id
       FROM entity
-      WHERE id NOT IN (SELECT child_id FROM entity_link)
+      WHERE type_id in (SELECT id FROM type 
+                        WHERE name="course-page"
+                        OR name="grouped-text-exercise")
+      AND id NOT IN (SELECT child_id FROM entity_link)
       AND id NOT IN (SELECT entity_id FROM term_taxonomy_entity) 
       `)
     if (uuidsToDelete.length > 0) {
