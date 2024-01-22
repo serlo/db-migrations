@@ -55,7 +55,7 @@
     "@types/semver": "^7.5.6",
     "date-fns": "^3.2.0",
     "depcheck": "^1.4.7",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.3.2",
     "esbuild": "^0.19.11",
     "fp-ts": "^2.16.2",
     "htmlparser2": "^9.1.0",
