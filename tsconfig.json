@@ -3,9 +3,9 @@
   "extends": "./tsconfig.prod.json",
   "compilerOptions": {
     "module": "ESNext",
-    "target": "ESNext"
+    "target": "ESNext",
   },
   "ts-node": {
-    "esm": true
-  }
+    "esm": true,
+  },
 }
