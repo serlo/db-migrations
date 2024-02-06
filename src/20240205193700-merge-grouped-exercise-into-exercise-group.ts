@@ -1,5 +1,6 @@
 import { zip } from 'fp-ts/Array'
 import * as t from 'io-ts'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Database, createMigration } from './utils'
 import { ApiCache } from './utils/api-cache'
@@ -15,11 +16,11 @@ const ChildContentDecoder = t.type({
     }),
     t.partial({ licenseId: t.number }),
   ]),
+  id: t.string,
 })
 const ParentContentDecoder = t.type({
   plugin: t.literal('exerciseGroup'),
   state: t.record(t.string, t.unknown),
-  id: t.string,
 })
 const RowPluginDecoder = t.type({ plugin: t.literal('rows') })
 const TextPluginDecoder = t.type({ plugin: t.literal('text') })
@@ -183,6 +184,7 @@ async function updateExerciseGroup(
           state: {
             content,
           },
+          id: uuidv4(),
         }
       }
 
