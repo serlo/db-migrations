@@ -1568,7 +1568,7 @@ var require_ReadonlyNonEmptyArray = __commonJS({
       return function_1.identity;
     };
     exports2.sortBy = sortBy;
-    var union = function(E) {
+    var union2 = function(E) {
       var uniqE = (0, exports2.uniq)(E);
       return function(second) {
         return function(first) {
@@ -1576,7 +1576,7 @@ var require_ReadonlyNonEmptyArray = __commonJS({
         };
       };
     };
-    exports2.union = union;
+    exports2.union = union2;
     var rotate = function(n) {
       return function(as) {
         var len = as.length;
@@ -2356,7 +2356,7 @@ var require_NonEmptyArray = __commonJS({
       return exports2.copy;
     };
     exports2.sortBy = sortBy;
-    var union = function(E) {
+    var union2 = function(E) {
       var uniqE = (0, exports2.uniq)(E);
       return function(second) {
         return function(first) {
@@ -2364,7 +2364,7 @@ var require_NonEmptyArray = __commonJS({
         };
       };
     };
-    exports2.union = union;
+    exports2.union = union2;
     var rotate = function(n) {
       return function(as) {
         var len = as.length;
@@ -3682,11 +3682,11 @@ var require_ReadonlyArray = __commonJS({
     };
     exports2.concatW = concatW;
     exports2.concat = exports2.concatW;
-    function union(E) {
+    function union2(E) {
       var unionE = RNEA.union(E);
       return function(first, second) {
         if (second === void 0) {
-          var unionE_1 = union(E);
+          var unionE_1 = union2(E);
           return function(second2) {
             return unionE_1(second2, first);
           };
@@ -3694,7 +3694,7 @@ var require_ReadonlyArray = __commonJS({
         return (0, exports2.isNonEmpty)(first) && (0, exports2.isNonEmpty)(second) ? unionE(second)(first) : (0, exports2.isNonEmpty)(first) ? first : second;
       };
     }
-    exports2.union = union;
+    exports2.union = union2;
     function intersection2(E) {
       var elemE = elem(E);
       return function(xs, ys) {
@@ -4114,7 +4114,7 @@ var require_ReadonlyArray = __commonJS({
     };
     exports2.getOrd = getOrd;
     var getUnionSemigroup = function(E) {
-      var unionE = union(E);
+      var unionE = union2(E);
       return {
         concat: function(first, second) {
           return unionE(second)(first);
@@ -4860,11 +4860,11 @@ var require_Array = __commonJS({
     };
     exports2.concatW = concatW;
     exports2.concat = exports2.concatW;
-    function union(E) {
+    function union2(E) {
       var unionE = NEA.union(E);
       return function(first, second) {
         if (second === void 0) {
-          var unionE_1 = union(E);
+          var unionE_1 = union2(E);
           return function(second2) {
             return unionE_1(second2, first);
           };
@@ -4872,7 +4872,7 @@ var require_Array = __commonJS({
         return (0, exports2.isNonEmpty)(first) && (0, exports2.isNonEmpty)(second) ? unionE(second)(first) : (0, exports2.isNonEmpty)(first) ? (0, exports2.copy)(first) : (0, exports2.copy)(second);
       };
     }
-    exports2.union = union;
+    exports2.union = union2;
     function intersection2(E) {
       var elemE = (0, exports2.elem)(E);
       return function(xs, ys) {
@@ -5214,7 +5214,7 @@ var require_Array = __commonJS({
     exports2.getEq = RA.getEq;
     exports2.getOrd = RA.getOrd;
     var getUnionSemigroup = function(E) {
-      var unionE = union(E);
+      var unionE = union2(E);
       return {
         concat: function(first, second) {
           return unionE(second)(first);
@@ -7174,7 +7174,7 @@ var require_lib = __commonJS({
       }(Type)
     );
     exports2.UnionType = UnionType;
-    function union(codecs, name) {
+    function union2(codecs, name) {
       if (name === void 0) {
         name = getUnionName(codecs);
       }
@@ -7244,7 +7244,7 @@ var require_lib = __commonJS({
         }, codecs);
       }
     }
-    exports2.union = union;
+    exports2.union = union2;
     var IntersectionType = (
       /** @class */
       function(_super) {
@@ -7530,7 +7530,7 @@ var require_lib = __commonJS({
       if (name === void 0) {
         name = getUnionName(codecs);
       }
-      var U = union(codecs, name);
+      var U = union2(codecs, name);
       if (U instanceof TaggedUnionType) {
         return U;
       } else {
@@ -16975,6 +16975,53 @@ var require_built3 = __commonJS({
 var import_Array = __toESM(require_Array(), 1);
 var t2 = __toESM(require_lib(), 1);
 
+// node_modules/uuid/dist/esm-node/rng.js
+var import_crypto = __toESM(require("crypto"));
+var rnds8Pool = new Uint8Array(256);
+var poolPtr = rnds8Pool.length;
+function rng() {
+  if (poolPtr > rnds8Pool.length - 16) {
+    import_crypto.default.randomFillSync(rnds8Pool);
+    poolPtr = 0;
+  }
+  return rnds8Pool.slice(poolPtr, poolPtr += 16);
+}
+
+// node_modules/uuid/dist/esm-node/stringify.js
+var byteToHex = [];
+for (let i = 0; i < 256; ++i) {
+  byteToHex.push((i + 256).toString(16).slice(1));
+}
+function unsafeStringify(arr, offset = 0) {
+  return byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]];
+}
+
+// node_modules/uuid/dist/esm-node/native.js
+var import_crypto2 = __toESM(require("crypto"));
+var native_default = {
+  randomUUID: import_crypto2.default.randomUUID
+};
+
+// node_modules/uuid/dist/esm-node/v4.js
+function v4(options, buf, offset) {
+  if (native_default.randomUUID && !buf && !options) {
+    return native_default.randomUUID();
+  }
+  options = options || {};
+  const rnds = options.random || (options.rng || rng)();
+  rnds[6] = rnds[6] & 15 | 64;
+  rnds[8] = rnds[8] & 63 | 128;
+  if (buf) {
+    offset = offset || 0;
+    for (let i = 0; i < 16; ++i) {
+      buf[offset + i] = rnds[i];
+    }
+    return buf;
+  }
+  return unsafeStringify(rnds);
+}
+var v4_default = v4;
+
 // src/utils/api-cache.ts
 var import_ioredis = __toESM(require_built3(), 1);
 var ApiCache = class {
@@ -17085,14 +17132,21 @@ var ChildContentDecoder = t2.type({
       })
     }),
     t2.partial({ licenseId: t2.number })
-  ])
+  ]),
+  id: t2.string
 });
 var ParentContentDecoder = t2.type({
-  plugin: t2.literal("type-text-exercise-group"),
+  plugin: t2.literal("exerciseGroup"),
   state: t2.record(t2.string, t2.unknown)
 });
 var RowPluginDecoder = t2.type({ plugin: t2.literal("rows") });
 var TextPluginDecoder = t2.type({ plugin: t2.literal("text") });
+var OldExercisePluginDecoder = t2.type({
+  plugin: t2.union([
+    t2.literal("type-text-exercise-group"),
+    t2.literal("exerciseGroup")
+  ])
+});
 createMigration(exports, {
   up: async (db) => {
     const apiCache = new ApiCache({ enableLogging: false });
@@ -17124,12 +17178,14 @@ async function updateExerciseGroup(db, apiCache, parentId) {
   for (const child of parentNode.children) {
     (0, import_assert.default)(child.children.length === 0, "child must not have children");
   }
-  if (parentNode.value.revisions.length === 0)
+  if (parentNode.value.revisions.length === 0) {
+    console.log(`Warning: Parent (${parentId}) has no revision`);
     return;
+  }
   const edits = getEdits(parentNode);
   if (edits.length > 0 && edits[0].value == null) {
     console.log(
-      `Warning: Parent entity ${parentId} has a revision for a child before first its first revision`
+      `Warning: Parent entity ${parentId} has a revision for a child before its first revision`
     );
   }
   const fallbackParent = edits.filter((r) => r.value != null).at(0);
@@ -17158,9 +17214,12 @@ async function updateExerciseGroup(db, apiCache, parentId) {
     }
     if (RowPluginDecoder.is(parentContent)) {
       parentContent = {
-        plugin: "type-text-exercise-group",
+        plugin: "exerciseGroup",
         state: { content: parentContent }
       };
+    }
+    if (OldExercisePluginDecoder.is(parentContent)) {
+      parentContent.plugin = "exerciseGroup";
     }
     if (!ParentContentDecoder.is(parentContent)) {
       console.log({ parentContent });
@@ -17178,8 +17237,12 @@ async function updateExerciseGroup(db, apiCache, parentId) {
           plugin: "exercise",
           state: {
             content
-          }
+          },
+          id: v4_default()
         };
+      }
+      if (content.id === void 0) {
+        content.id = v4_default();
       }
       if (!ChildContentDecoder.is(content)) {
         throw new Error(
