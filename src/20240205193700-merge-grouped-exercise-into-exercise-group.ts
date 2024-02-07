@@ -1,5 +1,6 @@
 import { zip } from 'fp-ts/Array'
 import * as t from 'io-ts'
+import { v4 as uuidv4 } from 'uuid'
 
 import { Database, createMigration } from './utils'
 import { ApiCache } from './utils/api-cache'
@@ -15,13 +16,20 @@ const ChildContentDecoder = t.type({
     }),
     t.partial({ licenseId: t.number }),
   ]),
+  id: t.string,
 })
 const ParentContentDecoder = t.type({
-  plugin: t.literal('type-text-exercise-group'),
+  plugin: t.literal('exerciseGroup'),
   state: t.record(t.string, t.unknown),
 })
 const RowPluginDecoder = t.type({ plugin: t.literal('rows') })
 const TextPluginDecoder = t.type({ plugin: t.literal('text') })
+const OldExercisePluginDecoder = t.type({
+  plugin: t.union([
+    t.literal('type-text-exercise-group'),
+    t.literal('exerciseGroup'),
+  ]),
+})
 
 createMigration(exports, {
   up: async (db) => {
@@ -75,7 +83,7 @@ async function updateExerciseGroup(
   //      └ [ child1 ]
   //      └ [ child2 ]
   //
-  // Next to the entity in the node the list of revisions are stored:
+  // The list of revisions are stored next to the entity in the node:
   //
   //    [ parent ]:      [ e1, e2, e3, ...]
   //      └ [ child1 ]   [ s1, s2, s3, ...]
@@ -85,21 +93,24 @@ async function updateExerciseGroup(
     assert(child.children.length === 0, 'child must not have children')
   }
 
-  // When a parent does not have any revision there is no transformation
-  // possible even if the solution has revisions.
-  if (parentNode.value.revisions.length === 0) return
+  // If a parent does not have any revision, there is no transformation possible.
+  // Even if the child(solution / exercise / course-page) has revisions.
+  if (parentNode.value.revisions.length === 0) {
+    console.log(`Warning: Parent (${parentId}) has no revision`)
+    return
+  }
 
   // From the tree of revisions we calculate the list of overall edits. We
   // represent an edit as a tree with the
   // same structure as the parent. The value for parent / child is
-  // a revision (type `EntityWithRevision`) when the parent / child was
+  // a revision (type `EntityWithRevision`) if the parent / child was
   // edited or `null` when it was not edited. So let's assume the entity
   // tree with the revisions has the structure
   //
   //    [ parent ]       [ edit_on_date1 | edit_on_date2 ]
   //      └ [ child1 ]   [ edit_on_date1 | edit_on_date3 ]
   //
-  // Then the list of edits are
+  // Then the list of edits is
   //
   // [ edit_on_date1 ]     | [ edit_on_date2 ] | [ null ]
   //   └ [ edit_on_date2 ] |   └ [ null ]      |   └ [ edit_on_date3 ]
@@ -107,7 +118,7 @@ async function updateExerciseGroup(
 
   if (edits.length > 0 && edits[0].value == null) {
     console.log(
-      `Warning: Parent entity ${parentId} has a revision for a child before first its first revision`,
+      `Warning: Parent entity ${parentId} has a revision for a child before its first revision`,
     )
   }
 
@@ -153,9 +164,13 @@ async function updateExerciseGroup(
 
     if (RowPluginDecoder.is(parentContent)) {
       parentContent = {
-        plugin: 'type-text-exercise-group',
+        plugin: 'exerciseGroup',
         state: { content: parentContent },
       }
+    }
+
+    if (OldExercisePluginDecoder.is(parentContent)) {
+      parentContent.plugin = 'exerciseGroup'
     }
 
     if (!ParentContentDecoder.is(parentContent)) {
@@ -179,7 +194,12 @@ async function updateExerciseGroup(
           state: {
             content,
           },
+          id: uuidv4(),
         }
+      }
+
+      if (content.id === undefined) {
+        content.id = uuidv4()
       }
 
       if (!ChildContentDecoder.is(content)) {
