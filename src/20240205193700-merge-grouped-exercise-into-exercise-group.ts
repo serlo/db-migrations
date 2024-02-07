@@ -24,6 +24,12 @@ const ParentContentDecoder = t.type({
 })
 const RowPluginDecoder = t.type({ plugin: t.literal('rows') })
 const TextPluginDecoder = t.type({ plugin: t.literal('text') })
+const OldExercisePluginDecoder = t.type({
+  plugin: t.union([
+    t.literal('type-text-exercise-group'),
+    t.literal('exerciseGroup'),
+  ]),
+})
 
 createMigration(exports, {
   up: async (db) => {
@@ -161,6 +167,10 @@ async function updateExerciseGroup(
         plugin: 'exerciseGroup',
         state: { content: parentContent },
       }
+    }
+
+    if (OldExercisePluginDecoder.is(parentContent)) {
+      parentContent.plugin = 'exerciseGroup'
     }
 
     if (!ParentContentDecoder.is(parentContent)) {
