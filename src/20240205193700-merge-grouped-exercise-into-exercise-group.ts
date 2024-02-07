@@ -198,6 +198,10 @@ async function updateExerciseGroup(
         }
       }
 
+      if (content.id === undefined) {
+        content.id = uuidv4()
+      }
+
       if (!ChildContentDecoder.is(content)) {
         throw new Error(
           `Illegal content for child ${value.id} with current revision ${value.revision.id}`,
