@@ -1,6 +1,5 @@
 import { zip } from 'fp-ts/Array'
 import * as t from 'io-ts'
-import { v4 as uuidv4 } from 'uuid'
 
 import { Database, createMigration } from './utils'
 import { ApiCache } from './utils/api-cache'
@@ -194,12 +193,8 @@ async function updateExerciseGroup(
           state: {
             content,
           },
-          id: uuidv4(),
+          id: value.id,
         }
-      }
-
-      if (content.id === undefined) {
-        content.id = uuidv4()
       }
 
       if (!ChildContentDecoder.is(content)) {
