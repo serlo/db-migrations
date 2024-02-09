@@ -36,8 +36,8 @@ the file will be built together!_
 
 ## Test a new migration
 
-Start a local version of the mysql database via `yarn start`. There are
-the following helper functions:
+Start a local version of the mysql database via `yarn start`. There are the
+following helper functions:
 
 - `yarn mysql` – Open a shell to MySQL
 - `yarn migrate:run [path]` – Run a certain migration (like
@@ -53,8 +53,8 @@ the following helper functions:
 
 ### Test on staging
 
-Once it seems to work as desired locally, it can be deployed to staging and will 
-then be run every night after the new anonymous data import. If you then find an 
+Once it seems to work as desired locally, it can be deployed to staging and will
+then be run every night after the new anonymous data import. If you then find an
 error and want to deploy a fixed version of the migration, run the `dbsetup` job
-on the staging cluster before deploying the fixed version of `db-migrations` to 
+on the staging cluster before deploying the fixed version of `db-migrations` to
 undo the changes of the erroneous migration first.
