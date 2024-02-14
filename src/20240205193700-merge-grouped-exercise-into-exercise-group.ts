@@ -1,6 +1,5 @@
 import { zip } from 'fp-ts/Array'
 import * as t from 'io-ts'
-import { v4 as uuidv4 } from 'uuid'
 
 import { Database, createMigration } from './utils'
 import { ApiCache } from './utils/api-cache'
@@ -187,6 +186,7 @@ async function updateExerciseGroup(
     const childrenContent = currentChildren.map((node) => {
       const value = node.value
       let content = JSON.parse(value.revision.content)
+      const id = `${value.id}-exercise-child`
 
       if (RowPluginDecoder.is(content)) {
         content = {
@@ -194,12 +194,12 @@ async function updateExerciseGroup(
           state: {
             content,
           },
-          id: uuidv4(),
+          id,
         }
       }
 
       if (content.id === undefined) {
-        content.id = uuidv4()
+        content.id = id
       }
 
       if (!ChildContentDecoder.is(content)) {
