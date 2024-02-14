@@ -186,6 +186,7 @@ async function updateExerciseGroup(
     const childrenContent = currentChildren.map((node) => {
       const value = node.value
       let content = JSON.parse(value.revision.content)
+      const id = `${value.id}-exercise-child`
 
       if (RowPluginDecoder.is(content)) {
         content = {
@@ -193,12 +194,12 @@ async function updateExerciseGroup(
           state: {
             content,
           },
-          id: value.id,
+          id,
         }
       }
 
       if (content.id === undefined) {
-        content.id = value.id
+        content.id = id
       }
 
       if (!ChildContentDecoder.is(content)) {
