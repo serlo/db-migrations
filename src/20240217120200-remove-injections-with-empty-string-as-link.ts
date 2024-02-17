@@ -16,7 +16,9 @@ createEdtrIoMigration({
         return undefined
       }
 
-      if (plugin.state.trim() === '') {
+      const injectionUrl = plugin.state.trim()
+
+      if (['', ')', 'A1'].includes(injectionUrl)) {
         return undefined
       }
 
