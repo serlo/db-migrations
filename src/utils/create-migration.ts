@@ -45,10 +45,7 @@ export function createMigration(
 
 export function createEdtrIoMigration({
   exports,
-  migrateState,
-  dryRun,
-  migrationName = 'migration',
-  log = console.log,
+  ...otherArgs
 }: {
   exports: any
   migrateState: (state: any) => any
@@ -60,12 +57,34 @@ export function createEdtrIoMigration({
     up: async (db) => {
       const apiCache = new ApiCache()
 
-      const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
-      const logFileStream = createWriteStream(logFileName)
+      await migrateSerloEditorContent({ ...otherArgs, apiCache, db })
 
-      log('Convert entity revisions')
-      await changeUuidContents({
-        query: `
+      await apiCache.quit()
+    },
+  })
+}
+
+export async function migrateSerloEditorContent({
+  migrateState,
+  dryRun,
+  apiCache,
+  db,
+  migrationName = 'migration',
+  log = console.log,
+}: {
+  migrateState: (state: any) => any
+  dryRun?: boolean
+  migrationName?: string
+  apiCache: ApiCache
+  db: Database
+  log?: (message: string) => void
+}) {
+  const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
+  const logFileStream = createWriteStream(logFileName)
+
+  log('Convert entity revisions')
+  await changeUuidContents({
+    query: `
           SELECT
             entity_revision_field.id as id,
             entity_revision_field.entity_revision_id as uuid,
@@ -83,67 +102,63 @@ export function createEdtrIoMigration({
               "single-choice-right-answer", "single-choice-wrong-answer")
             and entity_revision_field.id > ?
         `,
-        migrateState,
-        table: 'entity_revision_field',
-        column: 'value',
-        apiCache,
-        dryRun,
-        db,
-        log,
-        logFileStream,
-      })
+    migrateState,
+    table: 'entity_revision_field',
+    column: 'value',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
+  })
 
-      log('Convert page revisions')
-      await changeUuidContents({
-        query: `
+  log('Convert page revisions')
+  await changeUuidContents({
+    query: `
           SELECT
             page_revision.id, page_revision.content, page_revision.id as uuid
           FROM page_revision WHERE page_revision.id > ?
         `,
-        migrateState,
-        table: 'page_revision',
-        column: 'content',
-        apiCache,
-        dryRun,
-        db,
-        log,
-        logFileStream,
-      })
+    migrateState,
+    table: 'page_revision',
+    column: 'content',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
+  })
 
-      log('Convert taxonomy terms')
-      await changeUuidContents({
-        query: `
+  log('Convert taxonomy terms')
+  await changeUuidContents({
+    query: `
           SELECT id, description as content, id as uuid
           FROM term_taxonomy WHERE id > ?
         `,
-        migrateState,
-        table: 'term_taxonomy',
-        column: 'description',
-        apiCache,
-        dryRun,
-        db,
-        log,
-        logFileStream,
-      })
+    migrateState,
+    table: 'term_taxonomy',
+    column: 'description',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
+  })
 
-      log('Convert users')
-      await changeUuidContents({
-        query: `
+  log('Convert users')
+  await changeUuidContents({
+    query: `
           SELECT id, description as content, id as uuid
           FROM user WHERE id != 191656 and description != "NULL" and id > ?
         `,
-        migrateState,
-        table: 'user',
-        column: 'description',
-        apiCache,
-        dryRun,
-        db,
-        log,
-        logFileStream,
-      })
-
-      await apiCache.quit()
-    },
+    migrateState,
+    table: 'user',
+    column: 'description',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
   })
 }
 
