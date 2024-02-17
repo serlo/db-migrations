@@ -12,7 +12,7 @@ particularly for the legacy database
 Note: Also make sure you have `cmake` installed on your machine (e.g.
 `sudo apt install cmake`).
 
-## Steps to add a new migration
+## Add a new migration
 
 1. Go to [`src`](./src) and add a new file. It's name needs to be
    `YYYYMMDDHHMMSS-xyz.ts` (The prefix of the number for the date when you have
@@ -34,10 +34,10 @@ the file will be built together!_
    `packages/public/server/package.json`. Deploy this version with the changes
    in the `migrations` package and the database migrations should take effect. -->
 
-## How to test a new migration
+## Test a new migration
 
-You can start a local version of the mysql database via `yarn start`. There are
-the following helper functions:
+Start a local version of the mysql database via `yarn start`. There are the
+following helper functions:
 
 - `yarn mysql` – Open a shell to MySQL
 - `yarn migrate:run [path]` – Run a certain migration (like
@@ -51,6 +51,10 @@ the following helper functions:
   was already executed (will be thus executed the next time again)
 - `yarn mysql:import-anonymous-data` – Import last anonymized dump
 
-<!-- Of course you can also test your migrations in the `staging` enviornment by
-deploying the new server version. Note that each night the database in `staging`
-is reset. -->
+### Test on staging
+
+Once it seems to work as desired locally, it can be deployed to staging and will
+then be run every night after the new anonymous data import. If you then find an
+error and want to deploy a fixed version of the migration, run the `dbsetup` job
+on the staging cluster to undo the changes of the erroneous migration first
+before deploying the fixed version of `db-migrations`.

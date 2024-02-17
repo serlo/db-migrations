@@ -45,25 +45,46 @@ export function createMigration(
 
 export function createEdtrIoMigration({
   exports,
-  migrateState,
-  dryRun,
-  migrationName = 'migration',
+  ...otherArgs
 }: {
   exports: any
   migrateState: (state: any) => any
   dryRun?: boolean
   migrationName?: string
+  log?: (message: string) => void
 }) {
   createMigration(exports, {
     up: async (db) => {
       const apiCache = new ApiCache()
 
-      const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
-      const logFileStream = createWriteStream(logFileName)
+      await migrateSerloEditorContent({ ...otherArgs, apiCache, db })
 
-      console.log('Convert entity revisions')
-      await changeUuidContents({
-        query: `
+      await apiCache.quit()
+    },
+  })
+}
+
+export async function migrateSerloEditorContent({
+  migrateState,
+  dryRun,
+  apiCache,
+  db,
+  migrationName = 'migration',
+  log = console.log,
+}: {
+  migrateState: (state: any) => any
+  dryRun?: boolean
+  migrationName?: string
+  apiCache: ApiCache
+  db: Database
+  log?: (message: string) => void
+}) {
+  const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
+  const logFileStream = createWriteStream(logFileName)
+
+  log('Convert entity revisions')
+  await changeUuidContents({
+    query: `
           SELECT
             entity_revision_field.id as id,
             entity_revision_field.entity_revision_id as uuid,
@@ -81,62 +102,63 @@ export function createEdtrIoMigration({
               "single-choice-right-answer", "single-choice-wrong-answer")
             and entity_revision_field.id > ?
         `,
-        migrateState,
-        table: 'entity_revision_field',
-        column: 'value',
-        apiCache,
-        dryRun,
-        db,
-        logFileStream,
-      })
+    migrateState,
+    table: 'entity_revision_field',
+    column: 'value',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
+  })
 
-      console.log('Convert page revisions')
-      await changeUuidContents({
-        query: `
+  log('Convert page revisions')
+  await changeUuidContents({
+    query: `
           SELECT
             page_revision.id, page_revision.content, page_revision.id as uuid
           FROM page_revision WHERE page_revision.id > ?
         `,
-        migrateState,
-        table: 'page_revision',
-        column: 'content',
-        apiCache,
-        dryRun,
-        db,
-        logFileStream,
-      })
+    migrateState,
+    table: 'page_revision',
+    column: 'content',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
+  })
 
-      console.log('Convert taxonomy terms')
-      await changeUuidContents({
-        query: `
+  log('Convert taxonomy terms')
+  await changeUuidContents({
+    query: `
           SELECT id, description as content, id as uuid
           FROM term_taxonomy WHERE id > ?
         `,
-        migrateState,
-        table: 'term_taxonomy',
-        column: 'description',
-        apiCache,
-        dryRun,
-        db,
-        logFileStream,
-      }),
-        console.log('Convert users')
-      await changeUuidContents({
-        query: `
+    migrateState,
+    table: 'term_taxonomy',
+    column: 'description',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
+  })
+
+  log('Convert users')
+  await changeUuidContents({
+    query: `
           SELECT id, description as content, id as uuid
           FROM user WHERE id != 191656 and description != "NULL" and id > ?
         `,
-        migrateState,
-        table: 'user',
-        column: 'description',
-        apiCache,
-        dryRun,
-        db,
-        logFileStream,
-      })
-
-      await apiCache.quit()
-    },
+    migrateState,
+    table: 'user',
+    column: 'description',
+    apiCache,
+    dryRun,
+    db,
+    log,
+    logFileStream,
   })
 }
 
@@ -149,6 +171,7 @@ async function changeUuidContents({
   table,
   column,
   logFileStream,
+  log,
 }: {
   query: string
   db: Database
@@ -158,13 +181,14 @@ async function changeUuidContents({
   apiCache: ApiCache
   logFileStream: WriteStream
   dryRun?: boolean
+  log: (message: string) => void
 }) {
   const querySQL = query + ' LIMIT ?'
   let uuids: Uuid[] = []
 
   do {
     const lastID = uuids.at(-1)?.id ?? 0
-    console.log(`Last ID: ${lastID}`)
+    log(`Last ID: ${lastID}`)
     uuids = await db.runSql(querySQL, lastID, 5000)
 
     for (const uuid of uuids) {
@@ -194,7 +218,7 @@ async function changeUuidContents({
           await apiCache.deleteUuid(uuid.uuid)
         }
 
-        console.log(`Update ${table}.${column} with ID ${uuid.uuid}`)
+        log(`Update ${table}.${column} with ID ${uuid.uuid}`)
 
         logFileStream.write(
           JSON.stringify({
