@@ -16,7 +16,6 @@ createEdtrIoMigration({
       }
 
       if (plugin.state.trim() === '') {
-        console.log({ plugin })
         return undefined
       }
 
