@@ -12854,14 +12854,15 @@ function createEdtrIoMigration({
   exports: exports2,
   migrateState,
   dryRun,
-  migrationName = "migration"
+  migrationName = "migration",
+  log = console.log
 }) {
   createMigration(exports2, {
     up: async (db) => {
       const apiCache = new ApiCache();
       const logFileName = import_path.default.join((0, import_os.tmpdir)(), `${migrationName}.log.json`);
       const logFileStream = (0, import_fs.createWriteStream)(logFileName);
-      console.log("Convert entity revisions");
+      log("Convert entity revisions");
       await changeUuidContents({
         query: `
           SELECT
@@ -12887,9 +12888,10 @@ function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream
       });
-      console.log("Convert page revisions");
+      log("Convert page revisions");
       await changeUuidContents({
         query: `
           SELECT
@@ -12902,9 +12904,10 @@ function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream
       });
-      console.log("Convert taxonomy terms");
+      log("Convert taxonomy terms");
       await changeUuidContents({
         query: `
           SELECT id, description as content, id as uuid
@@ -12916,8 +12919,10 @@ function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream
-      }), console.log("Convert users");
+      });
+      log("Convert users");
       await changeUuidContents({
         query: `
           SELECT id, description as content, id as uuid
@@ -12929,6 +12934,7 @@ function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream
       });
       await apiCache.quit();
@@ -12943,13 +12949,14 @@ async function changeUuidContents({
   dryRun,
   table,
   column,
-  logFileStream
+  logFileStream,
+  log
 }) {
   const querySQL = query + " LIMIT ?";
   let uuids = [];
   do {
     const lastID = uuids.at(-1)?.id ?? 0;
-    console.log(`Last ID: ${lastID}`);
+    log(`Last ID: ${lastID}`);
     uuids = await db.runSql(querySQL, lastID, 5e3);
     for (const uuid of uuids) {
       let oldState;
@@ -12971,7 +12978,7 @@ async function changeUuidContents({
           );
           await apiCache.deleteUuid(uuid.uuid);
         }
-        console.log(`Update ${table}.${column} with ID ${uuid.uuid}`);
+        log(`Update ${table}.${column} with ID ${uuid.uuid}`);
         logFileStream.write(
           JSON.stringify({
             table,
@@ -12995,13 +13002,15 @@ var InjectionPlugin = t2.type({
 });
 createEdtrIoMigration({
   exports,
+  log: () => void 0,
+  migrationName: "remove-injections-with-empty-strings",
   migrateState: transformPlugins({
     injection: (plugin) => {
       if (!InjectionPlugin.is(plugin)) {
         return void 0;
       }
-      if (plugin.state.trim() === "") {
-        console.log({ plugin });
+      const injectionUrl = plugin.state.trim();
+      if (["", ")", "A1"].includes(injectionUrl)) {
         return void 0;
       }
       return [plugin];
