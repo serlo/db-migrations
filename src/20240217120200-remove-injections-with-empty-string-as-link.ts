@@ -9,6 +9,7 @@ const InjectionPlugin = t.type({
 
 createEdtrIoMigration({
   exports,
+  log: () => void 0,
   migrateState: transformPlugins({
     injection: (plugin) => {
       if (!InjectionPlugin.is(plugin)) {
