@@ -10,6 +10,7 @@ const InjectionPlugin = t.type({
 createEdtrIoMigration({
   exports,
   log: () => void 0,
+  migrationName: 'remove-injections-with-empty-strings',
   migrateState: transformPlugins({
     injection: (plugin) => {
       if (!InjectionPlugin.is(plugin)) {
