@@ -48,11 +48,13 @@ export function createEdtrIoMigration({
   migrateState,
   dryRun,
   migrationName = 'migration',
+  log = console.log,
 }: {
   exports: any
   migrateState: (state: any) => any
   dryRun?: boolean
   migrationName?: string
+  log?: (message: string) => void
 }) {
   createMigration(exports, {
     up: async (db) => {
@@ -61,7 +63,7 @@ export function createEdtrIoMigration({
       const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
       const logFileStream = createWriteStream(logFileName)
 
-      console.log('Convert entity revisions')
+      log('Convert entity revisions')
       await changeUuidContents({
         query: `
           SELECT
@@ -87,10 +89,11 @@ export function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream,
       })
 
-      console.log('Convert page revisions')
+      log('Convert page revisions')
       await changeUuidContents({
         query: `
           SELECT
@@ -103,10 +106,11 @@ export function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream,
       })
 
-      console.log('Convert taxonomy terms')
+      log('Convert taxonomy terms')
       await changeUuidContents({
         query: `
           SELECT id, description as content, id as uuid
@@ -118,9 +122,11 @@ export function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream,
-      }),
-        console.log('Convert users')
+      })
+
+      log('Convert users')
       await changeUuidContents({
         query: `
           SELECT id, description as content, id as uuid
@@ -132,6 +138,7 @@ export function createEdtrIoMigration({
         apiCache,
         dryRun,
         db,
+        log,
         logFileStream,
       })
 
@@ -149,6 +156,7 @@ async function changeUuidContents({
   table,
   column,
   logFileStream,
+  log,
 }: {
   query: string
   db: Database
@@ -158,13 +166,14 @@ async function changeUuidContents({
   apiCache: ApiCache
   logFileStream: WriteStream
   dryRun?: boolean
+  log: (message: string) => void
 }) {
   const querySQL = query + ' LIMIT ?'
   let uuids: Uuid[] = []
 
   do {
     const lastID = uuids.at(-1)?.id ?? 0
-    console.log(`Last ID: ${lastID}`)
+    log(`Last ID: ${lastID}`)
     uuids = await db.runSql(querySQL, lastID, 5000)
 
     for (const uuid of uuids) {
@@ -194,7 +203,7 @@ async function changeUuidContents({
           await apiCache.deleteUuid(uuid.uuid)
         }
 
-        console.log(`Update ${table}.${column} with ID ${uuid.uuid}`)
+        log(`Update ${table}.${column} with ID ${uuid.uuid}`)
 
         logFileStream.write(
           JSON.stringify({
