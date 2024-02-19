@@ -17189,15 +17189,10 @@ async function updateExerciseGroup(db, apiCache, parentId) {
       if (RowPluginDecoder.is(content)) {
         content = {
           plugin: "exercise",
-          state: {
-            content
-          },
-          id
+          state: { content }
         };
       }
-      if (content.id === void 0) {
-        content.id = id;
-      }
+      content.id = id;
       if (!ChildContentDecoder.is(content)) {
         throw new Error(
           `Illegal content for child ${value.id} with current revision ${value.revision.id}`
