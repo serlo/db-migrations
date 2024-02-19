@@ -191,16 +191,11 @@ async function updateExerciseGroup(
       if (RowPluginDecoder.is(content)) {
         content = {
           plugin: 'exercise',
-          state: {
-            content,
-          },
-          id,
+          state: { content },
         }
       }
 
-      if (content.id === undefined) {
-        content.id = id
-      }
+      content.id = id
 
       if (!ChildContentDecoder.is(content)) {
         throw new Error(
