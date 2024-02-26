@@ -2,6 +2,7 @@ import { createWriteStream } from 'fs'
 import { tmpdir } from 'os'
 import path from 'path'
 import { WebClient } from '@slack/web-api'
+import { once } from 'events'
 
 export class SlackLogger {
   private logFileName: string
@@ -26,14 +27,15 @@ export class SlackLogger {
   }
 
   async closeAndSend() {
-    this.close()
+    await this.close()
     await this.send()
   }
 
-  protected close() {
+  protected async close() {
     this.logEvent('logEnded', { name: this.name })
 
-    this.logFileStream.close()
+    this.logFileStream.end()
+    await once(this.logFileStream, 'finish')
   }
 
   protected async send() {
