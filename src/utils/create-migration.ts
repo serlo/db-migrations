@@ -1,10 +1,7 @@
 import { ApiCache } from './api-cache'
 import { CallbackBasedDatabase, createDatabase, Database } from './database'
 import { isPlugin } from './edtr-io'
-import type { WriteStream } from 'fs'
-import { createWriteStream } from 'fs'
-import path from 'path'
-import { tmpdir } from 'os'
+import { SlackLogger } from './slack-logger'
 
 export function createMigration(
   exports: any,
@@ -79,8 +76,7 @@ export async function migrateSerloEditorContent({
   db: Database
   log?: (message: string) => void
 }) {
-  const logFileName = path.join(tmpdir(), `${migrationName}.log.json`)
-  const logFileStream = createWriteStream(logFileName)
+  const logger = new SlackLogger(migrationName)
 
   log('Convert entity revisions')
   await changeUuidContents({
@@ -109,7 +105,7 @@ export async function migrateSerloEditorContent({
     dryRun,
     db,
     log,
-    logFileStream,
+    logger,
   })
 
   log('Convert page revisions')
@@ -126,7 +122,7 @@ export async function migrateSerloEditorContent({
     dryRun,
     db,
     log,
-    logFileStream,
+    logger,
   })
 
   log('Convert taxonomy terms')
@@ -142,7 +138,7 @@ export async function migrateSerloEditorContent({
     dryRun,
     db,
     log,
-    logFileStream,
+    logger,
   })
 
   log('Convert users')
@@ -158,8 +154,10 @@ export async function migrateSerloEditorContent({
     dryRun,
     db,
     log,
-    logFileStream,
+    logger,
   })
+
+  await logger.closeAndSend()
 }
 
 async function changeUuidContents({
@@ -170,7 +168,7 @@ async function changeUuidContents({
   dryRun,
   table,
   column,
-  logFileStream,
+  logger,
   log,
 }: {
   query: string
@@ -179,7 +177,7 @@ async function changeUuidContents({
   column: string
   migrateState: (state: any) => any
   apiCache: ApiCache
-  logFileStream: WriteStream
+  logger: SlackLogger
   dryRun?: boolean
   log: (message: string) => void
 }) {
@@ -220,17 +218,14 @@ async function changeUuidContents({
 
         log(`Update ${table}.${column} with ID ${uuid.uuid}`)
 
-        logFileStream.write(
-          JSON.stringify({
-            table,
-            column,
-            uuid: uuid.uuid,
-            tableId: uuid.id,
-            oldContent: uuid.content,
-            newContent,
-          }),
-        )
-        logFileStream.write('\n')
+        logger.logEvent('contentChanged', {
+          table,
+          column,
+          uuid: uuid.uuid,
+          tableId: uuid.id,
+          oldContent: uuid.content,
+          newContent,
+        })
       }
     }
   } while (uuids.length > 0)
