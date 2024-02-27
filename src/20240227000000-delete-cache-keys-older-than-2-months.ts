@@ -6,5 +6,5 @@ createMigration(exports, {
     const apiCache = new ApiCache()
     await apiCache.deleteKeysOlderThan(60 * 60 * 24 * 30 * 2)
     await apiCache.quit()
-  }
+  },
 })

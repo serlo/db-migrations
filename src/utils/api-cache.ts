@@ -50,11 +50,13 @@ export class ApiCache {
     const allKeys = await this.redis.keys('*')
     const currentTimestamp = new Date().getSeconds()
     for (const key in allKeys) {
-      const keyCreationTime = await this.redis.object("IDLETIME", key)
-      if(typeof keyCreationTime !== 'number' || currentTimestamp - keyCreationTime > timeInSeconds){
+      const keyCreationTime = await this.redis.object('IDLETIME', key)
+      if (
+        typeof keyCreationTime !== 'number' ||
+        currentTimestamp - keyCreationTime > timeInSeconds
+      ) {
         await this.redis.del(key)
       }
     }
   }
-
 }
