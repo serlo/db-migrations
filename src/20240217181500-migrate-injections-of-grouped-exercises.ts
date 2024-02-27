@@ -45,6 +45,7 @@ createMigration(exports, {
     await migrateSerloEditorContent({
       apiCache,
       db,
+      migrationName: 'migrate-injections-of-grouped-exercises',
       migrateState: transformPlugins({
         injection: (plugin) => {
           if (!InjectionPlugin.is(plugin)) {
