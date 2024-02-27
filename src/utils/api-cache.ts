@@ -45,4 +45,16 @@ export class ApiCache {
       console.log(`INFO: API cache for UUID ${uuid} deleted`)
     }
   }
+
+  public async deleteKeysOlderThan(timeInSeconds: number) {
+    const allKeys = await this.redis.keys('*')
+    const currentTimestamp = new Date().getSeconds()
+    for (const key in allKeys) {
+      const keyCreationTime = await this.redis.object("IDLETIME", key)
+      if(typeof keyCreationTime !== 'number' || currentTimestamp - keyCreationTime > timeInSeconds){
+        await this.redis.del(key)
+      }
+    }
+  }
+
 }
