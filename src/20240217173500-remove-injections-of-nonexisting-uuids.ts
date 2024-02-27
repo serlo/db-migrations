@@ -22,6 +22,7 @@ createMigration(exports, {
     await migrateSerloEditorContent({
       apiCache,
       db,
+      migrationName: 'remove-injections-of-nonexisting-uuids',
       migrateState: transformPlugins({
         injection: (plugin) => {
           if (!InjectionPlugin.is(plugin)) {
