@@ -12591,16 +12591,16 @@ var require_eventemitter3 = __commonJS({
       if (!new Events().__proto__)
         prefix = false;
     }
-    function EE(fn, context, once) {
+    function EE(fn, context, once2) {
       this.fn = fn;
       this.context = context;
-      this.once = once || false;
+      this.once = once2 || false;
     }
-    function addListener(emitter, event, fn, context, once) {
+    function addListener(emitter, event, fn, context, once2) {
       if (typeof fn !== "function") {
         throw new TypeError("The listener must be a function");
       }
-      var listener = new EE(fn, context || emitter, once), evt = prefix ? prefix + event : event;
+      var listener = new EE(fn, context || emitter, once2), evt = prefix ? prefix + event : event;
       if (!emitter._events[evt])
         emitter._events[evt] = listener, emitter._eventsCount++;
       else if (!emitter._events[evt].fn)
@@ -12709,10 +12709,10 @@ var require_eventemitter3 = __commonJS({
     EventEmitter.prototype.on = function on(event, fn, context) {
       return addListener(this, event, fn, context, false);
     };
-    EventEmitter.prototype.once = function once(event, fn, context) {
+    EventEmitter.prototype.once = function once2(event, fn, context) {
       return addListener(this, event, fn, context, true);
     };
-    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once2) {
       var evt = prefix ? prefix + event : event;
       if (!this._events[evt])
         return this;
@@ -12722,12 +12722,12 @@ var require_eventemitter3 = __commonJS({
       }
       var listeners = this._events[evt];
       if (listeners.fn) {
-        if (listeners.fn === fn && (!once || listeners.once) && (!context || listeners.context === context)) {
+        if (listeners.fn === fn && (!once2 || listeners.once) && (!context || listeners.context === context)) {
           clearEvent(this, evt);
         }
       } else {
         for (var i = 0, events = [], length = listeners.length; i < length; i++) {
-          if (listeners[i].fn !== fn || once && !listeners[i].once || context && listeners[i].context !== context) {
+          if (listeners[i].fn !== fn || once2 && !listeners[i].once || context && listeners[i].context !== context) {
             events.push(listeners[i]);
           }
         }
@@ -26368,16 +26368,16 @@ var require_eventemitter32 = __commonJS({
       if (!new Events().__proto__)
         prefix = false;
     }
-    function EE(fn, context, once) {
+    function EE(fn, context, once2) {
       this.fn = fn;
       this.context = context;
-      this.once = once || false;
+      this.once = once2 || false;
     }
-    function addListener(emitter, event, fn, context, once) {
+    function addListener(emitter, event, fn, context, once2) {
       if (typeof fn !== "function") {
         throw new TypeError("The listener must be a function");
       }
-      var listener = new EE(fn, context || emitter, once), evt = prefix ? prefix + event : event;
+      var listener = new EE(fn, context || emitter, once2), evt = prefix ? prefix + event : event;
       if (!emitter._events[evt])
         emitter._events[evt] = listener, emitter._eventsCount++;
       else if (!emitter._events[evt].fn)
@@ -26486,10 +26486,10 @@ var require_eventemitter32 = __commonJS({
     EventEmitter.prototype.on = function on(event, fn, context) {
       return addListener(this, event, fn, context, false);
     };
-    EventEmitter.prototype.once = function once(event, fn, context) {
+    EventEmitter.prototype.once = function once2(event, fn, context) {
       return addListener(this, event, fn, context, true);
     };
-    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once2) {
       var evt = prefix ? prefix + event : event;
       if (!this._events[evt])
         return this;
@@ -26499,12 +26499,12 @@ var require_eventemitter32 = __commonJS({
       }
       var listeners = this._events[evt];
       if (listeners.fn) {
-        if (listeners.fn === fn && (!once || listeners.once) && (!context || listeners.context === context)) {
+        if (listeners.fn === fn && (!once2 || listeners.once) && (!context || listeners.context === context)) {
           clearEvent(this, evt);
         }
       } else {
         for (var i = 0, events = [], length = listeners.length; i < length; i++) {
-          if (listeners[i].fn !== fn || once && !listeners[i].once || context && listeners[i].context !== context) {
+          if (listeners[i].fn !== fn || once2 && !listeners[i].once || context && listeners[i].context !== context) {
             events.push(listeners[i]);
           }
         }
@@ -29554,6 +29554,7 @@ var import_fs = require("fs");
 var import_os = require("os");
 var import_path = __toESM(require("path"), 1);
 var import_web_api = __toESM(require_dist4(), 1);
+var import_events = require("events");
 var SlackLogger = class {
   constructor(name) {
     this.name = name;
@@ -29572,12 +29573,13 @@ var SlackLogger = class {
     this.logFileStream.write("\n");
   }
   async closeAndSend() {
-    this.close();
+    await this.close();
     await this.send();
   }
-  close() {
+  async close() {
     this.logEvent("logEnded", { name: this.name });
-    this.logFileStream.close();
+    this.logFileStream.end();
+    await (0, import_events.once)(this.logFileStream, "finish");
   }
   async send() {
     const environment = process.env.ENVIRONMENT;
