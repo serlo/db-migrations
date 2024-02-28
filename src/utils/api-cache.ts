@@ -76,6 +76,9 @@ export class ApiCache {
           timeSinceLastAccess > timeLimit
         ) {
           await this.redis.del(key)
+          console.log(
+            `INFO: Key ${key} deleted (time since last access: ${timeSinceLastAccess})`,
+          )
           slackLogger?.logEvent('deleteRedisKey', { key, timeSinceLastAccess })
         }
       }
