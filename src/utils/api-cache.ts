@@ -47,16 +47,33 @@ export class ApiCache {
   }
 
   public async deleteKeysOlderThan(timeInSeconds: number) {
-    const allKeys = await this.redis.keys('*')
+    const numberOfKeysPerScan = 1000
     const currentTimestamp = new Date().getSeconds()
-    for (const key in allKeys) {
-      const keyCreationTime = await this.redis.object('IDLETIME', key)
-      if (
-        typeof keyCreationTime !== 'number' ||
-        currentTimestamp - keyCreationTime > timeInSeconds
-      ) {
-        await this.redis.del(key)
+
+    let lastCursor = '0'
+
+    while (true) {
+      const [newCursor, keys] = await this.redis.scan(
+        lastCursor,
+        'MATCH',
+        '*',
+        'COUNT',
+        numberOfKeysPerScan,
+      )
+
+      for (const key in keys) {
+        const keyCreationTime = await this.redis.object('IDLETIME', key)
+        if (
+          typeof keyCreationTime !== 'number' ||
+          currentTimestamp - keyCreationTime > timeInSeconds
+        ) {
+          await this.redis.del(key)
+        }
       }
+
+      lastCursor = newCursor
+
+      if (keys.length === 0) break
     }
   }
 }
