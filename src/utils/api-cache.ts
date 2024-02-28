@@ -1,4 +1,5 @@
 import Redis from 'ioredis'
+import { SlackLogger } from './slack-logger'
 
 export class ApiCache {
   private redis: Redis
@@ -46,7 +47,10 @@ export class ApiCache {
     }
   }
 
-  public async deleteKeysOlderThan(timeInSeconds: number) {
+  public async deleteKeysOlderThan(
+    timeInSeconds: number,
+    slackLogger?: SlackLogger,
+  ) {
     const numberOfKeysPerScan = 1000
     const currentTimestamp = new Date().getSeconds()
 
@@ -68,6 +72,7 @@ export class ApiCache {
           currentTimestamp - keyCreationTime > timeInSeconds
         ) {
           await this.redis.del(key)
+          slackLogger?.logEvent('deleteRedisKey', { key, keyCreationTime })
         }
       }
 
