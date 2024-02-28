@@ -47,7 +47,7 @@ export class ApiCache {
     }
   }
 
-  public async deleteKeysOlderThan(
+  public async deleteInactiveKeys(
     timeLimit: number,
     slackLogger?: SlackLogger,
   ) {

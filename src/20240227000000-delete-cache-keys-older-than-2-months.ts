@@ -6,7 +6,7 @@ createMigration(exports, {
     const apiCache = new ApiCache()
     const migrationName = 'delete-redis-keys-older-than-1.5-months'
     const slackLogger = new SlackLogger(migrationName)
-    await apiCache.deleteKeysOlderThan(
+    await apiCache.deleteInactiveKeys(
       Math.round(60 * 60 * 24 * 30 * 1.5),
       slackLogger,
     )
