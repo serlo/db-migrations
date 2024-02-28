@@ -29538,6 +29538,9 @@ var ApiCache = class {
         const timeSinceLastAccess = await this.redis.object("IDLETIME", key);
         if (typeof timeSinceLastAccess !== "number" || timeSinceLastAccess > timeLimit) {
           await this.redis.del(key);
+          console.log(
+            `INFO: Key ${key} deleted (time since last access: ${timeSinceLastAccess})`
+          );
           slackLogger?.logEvent("deleteRedisKey", { key, timeSinceLastAccess });
         }
       }
@@ -29662,10 +29665,7 @@ createMigration(exports, {
     const apiCache = new ApiCache();
     const migrationName = "delete-cache-keys-inactive-since-1.5-months";
     const slackLogger = new SlackLogger(migrationName);
-    await apiCache.deleteInactiveKeys(
-      Math.round(60 * 60 * 24 * 30 * 1.5),
-      slackLogger
-    );
+    await apiCache.deleteInactiveKeys(Math.round(60 * 60 * 24 * 7), slackLogger);
     await apiCache.quit();
     await slackLogger.closeAndSend();
   }
