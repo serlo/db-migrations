@@ -51,9 +51,13 @@ export class ApiCache {
     timeInSeconds: number,
     slackLogger?: SlackLogger,
   ) {
+    // We use a scan instead of keys() to avoid loading all keys into the
+    // memory, so that we avoid a crash when the memory is not enough to hold
+    // all keys (besides this implementation should be faster)
     const numberOfKeysPerScan = 1000
     const currentTimestamp = new Date().getSeconds()
 
+    // Start cursor for the scan needs to be "0"
     let lastCursor = '0'
 
     while (true) {
@@ -78,6 +82,8 @@ export class ApiCache {
 
       lastCursor = newCursor
 
+      // cursor is set to "0" in the last scan
+      // see https://redis.io/commands/scan/
       if (keys.length === 0 || newCursor === '0') break
     }
   }
