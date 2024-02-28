@@ -78,7 +78,7 @@ export class ApiCache {
 
       lastCursor = newCursor
 
-      if (keys.length === 0) break
+      if (keys.length === 0 || newCursor === '0') break
     }
   }
 }
