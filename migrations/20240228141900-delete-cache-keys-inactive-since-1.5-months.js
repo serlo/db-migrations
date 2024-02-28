@@ -29523,9 +29523,8 @@ var ApiCache = class {
       console.log(`INFO: API cache for UUID ${uuid} deleted`);
     }
   }
-  async deleteKeysOlderThan(timeInSeconds, slackLogger) {
+  async deleteInactiveKeys(timeLimit, slackLogger) {
     const numberOfKeysPerScan = 1e3;
-    const currentTimestamp = (/* @__PURE__ */ new Date()).getSeconds();
     let lastCursor = "0";
     while (true) {
       const [newCursor, keys] = await this.redis.scan(
@@ -29535,15 +29534,15 @@ var ApiCache = class {
         "COUNT",
         numberOfKeysPerScan
       );
-      for (const key in keys) {
-        const keyCreationTime = await this.redis.object("IDLETIME", key);
-        if (typeof keyCreationTime !== "number" || currentTimestamp - keyCreationTime > timeInSeconds) {
+      for (const key of keys) {
+        const timeSinceLastAccess = await this.redis.object("IDLETIME", key);
+        if (typeof timeSinceLastAccess !== "number" || timeSinceLastAccess > timeLimit) {
           await this.redis.del(key);
-          slackLogger?.logEvent("deleteRedisKey", { key, keyCreationTime });
+          slackLogger?.logEvent("deleteRedisKey", { key, timeSinceLastAccess });
         }
       }
       lastCursor = newCursor;
-      if (keys.length === 0)
+      if (keys.length === 0 || newCursor === "0")
         break;
     }
   }
@@ -29657,13 +29656,13 @@ function createMigration(exports2, {
   };
 }
 
-// src/20240227000000-delete-cache-keys-older-than-2-months.ts
+// src/20240228141900-delete-cache-keys-inactive-since-1.5-months.ts
 createMigration(exports, {
   up: async () => {
     const apiCache = new ApiCache();
-    const migrationName = "delete-redis-keys-older-than-1.5-months";
+    const migrationName = "delete-cache-keys-inactive-since-1.5-months";
     const slackLogger = new SlackLogger(migrationName);
-    await apiCache.deleteKeysOlderThan(
+    await apiCache.deleteInactiveKeys(
       Math.round(60 * 60 * 24 * 30 * 1.5),
       slackLogger
     );
