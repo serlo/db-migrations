@@ -1,6 +1,6 @@
 {
   "name": "@serlo/server-migrate",
-  "version": "0.12.0-redis-keys.0",
+  "version": "0.12.0-redis-keys.1",
   "private": true,
   "license": "Apache-2.0",
   "type": "module",
@@ -36,6 +36,7 @@
     "mysql:rollback": "docker compose exec mysql sh -c \"pv /docker-entrypoint-initdb.d/001-init.sql | serlo-mysql\"",
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node --experimental-specifier-resolution=node scripts/push-image",
+    "redis:cli": "docker compose exec redis redis-cli",
     "start": "yarn start:docker",
     "start:docker": "docker compose up mysql redis --detach",
     "stop": "yarn stop:docker",
