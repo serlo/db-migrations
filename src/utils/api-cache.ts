@@ -48,14 +48,13 @@ export class ApiCache {
   }
 
   public async deleteKeysOlderThan(
-    timeInSeconds: number,
+    timeLimit: number,
     slackLogger?: SlackLogger,
   ) {
     // We use a scan instead of keys() to avoid loading all keys into the
     // memory, so that we avoid a crash when the memory is not enough to hold
     // all keys (besides this implementation should be faster)
     const numberOfKeysPerScan = 1000
-    const currentTimestamp = new Date().getSeconds()
 
     // Start cursor for the scan needs to be "0"
     let lastCursor = '0'
@@ -69,14 +68,15 @@ export class ApiCache {
         numberOfKeysPerScan,
       )
 
-      for (const key in keys) {
-        const keyCreationTime = await this.redis.object('IDLETIME', key)
+      for (const key of keys) {
+        const timeSinceLastAccess = await this.redis.object('IDLETIME', key)
+
         if (
-          typeof keyCreationTime !== 'number' ||
-          currentTimestamp - keyCreationTime > timeInSeconds
+          typeof timeSinceLastAccess !== 'number' ||
+          timeSinceLastAccess > timeLimit
         ) {
           await this.redis.del(key)
-          slackLogger?.logEvent('deleteRedisKey', { key, keyCreationTime })
+          slackLogger?.logEvent('deleteRedisKey', { key, timeSinceLastAccess })
         }
       }
 
