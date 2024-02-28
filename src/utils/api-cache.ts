@@ -1,4 +1,5 @@
 import Redis from 'ioredis'
+import { SlackLogger } from './slack-logger'
 
 export class ApiCache {
   private redis: Redis
@@ -43,6 +44,50 @@ export class ApiCache {
 
     if (this.enableLogging) {
       console.log(`INFO: API cache for UUID ${uuid} deleted`)
+    }
+  }
+
+  public async deleteInactiveKeys(
+    timeLimit: number,
+    slackLogger?: SlackLogger,
+  ) {
+    // We use a scan instead of keys() to avoid loading all keys into the
+    // memory, so that we avoid a crash when the memory is not enough to hold
+    // all keys (besides this implementation should be faster)
+    const numberOfKeysPerScan = 1000
+
+    // Start cursor for the scan needs to be "0"
+    let lastCursor = '0'
+
+    while (true) {
+      const [newCursor, keys] = await this.redis.scan(
+        lastCursor,
+        'MATCH',
+        '*',
+        'COUNT',
+        numberOfKeysPerScan,
+      )
+
+      for (const key of keys) {
+        const timeSinceLastAccess = await this.redis.object('IDLETIME', key)
+
+        if (
+          typeof timeSinceLastAccess !== 'number' ||
+          timeSinceLastAccess > timeLimit
+        ) {
+          await this.redis.del(key)
+          console.log(
+            `INFO: Key ${key} deleted (time since last access: ${timeSinceLastAccess})`,
+          )
+          slackLogger?.logEvent('deleteRedisKey', { key, timeSinceLastAccess })
+        }
+      }
+
+      lastCursor = newCursor
+
+      // cursor is set to "0" in the last scan
+      // see https://redis.io/commands/scan/
+      if (keys.length === 0 || newCursor === '0') break
     }
   }
 }
