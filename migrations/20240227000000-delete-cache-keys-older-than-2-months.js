@@ -12591,16 +12591,16 @@ var require_eventemitter3 = __commonJS({
       if (!new Events().__proto__)
         prefix = false;
     }
-    function EE(fn, context, once) {
+    function EE(fn, context, once2) {
       this.fn = fn;
       this.context = context;
-      this.once = once || false;
+      this.once = once2 || false;
     }
-    function addListener(emitter, event, fn, context, once) {
+    function addListener(emitter, event, fn, context, once2) {
       if (typeof fn !== "function") {
         throw new TypeError("The listener must be a function");
       }
-      var listener = new EE(fn, context || emitter, once), evt = prefix ? prefix + event : event;
+      var listener = new EE(fn, context || emitter, once2), evt = prefix ? prefix + event : event;
       if (!emitter._events[evt])
         emitter._events[evt] = listener, emitter._eventsCount++;
       else if (!emitter._events[evt].fn)
@@ -12709,10 +12709,10 @@ var require_eventemitter3 = __commonJS({
     EventEmitter.prototype.on = function on(event, fn, context) {
       return addListener(this, event, fn, context, false);
     };
-    EventEmitter.prototype.once = function once(event, fn, context) {
+    EventEmitter.prototype.once = function once2(event, fn, context) {
       return addListener(this, event, fn, context, true);
     };
-    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once2) {
       var evt = prefix ? prefix + event : event;
       if (!this._events[evt])
         return this;
@@ -12722,12 +12722,12 @@ var require_eventemitter3 = __commonJS({
       }
       var listeners = this._events[evt];
       if (listeners.fn) {
-        if (listeners.fn === fn && (!once || listeners.once) && (!context || listeners.context === context)) {
+        if (listeners.fn === fn && (!once2 || listeners.once) && (!context || listeners.context === context)) {
           clearEvent(this, evt);
         }
       } else {
         for (var i = 0, events = [], length = listeners.length; i < length; i++) {
-          if (listeners[i].fn !== fn || once && !listeners[i].once || context && listeners[i].context !== context) {
+          if (listeners[i].fn !== fn || once2 && !listeners[i].once || context && listeners[i].context !== context) {
             events.push(listeners[i]);
           }
         }
@@ -22320,11 +22320,11 @@ var require_mime_types = __commonJS({
       }
       return exts[0];
     }
-    function lookup(path) {
-      if (!path || typeof path !== "string") {
+    function lookup(path2) {
+      if (!path2 || typeof path2 !== "string") {
         return false;
       }
-      var extension2 = extname("x." + path).toLowerCase().substr(1);
+      var extension2 = extname("x." + path2).toLowerCase().substr(1);
       if (!extension2) {
         return false;
       }
@@ -22581,7 +22581,7 @@ var require_form_data = __commonJS({
   "node_modules/form-data/lib/form_data.js"(exports2, module2) {
     var CombinedStream = require_combined_stream();
     var util = require("util");
-    var path = require("path");
+    var path2 = require("path");
     var http = require("http");
     var https = require("https");
     var parseUrl = require("url").parse;
@@ -22708,11 +22708,11 @@ var require_form_data = __commonJS({
     FormData2.prototype._getContentDisposition = function(value, options) {
       var filename, contentDisposition;
       if (typeof options.filepath === "string") {
-        filename = path.normalize(options.filepath).replace(/\\/g, "/");
+        filename = path2.normalize(options.filepath).replace(/\\/g, "/");
       } else if (options.filename || value.name || value.path) {
-        filename = path.basename(options.filename || value.name || value.path);
+        filename = path2.basename(options.filename || value.name || value.path);
       } else if (value.readable && value.hasOwnProperty("httpVersion")) {
-        filename = path.basename(value.client._httpMessage.path || "");
+        filename = path2.basename(value.client._httpMessage.path || "");
       }
       if (filename) {
         contentDisposition = 'filename="' + filename + '"';
@@ -23930,10 +23930,10 @@ var require_axios = __commonJS({
     function removeBrackets(key) {
       return utils$1.endsWith(key, "[]") ? key.slice(0, -2) : key;
     }
-    function renderKey(path, key, dots) {
-      if (!path)
+    function renderKey(path2, key, dots) {
+      if (!path2)
         return key;
-      return path.concat(key).map(function each(token, i) {
+      return path2.concat(key).map(function each(token, i) {
         token = removeBrackets(token);
         return !dots && i ? "[" + token + "]" : token;
       }).join(dots ? "." : "");
@@ -23979,9 +23979,9 @@ var require_axios = __commonJS({
         }
         return value;
       }
-      function defaultVisitor(value, key, path) {
+      function defaultVisitor(value, key, path2) {
         let arr = value;
-        if (value && !path && typeof value === "object") {
+        if (value && !path2 && typeof value === "object") {
           if (utils$1.endsWith(key, "{}")) {
             key = metaTokens ? key : key.slice(0, -2);
             value = JSON.stringify(value);
@@ -24000,7 +24000,7 @@ var require_axios = __commonJS({
         if (isVisitable(value)) {
           return true;
         }
-        formData.append(renderKey(path, key, dots), convertValue(value));
+        formData.append(renderKey(path2, key, dots), convertValue(value));
         return false;
       }
       const stack = [];
@@ -24009,11 +24009,11 @@ var require_axios = __commonJS({
         convertValue,
         isVisitable
       });
-      function build(value, path) {
+      function build(value, path2) {
         if (utils$1.isUndefined(value))
           return;
         if (stack.indexOf(value) !== -1) {
-          throw Error("Circular reference detected in " + path.join("."));
+          throw Error("Circular reference detected in " + path2.join("."));
         }
         stack.push(value);
         utils$1.forEach(value, function each(el, key) {
@@ -24021,11 +24021,11 @@ var require_axios = __commonJS({
             formData,
             el,
             utils$1.isString(key) ? key.trim() : key,
-            path,
+            path2,
             exposedHelpers
           );
           if (result === true) {
-            build(el, path ? path.concat(key) : [key]);
+            build(el, path2 ? path2.concat(key) : [key]);
           }
         });
         stack.pop();
@@ -24187,7 +24187,7 @@ var require_axios = __commonJS({
     };
     function toURLEncodedForm(data, options) {
       return toFormData(data, new platform.classes.URLSearchParams(), Object.assign({
-        visitor: function(value, key, path, helpers) {
+        visitor: function(value, key, path2, helpers) {
           if (platform.isNode && utils$1.isBuffer(value)) {
             this.append(key, value.toString("base64"));
             return false;
@@ -24214,12 +24214,12 @@ var require_axios = __commonJS({
       return obj;
     }
     function formDataToJSON(formData) {
-      function buildPath(path, value, target, index) {
-        let name = path[index++];
+      function buildPath(path2, value, target, index) {
+        let name = path2[index++];
         if (name === "__proto__")
           return true;
         const isNumericKey = Number.isFinite(+name);
-        const isLast = index >= path.length;
+        const isLast = index >= path2.length;
         name = !name && utils$1.isArray(target) ? target.length : name;
         if (isLast) {
           if (utils$1.hasOwnProp(target, name)) {
@@ -24232,7 +24232,7 @@ var require_axios = __commonJS({
         if (!target[name] || !utils$1.isObject(target[name])) {
           target[name] = [];
         }
-        const result = buildPath(path, value, target[name], index);
+        const result = buildPath(path2, value, target[name], index);
         if (result && utils$1.isArray(target[name])) {
           target[name] = arrayToObject(target[name]);
         }
@@ -25276,9 +25276,9 @@ var require_axios = __commonJS({
           auth = urlUsername + ":" + urlPassword;
         }
         auth && headers.delete("authorization");
-        let path;
+        let path2;
         try {
-          path = buildURL(
+          path2 = buildURL(
             parsed.pathname + parsed.search,
             config.params,
             config.paramsSerializer
@@ -25296,7 +25296,7 @@ var require_axios = __commonJS({
           false
         );
         const options = {
-          path,
+          path: path2,
           method,
           headers: headers.toJSON(),
           agents: { http: config.httpAgent, https: config.httpsAgent },
@@ -25516,10 +25516,10 @@ var require_axios = __commonJS({
     var cookies = platform.hasStandardBrowserEnv ? (
       // Standard browser envs support document.cookie
       {
-        write(name, value, expires, path, domain, secure) {
+        write(name, value, expires, path2, domain, secure) {
           const cookie = [name + "=" + encodeURIComponent(value)];
           utils$1.isNumber(expires) && cookie.push("expires=" + new Date(expires).toGMTString());
-          utils$1.isString(path) && cookie.push("path=" + path);
+          utils$1.isString(path2) && cookie.push("path=" + path2);
           utils$1.isString(domain) && cookie.push("domain=" + domain);
           secure === true && cookie.push("secure");
           document.cookie = cookie.join("; ");
@@ -26368,16 +26368,16 @@ var require_eventemitter32 = __commonJS({
       if (!new Events().__proto__)
         prefix = false;
     }
-    function EE(fn, context, once) {
+    function EE(fn, context, once2) {
       this.fn = fn;
       this.context = context;
-      this.once = once || false;
+      this.once = once2 || false;
     }
-    function addListener(emitter, event, fn, context, once) {
+    function addListener(emitter, event, fn, context, once2) {
       if (typeof fn !== "function") {
         throw new TypeError("The listener must be a function");
       }
-      var listener = new EE(fn, context || emitter, once), evt = prefix ? prefix + event : event;
+      var listener = new EE(fn, context || emitter, once2), evt = prefix ? prefix + event : event;
       if (!emitter._events[evt])
         emitter._events[evt] = listener, emitter._eventsCount++;
       else if (!emitter._events[evt].fn)
@@ -26486,10 +26486,10 @@ var require_eventemitter32 = __commonJS({
     EventEmitter.prototype.on = function on(event, fn, context) {
       return addListener(this, event, fn, context, false);
     };
-    EventEmitter.prototype.once = function once(event, fn, context) {
+    EventEmitter.prototype.once = function once2(event, fn, context) {
       return addListener(this, event, fn, context, true);
     };
-    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
+    EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once2) {
       var evt = prefix ? prefix + event : event;
       if (!this._events[evt])
         return this;
@@ -26499,12 +26499,12 @@ var require_eventemitter32 = __commonJS({
       }
       var listeners = this._events[evt];
       if (listeners.fn) {
-        if (listeners.fn === fn && (!once || listeners.once) && (!context || listeners.context === context)) {
+        if (listeners.fn === fn && (!once2 || listeners.once) && (!context || listeners.context === context)) {
           clearEvent(this, evt);
         }
       } else {
         for (var i = 0, events = [], length = listeners.length; i < length; i++) {
-          if (listeners[i].fn !== fn || once && !listeners[i].once || context && listeners[i].context !== context) {
+          if (listeners[i].fn !== fn || once2 && !listeners[i].once || context && listeners[i].context !== context) {
             events.push(listeners[i]);
           }
         }
@@ -29523,14 +29523,28 @@ var ApiCache = class {
       console.log(`INFO: API cache for UUID ${uuid} deleted`);
     }
   }
-  async deleteKeysOlderThan(timeInSeconds) {
-    const allKeys = await this.redis.keys("*");
+  async deleteKeysOlderThan(timeInSeconds, slackLogger) {
+    const numberOfKeysPerScan = 1e3;
     const currentTimestamp = (/* @__PURE__ */ new Date()).getSeconds();
-    for (const key in allKeys) {
-      const keyCreationTime = await this.redis.object("IDLETIME", key);
-      if (typeof keyCreationTime !== "number" || currentTimestamp - keyCreationTime > timeInSeconds) {
-        await this.redis.del(key);
+    let lastCursor = "0";
+    while (true) {
+      const [newCursor, keys] = await this.redis.scan(
+        lastCursor,
+        "MATCH",
+        "*",
+        "COUNT",
+        numberOfKeysPerScan
+      );
+      for (const key in keys) {
+        const keyCreationTime = await this.redis.object("IDLETIME", key);
+        if (typeof keyCreationTime !== "number" || currentTimestamp - keyCreationTime > timeInSeconds) {
+          await this.redis.del(key);
+          slackLogger?.logEvent("deleteRedisKey", { key, keyCreationTime });
+        }
       }
+      lastCursor = newCursor;
+      if (keys.length === 0)
+        break;
     }
   }
 };
@@ -29568,7 +29582,52 @@ var t = __toESM(require_lib2(), 1);
 var SlateNodeDecoder = t.type({ type: t.string });
 
 // src/utils/slack-logger.ts
+var import_fs = require("fs");
+var import_os = require("os");
+var import_path = __toESM(require("path"), 1);
 var import_web_api = __toESM(require_dist4(), 1);
+var import_events = require("events");
+var SlackLogger = class {
+  constructor(name) {
+    this.name = name;
+    const currentDate = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+    this.logFileName = `${currentDate}-${this.name}.log.jsonl`;
+    this.logFilePath = import_path.default.join((0, import_os.tmpdir)(), this.logFileName);
+    this.logFileStream = (0, import_fs.createWriteStream)(this.logFilePath);
+    this.logEvent("logStarted", { name: this.name });
+  }
+  logFileName;
+  logFilePath;
+  logFileStream;
+  logEvent(eventType, data) {
+    const event = { eventType, data, time: (/* @__PURE__ */ new Date()).toISOString() };
+    this.logFileStream.write(JSON.stringify(event));
+    this.logFileStream.write("\n");
+  }
+  async closeAndSend() {
+    await this.close();
+    await this.send();
+  }
+  async close() {
+    this.logEvent("logEnded", { name: this.name });
+    this.logFileStream.end();
+    await (0, import_events.once)(this.logFileStream, "finish");
+  }
+  async send() {
+    const environment = process.env.ENVIRONMENT;
+    const token = process.env.SLACK_TOKEN;
+    const channel = process.env.SLACK_CHANNEL;
+    if (token == null)
+      return;
+    const slack = new import_web_api.WebClient(token);
+    await slack.files.uploadV2({
+      file: this.logFilePath,
+      filename: this.logFileName,
+      channel_id: channel,
+      initial_comment: `*${environment}:* Migration "${this.name}" finished.`
+    });
+  }
+};
 
 // src/utils/create-migration.ts
 function createMigration(exports2, {
@@ -29602,8 +29661,14 @@ function createMigration(exports2, {
 createMigration(exports, {
   up: async () => {
     const apiCache = new ApiCache();
-    await apiCache.deleteKeysOlderThan(60 * 60 * 24 * 30 * 2);
+    const migrationName = "delete-redis-keys-older-than-1.5-months";
+    const slackLogger = new SlackLogger(migrationName);
+    await apiCache.deleteKeysOlderThan(
+      Math.round(60 * 60 * 24 * 30 * 1.5),
+      slackLogger
+    );
     await apiCache.quit();
+    await slackLogger.closeAndSend();
   }
 });
 /*! Bundled license information:
