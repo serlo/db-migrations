@@ -36,6 +36,7 @@
     "mysql:rollback": "docker compose exec mysql sh -c \"pv /docker-entrypoint-initdb.d/001-init.sql | serlo-mysql\"",
     "new": "./scripts/touch_file.sh",
     "push-image": "ts-node --experimental-specifier-resolution=node scripts/push-image",
+    "redis": "yarn redis:cli",
     "redis:cli": "docker compose exec redis redis-cli",
     "start": "yarn start:docker",
     "start:docker": "docker compose up mysql redis --detach",
