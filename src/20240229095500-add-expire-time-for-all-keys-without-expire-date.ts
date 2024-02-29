@@ -31,7 +31,7 @@ createMigration(exports, {
       for (const key of keys) {
         const ttl = await redis.ttl(key)
 
-        if (ttl === -1) {
+        if (ttl === -1 && !key.startsWith('bq:swr:')) {
           const newTtl = Math.round(Math.random() * oneWeek)
 
           await redis.expire(key, newTtl)
