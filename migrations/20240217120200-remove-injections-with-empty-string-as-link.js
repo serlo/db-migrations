@@ -29981,7 +29981,7 @@ createEdtrIoMigration({
       }
       const injectionUrl = plugin.state.trim();
       if (["", ")", "A1"].includes(injectionUrl)) {
-        return void 0;
+        return [];
       }
       return [plugin];
     }
