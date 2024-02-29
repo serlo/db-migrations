@@ -6,6 +6,6 @@ runs:
     # "20220625202000-convert-important-and-blockquote-to-box" was run
     # successfully
     - run:
-        yarn mysql:list-migrations:ci | grep
+        yarn mysql:list-migrations:cli | grep
         20220625202000-convert-important-and-blockquote-to-box
       shell: bash
