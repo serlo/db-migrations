@@ -29977,7 +29977,7 @@ createMigration(exports, {
             const uuid = parseInt(match[1]);
             if (!Number.isNaN(uuid) && !uuids.includes(uuid)) {
               console.log(`Delete injection with uuid ${uuid}`);
-              return void 0;
+              return [];
             }
           }
           return [plugin];
