@@ -27,7 +27,7 @@
     "migrate:up": "yarn db-migrate -m migrations up",
     "migrate:up:dist": "yarn db-migrate -m dist up",
     "mysql": "docker compose exec mysql serlo-mysql",
-    "mysql:ci": "docker compose exec mysql serlo-mysql",
+    "mysql:cli": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
     "mysql:delete-all-migrations": "yarn mysql --execute 'DELETE FROM migrations'",
     "mysql:import-anonymous-data": "./scripts/mysql/import-anonymous-data.sh",
