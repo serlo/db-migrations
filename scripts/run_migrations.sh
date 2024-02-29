@@ -34,7 +34,7 @@ delete_migrations_in_mysql() {
     MIGRATIONS="\"/${FILENAME%.*}\""
   done
 
-  yarn mysql --execute "DELETE FROM migrations WHERE name IN ($MIGRATIONS)"
+  yarn mysql:cli --execute "DELETE FROM migrations WHERE name IN ($MIGRATIONS)"
 }
 
 run_migrations_in_build_outdir() {
