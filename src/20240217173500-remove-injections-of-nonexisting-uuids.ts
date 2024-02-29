@@ -36,7 +36,7 @@ createMigration(exports, {
 
             if (!Number.isNaN(uuid) && !uuids.includes(uuid)) {
               console.log(`Delete injection with uuid ${uuid}`)
-              return undefined
+              return []
             }
           }
 
