@@ -6,6 +6,6 @@ runs:
   using: composite
   steps:
     - run: |
-        chmod +x ./scripts/test.sh
-        ./public/scripts/test.sh
+        chmod +x ./scripts/check_all_migrations_run.sh
+        ./scripts/check_all_migrations_run.sh
       shell: bash
