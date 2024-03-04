@@ -5,7 +5,5 @@ description:
 runs:
   using: composite
   steps:
-    - run:
-        yarn mysql:list-migrations:ci | grep
-        20240229095500-add-expire-time-for-all-keys-without-expire-date
+    - run: bash check_all_migrations_run.sh
       shell: bash
