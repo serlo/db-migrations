@@ -1,11 +1,11 @@
 name: Test whether migrations have been run successfully
+description:
+  Compare the list of migrations that have been run to the list of migrations in
+  the src folder, confirm that all migrations from the src folder have been run
 runs:
   using: composite
   steps:
-    # With the following command we check that the migration
-    # "20220625202000-convert-important-and-blockquote-to-box" was run
-    # successfully
     - run:
         yarn mysql:list-migrations:ci | grep
-        20220625202000-convert-important-and-blockquote-to-box
+        20240229095500-add-expire-time-for-all-keys-without-expire-date
       shell: bash
