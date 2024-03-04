@@ -1,36 +1,6 @@
 import * as t from 'io-ts'
 import * as R from 'ramda'
 
-export function replacePlugins(transformations: {
-  [key in string]?: (args: {
-    plugin: Plugin
-    applyChangeToChildren: Transformation
-  }) => Plugin
-}): Transformation {
-  return updatePlugins((plugin, applyChangeToChildren) => {
-    const transformFunc = transformations[plugin.plugin]
-
-    if (typeof transformFunc === 'function') {
-      return transformFunc({ plugin, applyChangeToChildren })
-    }
-  })
-}
-
-export function replacePluginState(transformations: {
-  [key in string]?: (args: {
-    state: unknown
-    applyChangeToChildren: Transformation
-  }) => unknown
-}): Transformation {
-  return updatePlugins(({ plugin, state }, applyChangeToChildren) => {
-    const transformFunc = transformations[plugin]
-
-    if (typeof transformFunc === 'function') {
-      return { plugin, state: transformFunc({ state, applyChangeToChildren }) }
-    }
-  })
-}
-
 function updatePlugins(
   updatePlugin: (
     plugin: Plugin,
@@ -56,20 +26,6 @@ function updatePlugins(
   }
 
   return applyChangeToChildren
-}
-
-export function transformPlugins(transformations: {
-  [key in string]?: ListTransformation<Plugin>
-}) {
-  return transformLists((value) => {
-    if (isPlugin(value)) {
-      const transformFunc = transformations[value.plugin]
-
-      if (typeof transformFunc === 'function') {
-        return transformFunc(value)
-      }
-    }
-  })
 }
 
 export function transformSlateTypes(transformations: {
