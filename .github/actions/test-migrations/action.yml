@@ -6,6 +6,6 @@ runs:
   using: composite
   steps:
     - run: |
-        chmod +x ./public/scripts/test.sh
+        chmod +x ./scripts/test.sh
         ./public/scripts/test.sh
       shell: bash
