@@ -9,7 +9,7 @@ do
   # Exit if the file name was not found within migrations that have been run
   if [ -z "$match" ]
   then
-    echo "$match migration has not been run"
+    echo "$migration_name migration has not been run"
     exit 1
   fi
 done
