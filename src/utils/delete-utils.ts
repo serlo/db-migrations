@@ -2,36 +2,6 @@ import { ApiCache } from './api-cache'
 import { Database } from './database'
 import { toSqlTuple } from './sql-utils'
 
-export async function deleteUnsupportedEntityTypes(args: {
-  db: Database
-  apiCache: ApiCache
-  unsupportedEntityTypes: string[]
-}) {
-  const { db, apiCache, unsupportedEntityTypes } = args
-
-  const entitiesToDelete: { id: number }[] = await db.runSql(`
-    select entity.id as id
-    from entity
-    join type on entity.type_id = type.id
-    where type.name in ${toSqlTuple(unsupportedEntityTypes)}
-  `)
-  const revisionsToDelete: { id: number }[] = await db.runSql(`
-    select entity_revision.id as id
-    from entity_revision
-    join entity on entity_revision.repository_id = entity.id
-    join type on entity.type_id = type.id
-    where type.name in ${toSqlTuple(unsupportedEntityTypes)}
-  `)
-
-  await deleteUuids(db, apiCache, [...entitiesToDelete, ...revisionsToDelete])
-  console.log(`INFO: ${entitiesToDelete.length} entities deleted`)
-  console.log(`INFO: ${revisionsToDelete.length} revisions deleted`)
-
-  await db.runSql(
-    `delete from type where name in ${toSqlTuple(unsupportedEntityTypes)}`,
-  )
-}
-
 export async function deleteUuids(
   db: Database,
   apiCache: ApiCache,
