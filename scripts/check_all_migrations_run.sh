@@ -14,4 +14,4 @@ do
   fi
 done
 
-echo "all migration have been run"
+echo "all migrations have been run"
