@@ -1,18 +1,11 @@
 {
   "include": ["src", "__tests__"],
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
     "esModuleInterop": true,
-    "importHelpers": true,
-    "jsx": "react",
-    "lib": ["dom", "webworker"],
     "module": "esnext",
     "moduleResolution": "node",
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "esnext",
     "sourceMap": false
   },
   "ts-node": {
