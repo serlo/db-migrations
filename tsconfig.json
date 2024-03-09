@@ -1,9 +1,19 @@
 {
   "include": ["src", "__tests__"],
-  "extends": "./tsconfig.prod.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ESNext"
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "jsx": "react",
+    "lib": ["dom", "webworker"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "sourceMap": false
   },
   "ts-node": {
     "esm": true
