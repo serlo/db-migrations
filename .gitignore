@@ -1,4 +1,5 @@
 /dist/*js
+/migrations/*js
 
 # development
 tmp
