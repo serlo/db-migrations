@@ -7,9 +7,8 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "_prettier": "prettier .",
-    "_build": "ts-node --experimental-specifier-resolution=node scripts/build",
-    "build": "BUILD_OUTDIR=migrations yarn _build",
-    "build:all": "BUILD_OUTDIR=migrations yarn _build src/*ts",
+    "build": "ts-node --experimental-specifier-resolution=node scripts/build",
+    "build:all": "yarn build src/*ts",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json",
     "docker:build": "docker build -t db-migrations-local-build:latest .",

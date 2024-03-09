@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-export BUILD_OUTDIR=migrations
 
 main() {
   clear_build_outdir
@@ -11,8 +10,8 @@ main() {
 }
 
 clear_build_outdir() {
-  if ls $BUILD_OUTDIR/*js &> /dev/null; then
-    rm $BUILD_OUTDIR/*js
+  if ls migrations/*js &> /dev/null; then
+    rm migrations/*js
   fi
 }
 
