@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-export BUILD_OUTDIR=dist
+export BUILD_OUTDIR=migrations
 
 main() {
   clear_build_outdir
@@ -38,7 +38,7 @@ delete_migrations_in_mysql() {
 }
 
 run_migrations_in_build_outdir() {
-  yarn migrate:up:dist
+  yarn migrate:up
 }
 
 main "$@"
