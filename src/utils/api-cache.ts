@@ -1,4 +1,5 @@
 import Redis from 'ioredis'
+import { SlackLogger } from './slack-logger'
 
 export class ApiCache {
   private redis: Redis
