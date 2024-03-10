@@ -7,7 +7,7 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "_prettier": "prettier .",
-    "_build": "ts-node --experimental-specifier-resolution=node scripts/build",
+    "_build": "ts-node -T --experimental-specifier-resolution=node scripts/build",
     "build": "BUILD_OUTDIR=migrations yarn _build",
     "build:cache": "BUILD_OUTDIR=dist yarn _build src/*ts",
     "check:unused-dependencies": "depcheck",
@@ -35,7 +35,7 @@
     "mysql:list-migrations:ci": "yarn mysql:ci --execute 'SELECT * FROM migrations'",
     "mysql:rollback": "docker compose exec mysql sh -c \"pv /docker-entrypoint-initdb.d/001-init.sql | serlo-mysql\"",
     "new": "./scripts/touch_file.sh",
-    "push-image": "ts-node --experimental-specifier-resolution=node scripts/push-image",
+    "push-image": "ts-node -T --experimental-specifier-resolution=node scripts/push-image",
     "redis:cli": "docker compose exec redis redis-cli",
     "start": "yarn start:docker",
     "start:docker": "docker compose up mysql redis --detach",
