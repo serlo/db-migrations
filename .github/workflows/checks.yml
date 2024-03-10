@@ -39,7 +39,7 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
-      - run: yarn migrate:ts
+      - run: yarn migrate:all
       - uses: ./.github/actions/test-migrations
 
   migrate_docker:
