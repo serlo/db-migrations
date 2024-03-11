@@ -7,7 +7,7 @@ COPY .yarnrc.yml package.json yarn.lock .
 RUN yarn workspaces focus --production
 
 FROM build_node_modules as build_migrations
-COPY tsconfig.json tsconfig.scripts.json tsconfig.prod.json .
+COPY tsconfig.json tsconfig.scripts.json .
 COPY scripts scripts
 COPY src src
 RUN yarn
