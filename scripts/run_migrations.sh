@@ -16,7 +16,7 @@ clear_build_outdir() {
 }
 
 build_migrations_into_build_outdir() {
-  yarn _build "$@"
+  yarn build "$@"
 }
 
 delete_migrations_in_mysql() {
