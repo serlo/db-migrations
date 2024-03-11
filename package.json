@@ -50,7 +50,7 @@
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@slack/web-api": "^7.0.2",
     "@types/jest": "^29.5.12",
-    "@types/node": "^18.19.21",
+    "@types/node": "^18.19.22",
     "@types/ramda": "^0.29.11",
     "@types/semver": "^7.5.8",
     "depcheck": "^1.4.7",
