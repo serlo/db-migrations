@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const root = path.join(__dirname, '..')
 const src = path.join(root, 'src')
-const dist = path.join(root, process.env.BUILD_OUTDIR ?? 'dist')
+const outputDir = path.join(root, 'migrations')
 
 await main()
 
@@ -21,7 +21,7 @@ async function main() {
     }
 
     const basename = path.basename(file, '.ts')
-    const outfile = path.join(dist, `${basename}.js`)
+    const outfile = path.join(outputDir, `${basename}.js`)
 
     await esbuild.build({
       entryPoints: [file],

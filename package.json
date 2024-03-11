@@ -7,9 +7,8 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "_prettier": "prettier .",
-    "_build": "ts-node -T --experimental-specifier-resolution=node scripts/build",
-    "build": "BUILD_OUTDIR=migrations yarn _build",
-    "build:cache": "BUILD_OUTDIR=dist yarn _build src/*ts",
+    "build": "ts-node -T --experimental-specifier-resolution=node scripts/build",
+    "build:all": "yarn build src/*ts",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json",
     "docker:build": "docker build -t db-migrations-local-build:latest .",
@@ -23,9 +22,8 @@
     "lint:tsc": "tsc --noEmit --project tsconfig.json",
     "migrate:docker": "docker compose run --build --rm server-migrate",
     "migrate:run": "scripts/run_migrations.sh",
-    "migrate:ts": "npm-run-all build:cache migrate:up:dist",
+    "migrate:all": "npm-run-all build:all migrate:up",
     "migrate:up": "yarn db-migrate -m migrations up",
-    "migrate:up:dist": "yarn db-migrate -m dist up",
     "mysql": "docker compose exec mysql serlo-mysql",
     "mysql:ci": "docker compose exec mysql serlo-mysql",
     "mysql:delete-last-migration": "yarn mysql --execute 'DELETE FROM migrations ORDER BY id DESC LIMIT 1'",
@@ -52,7 +50,7 @@
     "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@slack/web-api": "^7.0.2",
     "@types/jest": "^29.5.12",
-    "@types/node": "^18.19.21",
+    "@types/node": "^18.19.22",
     "@types/ramda": "^0.29.11",
     "@types/semver": "^7.5.8",
     "depcheck": "^1.4.7",
@@ -70,7 +68,7 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "ts-unused-exports": "^10.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   },
   "packageManager": "yarn@3.6.1",
   "engines": {

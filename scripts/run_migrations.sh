@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-export BUILD_OUTDIR=dist
 
 main() {
   clear_build_outdir
@@ -11,13 +10,13 @@ main() {
 }
 
 clear_build_outdir() {
-  if ls $BUILD_OUTDIR/*js &> /dev/null; then
-    rm $BUILD_OUTDIR/*js
+  if ls migrations/*js &> /dev/null; then
+    rm migrations/*js
   fi
 }
 
 build_migrations_into_build_outdir() {
-  yarn _build "$@"
+  yarn build "$@"
 }
 
 delete_migrations_in_mysql() {
@@ -38,7 +37,7 @@ delete_migrations_in_mysql() {
 }
 
 run_migrations_in_build_outdir() {
-  yarn migrate:up:dist
+  yarn migrate:up
 }
 
 main "$@"
