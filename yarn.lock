@@ -954,6 +954,7 @@ __metadata:
     "@jest/types": ^29.6.3
     "@serlo/markdown": Entkenntnis/tmp-serlo-markdown
     "@slack/web-api": ^7.0.2
+    "@tsconfig/node18": ^18.2.2
     "@types/jest": ^29.5.12
     "@types/node": ^18.19.22
     "@types/ramda": ^0.29.11
@@ -1064,6 +1065,13 @@ __metadata:
   version: 1.0.4
   resolution: "@tsconfig/node16@npm:1.0.4"
   checksum: 202319785901f942a6e1e476b872d421baec20cf09f4b266a1854060efbf78cde16a4d256e8bc949d31e6cd9a90f1e8ef8fb06af96a65e98338a2b6b0de0a0ff
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node18@npm:^18.2.2":
+  version: 18.2.2
+  resolution: "@tsconfig/node18@npm:18.2.2"
+  checksum: 1c4b04b570e33de14bf518492e077079db2dcfba738c8d40c6ff916d94c9410246f4cb56f0802d9771423862140bf714c35d4a5f6cec2446d851cf61d3f8f9df
   languageName: node
   linkType: hard
 
