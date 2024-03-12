@@ -1,8 +1,7 @@
 import { zip } from 'fp-ts/Array'
 import * as t from 'io-ts'
 
-import { Database, createMigration } from './utils'
-import { ApiCache } from './utils/api-cache'
+import { Database, createMigration, ApiCache, SlackLogger } from './utils'
 import assert from 'assert'
 
 const ChildContentDecoder = t.type({
@@ -33,6 +32,9 @@ const OldExercisePluginDecoder = t.type({
 createMigration(exports, {
   up: async (db) => {
     const apiCache = new ApiCache({ enableLogging: false })
+    const logger = new SlackLogger(
+      'merge-grouped-exercises-into-exercise-groups',
+    )
 
     const batchSize = 5000
     let entities: Row[] = []
@@ -53,12 +55,13 @@ createMigration(exports, {
       )
 
       for (const entity of entities) {
-        await updateExerciseGroup(db, apiCache, entity.entityId)
+        await updateExerciseGroup(db, apiCache, entity.entityId, logger)
       }
     } while (entities.length > 0)
 
     await apiCache.deleteUnrevisedRevisions()
     await apiCache.quit()
+    await logger.closeAndSend()
 
     interface Row {
       entityId: number
@@ -70,6 +73,7 @@ async function updateExerciseGroup(
   db: Database,
   apiCache: ApiCache,
   parentId: number,
+  logger: SlackLogger,
 ) {
   // Load the tree of the parent entity. It is either only the parent (without the
   // solution / without any children):
@@ -212,17 +216,25 @@ async function updateExerciseGroup(
 
     parentContent.state['exercises'] = childrenContent
 
+    const newContent = JSON.stringify(parentContent)
+
     if (edit.value != null) {
       // In this edit a parent revision was added -> We can change the
       // content of it
-      //
       await migrate(
         db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
-        JSON.stringify(parentContent),
+        newContent,
         edit.value.revision.id,
       )
+
+      logger.logEvent('changeParentContent', {
+        entityId: edit.value.id,
+        revisionId: edit.value.revision.id,
+        oldContent: edit.value.revision.content,
+        newContent,
+      })
 
       await apiCache.deleteUuid(edit.value.revision.id)
     } else {
@@ -252,6 +264,10 @@ async function updateExerciseGroup(
             child.value.id,
           )
 
+          logger.logEvent('currentRevisionSetToNull', {
+            entityId: child.value.id,
+          })
+
           // Update the current revision of the parent since we know that
           // we have added a new revision to the child which was already
           // reviewed
@@ -260,6 +276,7 @@ async function updateExerciseGroup(
             apiCache,
             parent: parentNode.value,
             child: child.value,
+            logger,
           })
 
           await apiCache.deleteUuid(child.value.id)
@@ -270,9 +287,14 @@ async function updateExerciseGroup(
         db,
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
-        JSON.stringify(parentContent),
+        newContent,
         revisionToOvertake.revision.id,
       )
+
+      logger.logEvent('overtakeChildContent', {
+        revisionToOvertake,
+        newContent,
+      })
 
       await apiCache.deleteUuid(revisionToOvertake.revision.id)
     }
@@ -297,11 +319,13 @@ async function updateCurrentRevisionOfEntity({
   apiCache,
   parent,
   child,
+  logger,
 }: {
   db: Database
   apiCache: ApiCache
   parent: EntityBase
   child: EntityBase
+  logger: SlackLogger
 }) {
   if (
     child.currentRevisionId != null &&
@@ -312,6 +336,14 @@ async function updateCurrentRevisionOfEntity({
       child.currentRevisionId,
       parent.id,
     )
+
+    logger.logEvent('currentRevisionChanged', {
+      entityId: parent.id,
+      currentRevision: {
+        old: parent.currentRevisionId,
+        new: child.currentRevisionId,
+      },
+    })
 
     await apiCache.deleteUuid(parent.id)
   }
