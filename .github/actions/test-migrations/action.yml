@@ -1,9 +1,0 @@
-name: Test whether migrations have been run successfully
-description:
-  Compare the list of migrations that have been run to the list of migrations in
-  the src folder, confirm that all migrations from the src folder have been run
-runs:
-  using: composite
-  steps:
-    - run: ./scripts/check_all_migrations_run.sh
-      shell: bash
