@@ -1,4 +1,5 @@
 import * as t from 'io-ts'
+import * as R from 'ramda'
 
 import {
   ApiCache,
@@ -52,7 +53,13 @@ createMigration(exports, {
           }>
           if (!pluginState || !pluginState.length) return [plugin]
 
-          replaceLinks(pluginState, groups)
+          const clonedState = structuredClone(pluginState)
+
+          replaceLinks(clonedState, groups)
+
+          if (!R.equals(clonedState, pluginState)) {
+            return [{ ...plugin, state: clonedState }]
+          }
 
           return [plugin]
         },
@@ -65,23 +72,26 @@ createMigration(exports, {
 
 function replaceLinks(object: object, groups: Group[]) {
   if (Link.is(object)) {
-    groups.forEach((exercise) => {
-      const link = object
-      const startsWithSlash = link.href.at(0) === '/'
-      const containsSerlo = link.href.includes('serlo')
-      const isAnAttachment = link.href.startsWith('/attachment/')
+    const startsWithSlash = object.href.at(0) === '/'
+    const containsSerlo = object.href.includes('serlo')
+    const isAnAttachment = object.href.startsWith('/attachment/')
 
-      const slug = link.href.substring(link.href.lastIndexOf('/') + 1)
+    const slug = object.href.substring(object.href.lastIndexOf('/') + 1)
 
-      if (!startsWithSlash && !containsSerlo) return
-      if (isAnAttachment) return
-      if (exercise.groupedExercise.toString() !== slug) return
+    if ((startsWithSlash || containsSerlo) && !isAnAttachment) {
+      groups.forEach((exercise) => {
+        if (exercise.groupedExercise.toString() !== slug) return
 
-      object.href = object.href.replace(
-        exercise.groupedExercise.toString(),
-        exercise.exerciseGroup.toString(),
-      )
-    })
+        console.log(
+          'link to grouped exercise replaced with its exercise group: ',
+          { initialHrefValue: object.href, ...exercise },
+        )
+        object.href = object.href.replace(
+          exercise.groupedExercise.toString(),
+          exercise.exerciseGroup.toString(),
+        )
+      })
+    }
   }
 
   Object.values(object).forEach((value: unknown) => {
