@@ -39,8 +39,8 @@ jobs:
       - uses: serlo/configure-repositories/actions/setup-node@main
       - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
-      - run: yarn migrate:ts
-      - uses: ./.github/actions/test-migrations
+      - run: yarn migrate:all
+      - run: ./scripts/check_all_migrations_run.sh
 
   migrate_docker:
     name: Migrations succeed after running in docker container
@@ -51,4 +51,4 @@ jobs:
       - run: yarn start
       - uses: serlo/configure-repositories/actions/setup-mysql@main
       - run: yarn migrate:docker
-      - uses: ./.github/actions/test-migrations
+      - run: ./scripts/check_all_migrations_run.sh
