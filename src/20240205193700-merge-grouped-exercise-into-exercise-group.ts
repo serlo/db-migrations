@@ -425,7 +425,7 @@ function splitNextEdit(
 
   if (
     node.value.revisions.length > 0 &&
-    node.value.revisions[0].date.getTime() < date.getTime() + 10
+    node.value.revisions[0].date.getTime() < date.getTime() + 10 * 1000
   ) {
     const base = {
       id: node.value.id,
