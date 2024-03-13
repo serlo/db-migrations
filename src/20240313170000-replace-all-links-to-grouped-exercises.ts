@@ -80,15 +80,18 @@ function replaceLinks(object: object, groups: Group[]) {
 
     if ((startsWithSlash || containsSerlo) && !isAnAttachment) {
       groups.forEach((exercise) => {
-        if (exercise.groupedExercise.toString() !== slug) return
+        const groupedExerciseId = exercise.groupedExercise.toString()
+        const exerciseGroupId = exercise.exerciseGroup.toString()
+
+        if (groupedExerciseId !== slug) return
 
         console.log(
           'link to grouped exercise replaced with its exercise group: ',
           { initialHrefValue: object.href, ...exercise },
         )
         object.href = object.href.replace(
-          exercise.groupedExercise.toString(),
-          exercise.exerciseGroup.toString(),
+          groupedExerciseId,
+          `${exerciseGroupId}#${groupedExerciseId}`,
         )
       })
     }
