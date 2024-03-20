@@ -1,27 +1,17 @@
 import { createMigration, migrateSerloEditorContent } from './utils'
 
 function getTextFromObject(object: any): string[] {
-  const strings: string[] = []
-
-  if (typeof object === 'object' && object !== null) {
-    if (Array.isArray(object)) {
-      for (const item of object) {
-        strings.push(...getTextFromObject(item))
-      }
-    } else {
-      for (const key in object) {
-        if (Object.prototype.hasOwnProperty.call(object, key)) {
-          if (key === 'text') {
-            strings.push(object[key])
-          } else {
-            strings.push(...getTextFromObject(object[key]))
-          }
-        }
-      }
-    }
+  if (typeof object !== 'object' || object === null) {
+    return []
   }
 
-  return strings
+  if (Array.isArray(object)) {
+    return object.flatMap(getTextFromObject)
+  }
+
+  return Object.entries(object).flatMap(([key, value]) =>
+    key === 'text' ? [value] : getTextFromObject(value),
+  ) as string[]
 }
 
 createMigration(exports, {
@@ -50,8 +40,8 @@ createMigration(exports, {
       return {
         ...entity,
         content: getTextFromObject(JSON.parse(entity.content))
-          .map(str => str.trim())
-          .filter(str => str.length > 0)
+          .map((str) => str.trim())
+          .filter((str) => str.length > 0)
           .join(' ')
           .replace(/ , /g, ', ')
           .replace(/ \. /g, '. ')
