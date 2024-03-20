@@ -56,7 +56,7 @@ export function createEdtrIoMigration({
 
       await migrateSerloEditorContent({ ...otherArgs, apiCache, db })
 
-      await apiCache.quit()
+      await apiCache.deleteKeysAndQuit()
     },
   })
 }
@@ -213,7 +213,7 @@ async function changeUuidContents({
             newContent,
             uuid.id,
           )
-          await apiCache.deleteUuid(uuid.uuid)
+          await apiCache.markUuid(uuid.uuid)
         }
 
         log(`Update ${table}.${column} with ID ${uuid.uuid}`)

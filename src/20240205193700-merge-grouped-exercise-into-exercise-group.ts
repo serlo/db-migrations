@@ -60,7 +60,7 @@ createMigration(exports, {
     } while (entities.length > 0)
 
     await apiCache.deleteUnrevisedRevisions()
-    await apiCache.quit()
+    await apiCache.deleteKeysAndQuit()
     await logger.closeAndSend()
 
     interface Row {
@@ -236,7 +236,7 @@ async function updateExerciseGroup(
         newContent,
       })
 
-      await apiCache.deleteUuid(edit.value.revision.id)
+      await apiCache.markUuid(edit.value.revision.id)
     } else {
       // In this edit the parent was not changed -> Let's use the revision
       // of one changed child and change it to a revision of the parent
@@ -279,7 +279,7 @@ async function updateExerciseGroup(
             logger,
           })
 
-          await apiCache.deleteUuid(child.value.id)
+          await apiCache.markUuid(child.value.id)
         }
       }
 
@@ -296,11 +296,11 @@ async function updateExerciseGroup(
         newContent,
       })
 
-      await apiCache.deleteUuid(revisionToOvertake.revision.id)
+      await apiCache.markUuid(revisionToOvertake.revision.id)
     }
   }
 
-  await apiCache.deleteUuid(parentNode.value.id)
+  await apiCache.markUuid(parentNode.value.id)
 
   for (const child of parentNode.children) {
     await moveCommentsFromChildToParent({
@@ -310,7 +310,7 @@ async function updateExerciseGroup(
       child: child.value,
     })
 
-    await apiCache.deleteUuid(child.value.id)
+    await apiCache.markUuid(child.value.id)
   }
 }
 
@@ -345,7 +345,7 @@ async function updateCurrentRevisionOfEntity({
       },
     })
 
-    await apiCache.deleteUuid(parent.id)
+    await apiCache.markUuid(parent.id)
   }
 }
 
@@ -372,7 +372,7 @@ async function moveCommentsFromChildToParent({
   )
 
   for (const comment of commentsOfSolution) {
-    await apiCache.deleteUuid(comment.id)
+    await apiCache.markUuid(comment.id)
   }
 
   await apiCache.deleteThreadIds(parent.id)

@@ -7,20 +7,20 @@ const apiCache = new ApiCache()
 
 afterAll(async () => {
   await redis.quit()
-  await apiCache.quit()
+  await apiCache.deleteKeysAndQuit()
 })
 
 describe('deleteUuid', () => {
   test('deletes uuid key', async () => {
     await redis.set('de.serlo.org/api/uuid/1', 'hello')
 
-    await apiCache.deleteUuid(1)
+    await apiCache.markUuid(1)
 
     expect(await redis.get('de.serlo.org/api/uuid/1')).toBeNull()
   })
 
   test('does not throw an error when key is not present', async () => {
-    await apiCache.deleteUuid(42)
+    await apiCache.markUuid(42)
 
     expect(await redis.get('de.serlo.org/api/uuid/42')).toBeNull()
   })
