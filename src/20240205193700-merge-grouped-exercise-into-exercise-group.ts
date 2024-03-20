@@ -31,7 +31,7 @@ const OldExercisePluginDecoder = t.type({
 
 createMigration(exports, {
   up: async (db) => {
-    const apiCache = new ApiCache({ enableLogging: false })
+    const apiCache = new ApiCache()
     const logger = new SlackLogger(
       'merge-grouped-exercises-into-exercise-groups',
     )
@@ -59,7 +59,7 @@ createMigration(exports, {
       }
     } while (entities.length > 0)
 
-    await apiCache.deleteUnrevisedRevisions()
+    apiCache.deleteUnrevisedRevisions()
     await apiCache.deleteKeysAndQuit()
     await logger.closeAndSend()
 
