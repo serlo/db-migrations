@@ -1,21 +1,21 @@
 import { createMigration, migrateSerloEditorContent } from './utils'
 
-function getText(object: any): string[] {
+function getTextSnippets(object: any): string[] {
   if (typeof object !== 'object' || object === null) {
     return []
   }
 
   if (Array.isArray(object)) {
-    return object.flatMap(getText)
+    return object.flatMap(getTextSnippets)
   }
 
   return Object.entries(object).flatMap(([key, value]) =>
-    key === 'text' ? [value] : getText(value),
+    key === 'text' ? [value] : getTextSnippets(value),
   ) as string[]
 }
 
 function convertToPlainText(contentJSON: string): string {
-  return getText(JSON.parse(contentJSON))
+  return getTextSnippets(JSON.parse(contentJSON))
     .map((str) => str.trim())
     .filter((str) => str.length > 0)
     .join(' ')
