@@ -39,7 +39,9 @@ export class ApiCache {
   }
 
   public async deleteKeysAndQuit() {
-    await this.redis.del(...this.keys)
+    if (this.keys.size > 0) {
+      await this.redis.del(Array.from(this.keys))
+    }
     await this.redis.quit()
   }
 
