@@ -1,4 +1,4 @@
-migrations_run=$(yarn mysql:list-migrations:ci)
+migrations_run=$(yarn mysql:list-migrations)
 
 for migration_file in src/*.ts
 do
