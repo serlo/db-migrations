@@ -1,32 +1,35 @@
 import { createMigration, migrateSerloEditorContent } from './utils'
 
 function getTextFromObject(object: any): string[] {
-    const strings: string[] = [];
+  const strings: string[] = []
 
-    if (typeof object === 'object' && object !== null) {
-        if (Array.isArray(object)) {
-            for (const item of object) {
-                strings.push(...getTextFromObject(item));
-            }
-        } else {
-            for (const key in object) {
-                if (Object.prototype.hasOwnProperty.call(object, key)) {
-                    if (key === 'text') {
-                        strings.push(object[key]);
-                    } else {
-                        strings.push(...getTextFromObject(object[key]));
-                    }
-                }
-            }
+  if (typeof object === 'object' && object !== null) {
+    if (Array.isArray(object)) {
+      for (const item of object) {
+        strings.push(...getTextFromObject(item))
+      }
+    } else {
+      for (const key in object) {
+        if (Object.prototype.hasOwnProperty.call(object, key)) {
+          if (key === 'text') {
+            strings.push(object[key])
+          } else {
+            strings.push(...getTextFromObject(object[key]))
+          }
         }
+      }
     }
+  }
 
-    return strings;
+  return strings
 }
 
 createMigration(exports, {
   up: async (db) => {
-    const entitiesWithEmptyDescription: { revisionId: number, content: string }[] = await db.runSql(`
+    const entitiesWithEmptyDescription: {
+      revisionId: number
+      content: string
+    }[] = await db.runSql(`
       SELECT entity_revision_id as revisionId, value as content FROM entity_revision_field
       WHERE field = "content"
       AND entity_revision_id IN
@@ -43,11 +46,20 @@ createMigration(exports, {
       )
       LIMIT 3
       `)
-    for (const entity of entitiesWithEmptyDescription) {
-      entity.content = getTextFromObject(JSON.parse(entity.content)).join(" ")
-    }
+    const bla = entitiesWithEmptyDescription.map((entity) => {
+      return {
+        ...entity,
+        content: getTextFromObject(JSON.parse(entity.content))
+          .map(str => str.trim())
+          .filter(str => str.length > 0)
+          .join(' ')
+          .replace(/ , /g, ', ')
+          .replace(/ \. /g, '. ')
+          .replace(/  +/g, ' '),
+      }
+    })
     // let ChatGPT create description from content
     // write description to database
-    console.log(entitiesWithEmptyDescription)
+    console.log(bla)
   },
 })
