@@ -1,17 +1,32 @@
 import { createMigration, migrateSerloEditorContent } from './utils'
 
-function getTextFromObject(object: any): string[] {
+function getText(object: any): string[] {
   if (typeof object !== 'object' || object === null) {
     return []
   }
 
   if (Array.isArray(object)) {
-    return object.flatMap(getTextFromObject)
+    return object.flatMap(getText)
   }
 
   return Object.entries(object).flatMap(([key, value]) =>
-    key === 'text' ? [value] : getTextFromObject(value),
+    key === 'text' ? [value] : getText(value),
   ) as string[]
+}
+
+function convertToPlainText(contentJSON: string): string {
+  return getText(JSON.parse(contentJSON))
+    .map((str) => str.trim())
+    .filter((str) => str.length > 0)
+    .join(' ')
+    .replace(/ , /g, ', ')
+    .replace(/ \. /g, '. ')
+    .replace(/  +/g, ' ')
+}
+
+function generateDescription(plainTextContent: string): string {
+  // todo: prompt LLM to generate a description from content given as plain text
+  return 'test'
 }
 
 createMigration(exports, {
@@ -36,20 +51,16 @@ createMigration(exports, {
       )
       LIMIT 3
       `)
-    const bla = entitiesWithEmptyDescription.map((entity) => {
-      return {
-        ...entity,
-        content: getTextFromObject(JSON.parse(entity.content))
-          .map((str) => str.trim())
-          .filter((str) => str.length > 0)
-          .join(' ')
-          .replace(/ , /g, ', ')
-          .replace(/ \. /g, '. ')
-          .replace(/  +/g, ' '),
-      }
-    })
-    // let ChatGPT create description from content
-    // write description to database
-    console.log(bla)
+    const revisionsWithGeneratedDescriptions = entitiesWithEmptyDescription.map(
+      (entity) => {
+        return {
+          revisionId: entity.revisionId,
+          description: generateDescription(convertToPlainText(entity.content)),
+        }
+      },
+    )
+    // todo: write description to database
+    console.log(revisionsWithGeneratedDescriptions)
+    // todo: handle the entities without description field
   },
 })
