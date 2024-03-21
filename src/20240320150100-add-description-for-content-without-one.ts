@@ -1,5 +1,4 @@
-import { ChatCompletionRole } from 'openai/resources'
-import { createMigration } from './utils'
+import { createMigration, Database } from './utils'
 import { OpenAI } from 'openai'
 
 function getTextSnippets(object: any): string[] {
@@ -68,9 +67,7 @@ async function generateDescription(
   return responseContent
 }
 
-createMigration(exports, {
-  up: async (db) => {
-    /*
+async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
     // TODO: remove the limit
     const entitiesWithEmptyDescription: {
       revisionId: number
@@ -92,8 +89,6 @@ createMigration(exports, {
       )
       LIMIT 3
       `)
-
-    const openAIClient = getAIClient()
 
     const revisionsWithGeneratedDescriptions = await Promise.all(
       entitiesWithEmptyDescription.map(async (entity) => {
@@ -118,9 +113,9 @@ createMigration(exports, {
         [revision.description, revision.revisionId],
       )
     }
-*/
-
-    // todo: handle the entities without description field
+}
+async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI){
+    // TODO: remove limit
     const entitiesWithoutDescription: {
       revisionId: number
       content: string
@@ -147,8 +142,6 @@ createMigration(exports, {
       `)
     console.log(entitiesWithoutDescription)
 
-    const openAIClient = getAIClient()
-
     const revisionsWithGeneratedDescriptions = await Promise.all(
       entitiesWithoutDescription.map(async (entity) => {
         return {
@@ -174,5 +167,12 @@ createMigration(exports, {
         console.log("skipped " + revision.revisionId)
       }
     }
+}
+
+createMigration(exports, {
+  up: async function (db) {
+    const openAIClient = getAIClient()
+    await createDescriptionWhereEmpty(db, openAIClient)
+    await createDescriptionWhereMissing(db, openAIClient)
   },
 })
