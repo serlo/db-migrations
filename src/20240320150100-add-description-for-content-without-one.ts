@@ -11,7 +11,7 @@ function getTextSnippets(object: any): string[] {
   }
 
   return Object.entries(object).flatMap(([key, value]) =>
-    key === 'text' ? [value] : getTextSnippets(value),
+    key === 'text' ? [String(value)] : getTextSnippets(value),
   ) as string[]
 }
 
@@ -68,7 +68,6 @@ async function generateDescription(
 }
 
 async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
-    // TODO: remove the limit
     const entitiesWithEmptyDescription: {
       revisionId: number
       content: string
@@ -82,12 +81,11 @@ async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
           JOIN uuid ON uuid.id = entity.id 
           JOIN type ON type.id = type_id
           WHERE trashed = 0 
-          AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group", "video")
+          AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
           AND field = 'meta_description'
           AND instance_id = 1
           AND value = ''
       )
-      LIMIT 3
       `)
 
     const revisionsWithGeneratedDescriptions = await Promise.all(
@@ -103,6 +101,7 @@ async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
     )
 
     for (const revision of revisionsWithGeneratedDescriptions) {
+      if (revision.description !== '') {
       await db.runSql(
         `
         UPDATE entity_revision_field
@@ -112,10 +111,10 @@ async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
       `,
         [revision.description, revision.revisionId],
       )
+      }
     }
 }
 async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI){
-    // TODO: remove limit
     const entitiesWithoutDescription: {
       revisionId: number
       content: string
@@ -129,7 +128,7 @@ async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI)
         JOIN uuid ON uuid.id = entity.id 
         JOIN type ON type.id = type_id
         WHERE trashed = 0 
-        AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group", "video")
+        AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
         AND instance_id = 1
         AND entity.id NOT IN (
           SELECT distinct(entity.id) FROM entity_revision_field
@@ -138,9 +137,7 @@ async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI)
           WHERE field LIKE "meta_description"
         )
       )
-      LIMIT 10
       `)
-    console.log(entitiesWithoutDescription)
 
     const revisionsWithGeneratedDescriptions = await Promise.all(
       entitiesWithoutDescription.map(async (entity) => {
@@ -163,9 +160,6 @@ async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI)
       `,
           [revision.revisionId, revision.description],
         )
-      } else {
-        console.log("skipped " + revision.revisionId)
-      }
     }
 }
 
