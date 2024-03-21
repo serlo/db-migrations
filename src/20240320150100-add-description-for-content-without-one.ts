@@ -40,6 +40,8 @@ async function generateDescription(
   plainTextContent: string,
   openAIClient: OpenAI,
 ): Promise<string> {
+  if (plainTextContent.length < 20) return ''
+
   const messages = [
     {
       // Regarding `as const` see https://github.com/openai/openai-node/issues/639
@@ -68,6 +70,7 @@ async function generateDescription(
 
 createMigration(exports, {
   up: async (db) => {
+    /*
     // TODO: remove the limit
     const entitiesWithEmptyDescription: {
       revisionId: number
@@ -115,6 +118,61 @@ createMigration(exports, {
         [revision.description, revision.revisionId],
       )
     }
+*/
+
     // todo: handle the entities without description field
+    const entitiesWithoutDescription: {
+      revisionId: number
+      content: string
+    }[] = await db.runSql(`
+      SELECT entity_revision_id as revisionId, value as content FROM entity_revision_field
+      WHERE field = "content"
+      AND entity_revision_id IN
+      (
+        SELECT current_revision_id FROM entity 
+        JOIN entity_revision_field ON entity_revision_field.entity_revision_id = current_revision_id 
+        JOIN uuid ON uuid.id = entity.id 
+        JOIN type ON type.id = type_id
+        WHERE trashed = 0 
+        AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group", "video")
+        AND instance_id = 1
+        AND entity.id NOT IN (
+          SELECT distinct(entity.id) FROM entity_revision_field
+          JOIN entity_revision ON entity_revision_id = entity_revision.id
+          JOIN entity ON entity.id = entity_revision.repository_id 
+          WHERE field LIKE "meta_description"
+        )
+      )
+      LIMIT 10
+      `)
+    console.log(entitiesWithoutDescription)
+
+    const openAIClient = getAIClient()
+
+    const revisionsWithGeneratedDescriptions = await Promise.all(
+      entitiesWithoutDescription.map(async (entity) => {
+        return {
+          revisionId: entity.revisionId,
+          description: await generateDescription(
+            convertToPlainText(entity.content),
+            openAIClient,
+          ),
+        }
+      }),
+    )
+
+    for (const revision of revisionsWithGeneratedDescriptions) {
+      if (revision.description !== '') {
+        await db.runSql(
+          `
+        INSERT INTO entity_revision_field (field, entity_revision_id, value)
+        VALUES ('meta_description', ?, ?)
+      `,
+          [revision.revisionId, revision.description],
+        )
+      } else {
+        console.log("skipped " + revision.revisionId)
+      }
+    }
   },
 })
