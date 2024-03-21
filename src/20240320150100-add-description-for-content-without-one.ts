@@ -36,30 +36,32 @@ function getAIClient() {
   })
 }
 
-async function generateDescription(plainTextContent: string): Promise<string> {
-  const openAIClient = getAIClient()
+async function generateDescription(
+  plainTextContent: string,
+  openAIClient: OpenAI,
+): Promise<string> {
   const messages = [
     {
       // Regarding `as const` see https://github.com/openai/openai-node/issues/639
       role: 'system' as const,
-      content: plainTextContent,
+      content: `Antworte mit einer 60 bis 160 Zeichen langen Inhaltsbeschreibung des folgenden Textes: ${plainTextContent}`,
     },
   ]
 
   const response = await openAIClient.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages,
-    max_tokens: 750,
+    max_tokens: 100,
   })
 
   const responseContent = response.choices[0].message.content
 
   if (!responseContent) {
+    // TODO: Do not throw error, handle it in other way
     throw new Error('No content received from LLM!')
   }
 
-  // TODO: maybe log the generated content
-  // console.log({responseContent})
+  // TODO: log the generated content to slack document, put also revision_id
 
   return responseContent
 }
@@ -87,18 +89,32 @@ createMigration(exports, {
       )
       LIMIT 3
       `)
-    const revisionsWithGeneratedDescriptions = entitiesWithEmptyDescription.map(
-      async (entity) => {
+
+    const openAIClient = getAIClient()
+
+    const revisionsWithGeneratedDescriptions = await Promise.all(
+      entitiesWithEmptyDescription.map(async (entity) => {
         return {
           revisionId: entity.revisionId,
           description: await generateDescription(
             convertToPlainText(entity.content),
+            openAIClient,
           ),
         }
-      },
+      }),
     )
-    // todo: write description to database
-    console.log(revisionsWithGeneratedDescriptions)
+
+    for (const revision of revisionsWithGeneratedDescriptions) {
+      await db.runSql(
+        `
+        UPDATE entity_revision_field
+        SET value = ?
+        WHERE entity_revision_id = ?
+          AND field = 'meta_description'
+      `,
+        [revision.description, revision.revisionId],
+      )
+    }
     // todo: handle the entities without description field
   },
 })
