@@ -67,11 +67,11 @@ async function generateDescription(
   return responseContent
 }
 
-async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
-    const entitiesWithEmptyDescription: {
-      revisionId: number
-      content: string
-    }[] = await db.runSql(`
+async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
+  const entitiesWithEmptyDescription: {
+    revisionId: number
+    content: string
+  }[] = await db.runSql(`
       SELECT entity_revision_id as revisionId, value as content FROM entity_revision_field
       WHERE field = "content"
       AND entity_revision_id IN
@@ -88,20 +88,20 @@ async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
       )
       `)
 
-    const revisionsWithGeneratedDescriptions = await Promise.all(
-      entitiesWithEmptyDescription.map(async (entity) => {
-        return {
-          revisionId: entity.revisionId,
-          description: await generateDescription(
-            convertToPlainText(entity.content),
-            openAIClient,
-          ),
-        }
-      }),
-    )
+  const revisionsWithGeneratedDescriptions = await Promise.all(
+    entitiesWithEmptyDescription.map(async (entity) => {
+      return {
+        revisionId: entity.revisionId,
+        description: await generateDescription(
+          convertToPlainText(entity.content),
+          openAIClient,
+        ),
+      }
+    }),
+  )
 
-    for (const revision of revisionsWithGeneratedDescriptions) {
-      if (revision.description !== '') {
+  for (const revision of revisionsWithGeneratedDescriptions) {
+    if (revision.description !== '') {
       await db.runSql(
         `
         UPDATE entity_revision_field
@@ -111,14 +111,17 @@ async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI){
       `,
         [revision.description, revision.revisionId],
       )
-      }
     }
+  }
 }
-async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI){
-    const entitiesWithoutDescription: {
-      revisionId: number
-      content: string
-    }[] = await db.runSql(`
+async function createDescriptionWhereMissing(
+  db: Database,
+  openAIClient: OpenAI,
+) {
+  const entitiesWithoutDescription: {
+    revisionId: number
+    content: string
+  }[] = await db.runSql(`
       SELECT entity_revision_id as revisionId, value as content FROM entity_revision_field
       WHERE field = "content"
       AND entity_revision_id IN
@@ -139,28 +142,29 @@ async function createDescriptionWhereMissing(db: Database, openAIClient: OpenAI)
       )
       `)
 
-    const revisionsWithGeneratedDescriptions = await Promise.all(
-      entitiesWithoutDescription.map(async (entity) => {
-        return {
-          revisionId: entity.revisionId,
-          description: await generateDescription(
-            convertToPlainText(entity.content),
-            openAIClient,
-          ),
-        }
-      }),
-    )
+  const revisionsWithGeneratedDescriptions = await Promise.all(
+    entitiesWithoutDescription.map(async (entity) => {
+      return {
+        revisionId: entity.revisionId,
+        description: await generateDescription(
+          convertToPlainText(entity.content),
+          openAIClient,
+        ),
+      }
+    }),
+  )
 
-    for (const revision of revisionsWithGeneratedDescriptions) {
-      if (revision.description !== '') {
-        await db.runSql(
-          `
+  for (const revision of revisionsWithGeneratedDescriptions) {
+    if (revision.description !== '') {
+      await db.runSql(
+        `
         INSERT INTO entity_revision_field (field, entity_revision_id, value)
         VALUES ('meta_description', ?, ?)
       `,
-          [revision.revisionId, revision.description],
-        )
+        [revision.revisionId, revision.description],
+      )
     }
+  }
 }
 
 createMigration(exports, {
