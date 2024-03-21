@@ -79,6 +79,6 @@ createMigration(exports, {
       }),
     })
 
-    await apiCache.quit()
+    await apiCache.deleteKeysAndQuit()
   },
 })
