@@ -1,3 +1,4 @@
+import { ChatCompletionRole } from 'openai/resources'
 import { createMigration } from './utils'
 import { OpenAI } from 'openai'
 
@@ -35,13 +36,37 @@ function getAIClient() {
   })
 }
 
-function generateDescription(plainTextContent: string): string {
-  // todo: prompt LLM to generate a description from content given as plain text
-  return 'test'
+async function generateDescription(plainTextContent: string): Promise<string> {
+  const openAIClient = getAIClient()
+  const messages = [
+    {
+      // Regarding `as const` see https://github.com/openai/openai-node/issues/639
+      role: 'system' as const,
+      content: plainTextContent,
+    },
+  ]
+
+  const response = await openAIClient.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages,
+    max_tokens: 750,
+  })
+
+  const responseContent = response.choices[0].message.content
+
+  if (!responseContent) {
+    throw new Error('No content received from LLM!')
+  }
+
+  // TODO: maybe log the generated content
+  // console.log({responseContent})
+
+  return responseContent
 }
 
 createMigration(exports, {
   up: async (db) => {
+    // TODO: remove the limit
     const entitiesWithEmptyDescription: {
       revisionId: number
       content: string
@@ -63,10 +88,12 @@ createMigration(exports, {
       LIMIT 3
       `)
     const revisionsWithGeneratedDescriptions = entitiesWithEmptyDescription.map(
-      (entity) => {
+      async (entity) => {
         return {
           revisionId: entity.revisionId,
-          description: generateDescription(convertToPlainText(entity.content)),
+          description: await generateDescription(
+            convertToPlainText(entity.content),
+          ),
         }
       },
     )
