@@ -1,4 +1,5 @@
-import { createMigration, migrateSerloEditorContent } from './utils'
+import { createMigration } from './utils'
+import { OpenAI } from 'openai'
 
 function getTextSnippets(object: any): string[] {
   if (typeof object !== 'object' || object === null) {
@@ -22,6 +23,16 @@ function convertToPlainText(contentJSON: string): string {
     .replace(/ , /g, ', ')
     .replace(/ \. /g, '. ')
     .replace(/  +/g, ' ')
+}
+
+function getAIClient() {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+  if (!OPENAI_API_KEY || OPENAI_API_KEY === '') {
+    throw new Error('Env `OPENAI_API_KEY` is not defined')
+  }
+  return new OpenAI({
+    apiKey: OPENAI_API_KEY,
+  })
 }
 
 function generateDescription(plainTextContent: string): string {
