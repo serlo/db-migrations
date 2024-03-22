@@ -67,7 +67,7 @@ async function generateDescription(
   return responseContent
 }
 
-async function createDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
+async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
   const entitiesWithEmptyDescription: {
     revisionId: number
     content: string
@@ -170,7 +170,7 @@ async function createDescriptionWhereMissing(
 createMigration(exports, {
   up: async function (db) {
     const openAIClient = getAIClient()
-    await createDescriptionWhereEmpty(db, openAIClient)
+    await fillDescriptionWhereEmpty(db, openAIClient)
     await createDescriptionWhereMissing(db, openAIClient)
   },
 })
