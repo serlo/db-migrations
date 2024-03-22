@@ -38,6 +38,10 @@ export class ApiCache {
     this.markKey(`de.serlo.org/api/uuid/${uuid}`)
   }
 
+  public markSubscription(userId: number) {
+    this.markKey(`de.serlo.org/api/subscriptions/${userId}`)
+  }
+
   public async deleteKeysAndQuit() {
     if (this.keys.size > 0) {
       await this.redis.del(Array.from(this.keys))
