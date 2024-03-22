@@ -10,6 +10,7 @@ import {
 
 const TextPlugin = t.type({
   plugin: t.literal('text'),
+  state: t.array(t.unknown),
 })
 
 interface Group {
@@ -45,11 +46,8 @@ createMigration(exports, {
         text: (plugin) => {
           if (!TextPlugin.is(plugin)) return undefined
 
-          const pluginState = plugin.state as Array<{
-            type: string
-            children: Array<unknown>
-          }>
-          if (!pluginState || !pluginState.length) return [plugin]
+          const pluginState = plugin.state
+          if (!pluginState || !pluginState.length) return undefined
 
           const clonedState = structuredClone(pluginState)
 
