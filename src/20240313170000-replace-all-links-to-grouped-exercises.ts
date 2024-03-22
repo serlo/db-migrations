@@ -34,8 +34,6 @@ createMigration(exports, {
       FROM entity
       JOIN entity_link ON entity.id = entity_link.child_id
       JOIN entity ent2 ON entity_link.parent_id = ent2.id
-      JOIN uuid u1 ON u1.id = entity.id
-      JOIN uuid u2 ON u2.id = ent2.id
       WHERE entity.type_id = 5;
     `)
 
