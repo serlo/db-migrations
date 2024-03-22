@@ -45,7 +45,6 @@
   },
   "devDependencies": {
     "@jest/types": "^29.6.3",
-    "@serlo/markdown": "Entkenntnis/tmp-serlo-markdown",
     "@slack/web-api": "^7.0.2",
     "@tsconfig/node18": "^18.2.2",
     "@types/jest": "^29.5.12",
