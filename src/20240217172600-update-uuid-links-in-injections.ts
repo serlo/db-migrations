@@ -1,13 +1,13 @@
 import * as t from 'io-ts'
 
-import { createEdtrIoMigration, transformPlugins } from './utils'
+import { createSerloEditorMigration, transformPlugins } from './utils'
 
 const InjectionPlugin = t.type({
   plugin: t.literal('injection'),
   state: t.string,
 })
 
-createEdtrIoMigration({
+createSerloEditorMigration({
   exports,
   log: () => void 0,
   migrationName: 'update-uuid-links-in-injections',

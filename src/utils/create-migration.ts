@@ -40,7 +40,7 @@ export function createMigration(
   }
 }
 
-export function createEdtrIoMigration({
+export function createSerloEditorMigration({
   exports,
   ...otherArgs
 }: {
