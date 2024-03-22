@@ -41,7 +41,7 @@ async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
       )
       `)
 
-  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescriptions(
+  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescription(
     entitiesWithEmptyDescription,
     openAIClient,
   )
@@ -89,7 +89,7 @@ async function createDescriptionWhereMissing(
       )
       `)
 
-  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescriptions(
+  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescription(
     entitiesWithoutDescription,
     openAIClient,
   )
@@ -121,29 +121,37 @@ function getTextSnippets(object: any): string[] {
   ) as string[]
 }
 
-async function getRevisionsWithDescriptions(
-  revisionsWithContentJSON: { revisionId: number; content: string }[],
+async function getRevisionsWithDescription(
+  revisionsWithJSONContent: { revisionId: number; content: string }[],
   openAIClient: OpenAI,
 ): Promise<{ revisionId: number; description: string }[]> {
-  return await Promise.all(
-    revisionsWithContentJSON.map(async (entity) => {
-      return {
-        revisionId: entity.revisionId,
-        description: await generateDescription(
-          convertToPlainText(entity.content),
-          openAIClient,
-        ),
-      }
-    }),
-  )
+  let revisions = []
+
+  for (const revision of revisionsWithJSONContent) {
+    const plainTextContent = convertToPlainText(revision.content)
+
+    if (plainTextContent.length < 20) continue
+
+    const description = await generateDescription(
+      plainTextContent,
+      openAIClient,
+    )
+
+    if (!description) continue
+
+    revisions.push({
+      revisionId: revision.revisionId,
+      description: `${description} [KI generiert]`,
+    })
+  }
+
+  return revisions
 }
 
 async function generateDescription(
   plainTextContent: string,
   openAIClient: OpenAI,
-): Promise<string> {
-  if (plainTextContent.length < 20) return ''
-
+): Promise<string | null> {
   const messages = [
     {
       // Regarding `as const` see https://github.com/openai/openai-node/issues/639
@@ -159,11 +167,6 @@ async function generateDescription(
   })
 
   const responseContent = response.choices[0].message.content
-
-  if (!responseContent) {
-    // TODO: Do not throw error, handle it in other way
-    throw new Error('No content received from LLM!')
-  }
 
   // TODO: log the generated content to slack document, put also revision_id
 
