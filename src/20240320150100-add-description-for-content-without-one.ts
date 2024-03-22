@@ -107,20 +107,6 @@ async function createDescriptionWhereMissing(
   }
 }
 
-function getTextSnippets(object: any): string[] {
-  if (typeof object !== 'object' || object === null) {
-    return []
-  }
-
-  if (Array.isArray(object)) {
-    return object.flatMap(getTextSnippets)
-  }
-
-  return Object.entries(object).flatMap(([key, value]) =>
-    key === 'text' ? [String(value)] : getTextSnippets(value),
-  ) as string[]
-}
-
 async function getRevisionsWithDescription(
   revisionsWithJSONContent: { revisionId: number; content: string }[],
   openAIClient: OpenAI,
@@ -181,4 +167,18 @@ function convertToPlainText(contentJSON: string): string {
     .replace(/ , /g, ', ')
     .replace(/ \. /g, '. ')
     .replace(/  +/g, ' ')
+}
+
+function getTextSnippets(object: any): string[] {
+  if (typeof object !== 'object' || object === null) {
+    return []
+  }
+
+  if (Array.isArray(object)) {
+    return object.flatMap(getTextSnippets)
+  }
+
+  return Object.entries(object).flatMap(([key, value]) =>
+    key === 'text' ? [String(value)] : getTextSnippets(value),
+  ) as string[]
 }
