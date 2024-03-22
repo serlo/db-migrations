@@ -124,6 +124,7 @@ async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
     }
   }
 }
+
 async function createDescriptionWhereMissing(
   db: Database,
   openAIClient: OpenAI,
