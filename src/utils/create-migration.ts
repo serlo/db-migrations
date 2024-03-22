@@ -1,6 +1,6 @@
 import { ApiCache } from './api-cache'
 import { CallbackBasedDatabase, createDatabase, Database } from './database'
-import { isPlugin } from './edtr-io'
+import { isPlugin } from './serlo-editor'
 import { SlackLogger } from './slack-logger'
 
 export function createMigration(
@@ -40,7 +40,7 @@ export function createMigration(
   }
 }
 
-export function createEdtrIoMigration({
+export function createSerloEditorMigration({
   exports,
   ...otherArgs
 }: {
