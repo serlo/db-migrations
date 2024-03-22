@@ -1,12 +1,16 @@
-import { createMigration, Database } from './utils'
+import { createMigration, Database, SlackLogger } from './utils'
 import { OpenAI } from 'openai'
 
 createMigration(exports, {
   up: async function (db) {
     if (process.env.CI === 'true') return
     const openAIClient = getAIClient()
-    await fillDescriptionWhereEmpty(db, openAIClient)
-    await createDescriptionWhereMissing(db, openAIClient)
+    const slackLogger = new SlackLogger(
+      'add-description-for-content-without-one',
+    )
+    await fillDescriptionWhereEmpty(db, openAIClient, slackLogger)
+    await createDescriptionWhereMissing(db, openAIClient, slackLogger)
+    await slackLogger.closeAndSend()
   },
 })
 
@@ -20,7 +24,11 @@ function getAIClient() {
   })
 }
 
-async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
+async function fillDescriptionWhereEmpty(
+  db: Database,
+  openAIClient: OpenAI,
+  slackLogger: SlackLogger,
+) {
   const revisionsWithEmptyDescription: {
     revisionId: number
     content: string
@@ -44,6 +52,7 @@ async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
   const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
     revisionsWithEmptyDescription,
     openAIClient,
+    slackLogger,
   )
 
   for (const revision of revisionsWithGeneratedDescription) {
@@ -62,6 +71,7 @@ async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
 async function createDescriptionWhereMissing(
   db: Database,
   openAIClient: OpenAI,
+  slackLogger: SlackLogger,
 ) {
   const revisionsWithoutDescription: {
     revisionId: number
@@ -90,6 +100,7 @@ async function createDescriptionWhereMissing(
   const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
     revisionsWithoutDescription,
     openAIClient,
+    slackLogger,
   )
 
   for (const revision of revisionsWithGeneratedDescription) {
@@ -106,20 +117,36 @@ async function createDescriptionWhereMissing(
 async function getRevisionsWithDescription(
   revisionsWithJSONContent: { revisionId: number; content: string }[],
   openAIClient: OpenAI,
+  slackLogger: SlackLogger,
 ): Promise<{ revisionId: number; description: string }[]> {
   let revisions = []
 
   for (const revision of revisionsWithJSONContent) {
     const plainTextContent = convertToPlainText(revision.content)
 
-    if (plainTextContent.length < 20) continue
+    if (plainTextContent.length < 20) {
+      slackLogger.logEvent(`Revision ${revision.revisionId} NO DESCRIPTION`, {
+        reason: 'Content too short',
+      })
+      continue
+    }
 
     const description = await generateDescription(
       plainTextContent,
       openAIClient,
     )
 
-    if (!description) continue
+    if (!description) {
+      slackLogger.logEvent(`Revision ${revision.revisionId} NO DESCRIPTION`, {
+        reason: 'AI could not generate description',
+      })
+      continue
+    }
+
+    slackLogger.logEvent(`revision ${revision.revisionId}`, {
+      originalContent: revision.content,
+      newDescription: description,
+    })
 
     revisions.push({
       revisionId: revision.revisionId,
@@ -149,8 +176,6 @@ async function generateDescription(
   })
 
   const responseContent = response.choices[0].message.content
-
-  // TODO: log the generated content to slack document, put also revision_id
 
   return responseContent
 }
