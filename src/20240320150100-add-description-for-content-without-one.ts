@@ -67,6 +67,23 @@ async function generateDescription(
   return responseContent
 }
 
+async function getRevisionsWithDescriptions(
+  revisionsWithContentJSON: { revisionId: number; content: string }[],
+  openAIClient: OpenAI,
+): Promise<{ revisionId: number; description: string }[]> {
+  return await Promise.all(
+    revisionsWithContentJSON.map(async (entity) => {
+      return {
+        revisionId: entity.revisionId,
+        description: await generateDescription(
+          convertToPlainText(entity.content),
+          openAIClient,
+        ),
+      }
+    }),
+  )
+}
+
 async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
   const entitiesWithEmptyDescription: {
     revisionId: number
@@ -88,16 +105,9 @@ async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
       )
       `)
 
-  const revisionsWithGeneratedDescriptions = await Promise.all(
-    entitiesWithEmptyDescription.map(async (entity) => {
-      return {
-        revisionId: entity.revisionId,
-        description: await generateDescription(
-          convertToPlainText(entity.content),
-          openAIClient,
-        ),
-      }
-    }),
+  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescriptions(
+    entitiesWithEmptyDescription,
+    openAIClient,
   )
 
   for (const revision of revisionsWithGeneratedDescriptions) {
@@ -142,16 +152,9 @@ async function createDescriptionWhereMissing(
       )
       `)
 
-  const revisionsWithGeneratedDescriptions = await Promise.all(
-    entitiesWithoutDescription.map(async (entity) => {
-      return {
-        revisionId: entity.revisionId,
-        description: await generateDescription(
-          convertToPlainText(entity.content),
-          openAIClient,
-        ),
-      }
-    }),
+  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescriptions(
+    entitiesWithoutDescription,
+    openAIClient,
   )
 
   for (const revision of revisionsWithGeneratedDescriptions) {
