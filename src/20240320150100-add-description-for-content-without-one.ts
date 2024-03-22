@@ -1,29 +1,13 @@
 import { createMigration, Database } from './utils'
 import { OpenAI } from 'openai'
 
-function getTextSnippets(object: any): string[] {
-  if (typeof object !== 'object' || object === null) {
-    return []
-  }
-
-  if (Array.isArray(object)) {
-    return object.flatMap(getTextSnippets)
-  }
-
-  return Object.entries(object).flatMap(([key, value]) =>
-    key === 'text' ? [String(value)] : getTextSnippets(value),
-  ) as string[]
-}
-
-function convertToPlainText(contentJSON: string): string {
-  return getTextSnippets(JSON.parse(contentJSON))
-    .map((str) => str.trim())
-    .filter((str) => str.length > 0)
-    .join(' ')
-    .replace(/ , /g, ', ')
-    .replace(/ \. /g, '. ')
-    .replace(/  +/g, ' ')
-}
+createMigration(exports, {
+  up: async function (db) {
+    const openAIClient = getAIClient()
+    await fillDescriptionWhereEmpty(db, openAIClient)
+    await createDescriptionWhereMissing(db, openAIClient)
+  },
+})
 
 function getAIClient() {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY
@@ -33,55 +17,6 @@ function getAIClient() {
   return new OpenAI({
     apiKey: OPENAI_API_KEY,
   })
-}
-
-async function generateDescription(
-  plainTextContent: string,
-  openAIClient: OpenAI,
-): Promise<string> {
-  if (plainTextContent.length < 20) return ''
-
-  const messages = [
-    {
-      // Regarding `as const` see https://github.com/openai/openai-node/issues/639
-      role: 'system' as const,
-      content: `Antworte mit einer 60 bis 160 Zeichen langen Inhaltsbeschreibung des folgenden Textes: ${plainTextContent}`,
-    },
-  ]
-
-  const response = await openAIClient.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages,
-    max_tokens: 100,
-  })
-
-  const responseContent = response.choices[0].message.content
-
-  if (!responseContent) {
-    // TODO: Do not throw error, handle it in other way
-    throw new Error('No content received from LLM!')
-  }
-
-  // TODO: log the generated content to slack document, put also revision_id
-
-  return responseContent
-}
-
-async function getRevisionsWithDescriptions(
-  revisionsWithContentJSON: { revisionId: number; content: string }[],
-  openAIClient: OpenAI,
-): Promise<{ revisionId: number; description: string }[]> {
-  return await Promise.all(
-    revisionsWithContentJSON.map(async (entity) => {
-      return {
-        revisionId: entity.revisionId,
-        description: await generateDescription(
-          convertToPlainText(entity.content),
-          openAIClient,
-        ),
-      }
-    }),
-  )
 }
 
 async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
@@ -171,10 +106,75 @@ async function createDescriptionWhereMissing(
   }
 }
 
-createMigration(exports, {
-  up: async function (db) {
-    const openAIClient = getAIClient()
-    await fillDescriptionWhereEmpty(db, openAIClient)
-    await createDescriptionWhereMissing(db, openAIClient)
-  },
-})
+function getTextSnippets(object: any): string[] {
+  if (typeof object !== 'object' || object === null) {
+    return []
+  }
+
+  if (Array.isArray(object)) {
+    return object.flatMap(getTextSnippets)
+  }
+
+  return Object.entries(object).flatMap(([key, value]) =>
+    key === 'text' ? [String(value)] : getTextSnippets(value),
+  ) as string[]
+}
+
+async function getRevisionsWithDescriptions(
+  revisionsWithContentJSON: { revisionId: number; content: string }[],
+  openAIClient: OpenAI,
+): Promise<{ revisionId: number; description: string }[]> {
+  return await Promise.all(
+    revisionsWithContentJSON.map(async (entity) => {
+      return {
+        revisionId: entity.revisionId,
+        description: await generateDescription(
+          convertToPlainText(entity.content),
+          openAIClient,
+        ),
+      }
+    }),
+  )
+}
+
+async function generateDescription(
+  plainTextContent: string,
+  openAIClient: OpenAI,
+): Promise<string> {
+  if (plainTextContent.length < 20) return ''
+
+  const messages = [
+    {
+      // Regarding `as const` see https://github.com/openai/openai-node/issues/639
+      role: 'system' as const,
+      content: `Antworte mit einer 60 bis 160 Zeichen langen Inhaltsbeschreibung des folgenden Textes: ${plainTextContent}`,
+    },
+  ]
+
+  const response = await openAIClient.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages,
+    max_tokens: 100,
+  })
+
+  const responseContent = response.choices[0].message.content
+
+  if (!responseContent) {
+    // TODO: Do not throw error, handle it in other way
+    throw new Error('No content received from LLM!')
+  }
+
+  // TODO: log the generated content to slack document, put also revision_id
+
+  return responseContent
+}
+
+function convertToPlainText(contentJSON: string): string {
+  return getTextSnippets(JSON.parse(contentJSON))
+    .map((str) => str.trim())
+    .filter((str) => str.length > 0)
+    .join(' ')
+    .replace(/ , /g, ', ')
+    .replace(/ \. /g, '. ')
+    .replace(/  +/g, ' ')
+}
