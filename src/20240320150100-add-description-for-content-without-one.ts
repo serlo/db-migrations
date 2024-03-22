@@ -3,7 +3,15 @@ import { OpenAI } from 'openai'
 
 createMigration(exports, {
   up: async function (db) {
-    if (process.env.CI === 'true') return
+    if (
+      process.env.CI === 'true' ||
+      process.env.OPENAI_API_KEY === 'sk-whatever'
+    ) {
+      console.log(
+        'It is running in a CI environment or you are operating with invalid openai key. Skipping...',
+      )
+      return
+    }
     const openAIClient = getAIClient()
     const slackLogger = new SlackLogger(
       'add-description-for-content-without-one',
