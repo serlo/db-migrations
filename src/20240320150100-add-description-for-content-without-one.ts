@@ -3,6 +3,7 @@ import { OpenAI } from 'openai'
 
 createMigration(exports, {
   up: async function (db) {
+    if (process.env.CI === 'true') return
     const openAIClient = getAIClient()
     await fillDescriptionWhereEmpty(db, openAIClient)
     await createDescriptionWhereMissing(db, openAIClient)
