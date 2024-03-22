@@ -2,17 +2,19 @@ import { ApiCache, createMigration, Database, toSqlTuple } from './utils'
 
 const unsupportedEntityTypes = ['grouped-text-exercise']
 
-createMigration(exports, {
-  up: async (db) => {
-    const apiCache = new ApiCache()
+export async function up(db: Database) {
+  const apiCache = new ApiCache()
 
-    await deleteUnsupportedEntityTypes({ db, apiCache, unsupportedEntityTypes })
+  await deleteUnsupportedEntityTypes({
+    db,
+    apiCache,
+    unsupportedEntityTypes,
+  })
 
-    await apiCache.deleteKeysAndQuit()
-  },
-})
+  await apiCache.deleteKeysAndQuit()
+}
 
-export async function deleteUnsupportedEntityTypes(args: {
+async function deleteUnsupportedEntityTypes(args: {
   db: Database
   apiCache: ApiCache
   unsupportedEntityTypes: string[]
