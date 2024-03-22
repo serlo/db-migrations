@@ -1,65 +1,7 @@
 import { ApiCache } from './api-cache'
-import { CallbackBasedDatabase, createDatabase, Database } from './database'
+import { Database } from './database'
 import { isPlugin } from './serlo-editor'
 import { SlackLogger } from './slack-logger'
-
-export function createMigration(
-  exports: any,
-  {
-    up,
-    down,
-  }: {
-    up: (db: Database) => Promise<void>
-    down?: (db: Database) => Promise<void>
-  },
-) {
-  exports._meta = {
-    version: 1,
-  }
-  exports.up = (db: CallbackBasedDatabase, cb: Callback) => {
-    up(createDatabase(db))
-      .then(() => {
-        cb(undefined)
-      })
-      .catch((error) => {
-        cb(error)
-      })
-  }
-  exports.down = (db: CallbackBasedDatabase, cb: Callback) => {
-    if (typeof down === 'function') {
-      down(createDatabase(db))
-        .then(() => {
-          cb()
-        })
-        .catch((error) => {
-          cb(error)
-        })
-    } else {
-      cb()
-    }
-  }
-}
-
-export function createSerloEditorMigration({
-  exports,
-  ...otherArgs
-}: {
-  exports: any
-  migrateState: (state: any) => any
-  dryRun?: boolean
-  migrationName?: string
-  log?: (message: string) => void
-}) {
-  createMigration(exports, {
-    up: async (db) => {
-      const apiCache = new ApiCache()
-
-      await migrateSerloEditorContent({ ...otherArgs, apiCache, db })
-
-      await apiCache.deleteKeysAndQuit()
-    },
-  })
-}
 
 export async function migrateSerloEditorContent({
   migrateState,
