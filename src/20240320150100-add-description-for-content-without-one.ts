@@ -21,7 +21,7 @@ function getAIClient() {
 }
 
 async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
-  const entitiesWithEmptyDescription: {
+  const revisionsWithEmptyDescription: {
     revisionId: number
     content: string
   }[] = await db.runSql(`
@@ -41,23 +41,21 @@ async function fillDescriptionWhereEmpty(db: Database, openAIClient: OpenAI) {
       )
       `)
 
-  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescription(
-    entitiesWithEmptyDescription,
+  const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
+    revisionsWithEmptyDescription,
     openAIClient,
   )
 
-  for (const revision of revisionsWithGeneratedDescriptions) {
-    if (revision.description !== '') {
-      await db.runSql(
-        `
-        UPDATE entity_revision_field
-        SET value = ?
-        WHERE entity_revision_id = ?
-          AND field = 'meta_description'
-      `,
-        [revision.description, revision.revisionId],
-      )
-    }
+  for (const revision of revisionsWithGeneratedDescription) {
+    await db.runSql(
+      `
+      UPDATE entity_revision_field
+      SET value = ?
+      WHERE entity_revision_id = ?
+        AND field = 'meta_description'
+    `,
+      [revision.description, revision.revisionId],
+    )
   }
 }
 
@@ -65,7 +63,7 @@ async function createDescriptionWhereMissing(
   db: Database,
   openAIClient: OpenAI,
 ) {
-  const entitiesWithoutDescription: {
+  const revisionsWithoutDescription: {
     revisionId: number
     content: string
   }[] = await db.runSql(`
@@ -89,21 +87,19 @@ async function createDescriptionWhereMissing(
       )
       `)
 
-  const revisionsWithGeneratedDescriptions = await getRevisionsWithDescription(
-    entitiesWithoutDescription,
+  const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
+    revisionsWithoutDescription,
     openAIClient,
   )
 
-  for (const revision of revisionsWithGeneratedDescriptions) {
-    if (revision.description !== '') {
-      await db.runSql(
-        `
-        INSERT INTO entity_revision_field (field, entity_revision_id, value)
-        VALUES ('meta_description', ?, ?)
-      `,
-        [revision.revisionId, revision.description],
-      )
-    }
+  for (const revision of revisionsWithGeneratedDescription) {
+    await db.runSql(
+      `
+      INSERT INTO entity_revision_field (field, entity_revision_id, value)
+      VALUES ('meta_description', ?, ?)
+    `,
+      [revision.revisionId, revision.description],
+    )
   }
 }
 
