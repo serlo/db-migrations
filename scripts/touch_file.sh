@@ -1,9 +1,10 @@
 echo "Enter the name of the migration (no spaces and with hifens)"
 
-read FILENAME
+read MIGRATION_NAME
 
 DATE=$(date +%Y%m%d%H%M00)
-FILENAME="src/${DATE}-${FILENAME}.ts"
+FILENAME="${DATE}-${MIGRATION_NAME}"
+FILEPATH="src/${FILENAME}.ts"
 
 echo "import { ApiCache, Database, SlackLogger } from './utils'
 
@@ -15,4 +16,4 @@ export async function up(db: Database) {
   // To reduce the time between deleting the keys and finishing the DB
   // transaction, this should be the last command
   await apiCache.deleteKeysAndQuit()
-}"> "$FILENAME"
+}"> "$FILEPATH"
