@@ -1,4 +1,4 @@
-import { ApiCache, createMigration, Database, toSqlTuple } from './utils'
+import { ApiCache, Database, toSqlTuple } from './utils'
 
 const unsupportedEntityTypes = ['grouped-text-exercise']
 
