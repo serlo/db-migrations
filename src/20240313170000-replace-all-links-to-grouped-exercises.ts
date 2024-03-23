@@ -3,7 +3,7 @@ import * as R from 'ramda'
 
 import {
   ApiCache,
-  createMigration,
+  Database,
   migrateSerloEditorContent,
   transformPlugins,
 } from './utils'
@@ -24,11 +24,10 @@ const Link = t.type({
   children: t.array(t.unknown),
 })
 
-createMigration(exports, {
-  up: async (db) => {
-    const apiCache = new ApiCache()
+export async function up(db: Database) {
+  const apiCache = new ApiCache()
 
-    const groups = await db.runSql<Group[]>(`
+  const groups = await db.runSql<Group[]>(`
       SELECT
         entity.id AS groupedExercise,
         ent2.id AS exerciseGroup
@@ -38,33 +37,32 @@ createMigration(exports, {
       WHERE entity.type_id = 5;
     `)
 
-    await migrateSerloEditorContent({
-      apiCache,
-      db,
-      migrationName: 'replace-all-links-to-grouped-exercises',
-      migrateState: transformPlugins({
-        text: (plugin) => {
-          if (!TextPlugin.is(plugin)) return undefined
+  await migrateSerloEditorContent({
+    apiCache,
+    db,
+    migrationName: 'replace-all-links-to-grouped-exercises',
+    migrateState: transformPlugins({
+      text: (plugin) => {
+        if (!TextPlugin.is(plugin)) return undefined
 
-          const pluginState = plugin.state
-          if (!pluginState || !pluginState.length) return undefined
+        const pluginState = plugin.state
+        if (!pluginState || !pluginState.length) return undefined
 
-          const clonedState = structuredClone(pluginState)
+        const clonedState = structuredClone(pluginState)
 
-          replaceLinks(clonedState, groups)
+        replaceLinks(clonedState, groups)
 
-          if (!R.equals(clonedState, pluginState)) {
-            return [{ ...plugin, state: clonedState }]
-          }
+        if (!R.equals(clonedState, pluginState)) {
+          return [{ ...plugin, state: clonedState }]
+        }
 
-          return [plugin]
-        },
-      }),
-    })
+        return [plugin]
+      },
+    }),
+  })
 
-    await apiCache.deleteKeysAndQuit()
-  },
-})
+  await apiCache.deleteKeysAndQuit()
+}
 
 function replaceLinks(object: object, groups: Group[]) {
   if (Link.is(object)) {
