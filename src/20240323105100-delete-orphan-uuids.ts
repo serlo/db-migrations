@@ -2,7 +2,7 @@ import { ApiCache, Database, SlackLogger, deleteUuids } from './utils'
 
 export async function up(db: Database) {
   const apiCache = new ApiCache()
-  const logger = new SlackLogger('src/20240323105100-delete-orphan-uuids.ts')
+  const logger = new SlackLogger('20240323105100-delete-orphan-uuids')
 
   const uuids = await db.runSql<{ id: number }[]>(`
     select
