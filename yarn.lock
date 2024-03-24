@@ -943,7 +943,7 @@ __metadata:
   dependencies:
     "@jest/types": ^29.6.3
     "@slack/web-api": ^7.0.2
-    "@tsconfig/node18": ^18.2.2
+    "@tsconfig/node18": ^18.2.3
     "@types/jest": ^29.5.12
     "@types/node": ^18.19.26
     "@types/ramda": ^0.29.11
@@ -1056,10 +1056,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node18@npm:^18.2.2":
-  version: 18.2.2
-  resolution: "@tsconfig/node18@npm:18.2.2"
-  checksum: 1c4b04b570e33de14bf518492e077079db2dcfba738c8d40c6ff916d94c9410246f4cb56f0802d9771423862140bf714c35d4a5f6cec2446d851cf61d3f8f9df
+"@tsconfig/node18@npm:^18.2.3":
+  version: 18.2.3
+  resolution: "@tsconfig/node18@npm:18.2.3"
+  checksum: 4957a02ff3ab9f64008ecaf0f2a2218773a10e0238c5d776304664f94b8309c2abdb334837a1214f08cc960921e0f87068aabc1ddc799174d0f2de3c65c4507b
   languageName: node
   linkType: hard
 
