@@ -133,8 +133,9 @@ async function getRevisionsWithDescription(
     const plainTextContent = convertToPlainText(revision.content)
 
     if (plainTextContent.length < 20) {
-      slackLogger.logEvent(`Revision ${revision.revisionId} NO DESCRIPTION`, {
+      slackLogger.logEvent('noDescriptionCreated', {
         reason: 'Content too short',
+        revisionId: revision.revisionId,
       })
       continue
     }
@@ -145,13 +146,15 @@ async function getRevisionsWithDescription(
     )
 
     if (!description) {
-      slackLogger.logEvent(`Revision ${revision.revisionId} NO DESCRIPTION`, {
+      slackLogger.logEvent('noDescriptionCreated', {
         reason: 'AI could not generate description',
+        revisionId: revision.revisionId,
       })
       continue
     }
 
-    slackLogger.logEvent(`revision ${revision.revisionId}`, {
+    slackLogger.logEvent(`createDescription`, {
+      revisionId: revision.revisionId,
       originalContent: revision.content,
       newDescription: description,
     })
