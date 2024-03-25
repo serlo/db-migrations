@@ -209,5 +209,5 @@ function getTextSnippets(object: any): string[] {
 
   return Object.entries(object).flatMap(([key, value]) =>
     key === 'text' ? [String(value)] : getTextSnippets(value),
-  ) as string[]
+  )
 }
