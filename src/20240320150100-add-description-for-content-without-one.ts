@@ -17,8 +17,7 @@ createMigration(exports, {
     const slackLogger = new SlackLogger(
       'add-description-for-content-without-one',
     )
-    await fillDescriptionWhereEmpty(db, openAIClient, slackLogger)
-    await createDescriptionWhereMissing(db, openAIClient, slackLogger)
+    await createDescriptions(db, openAIClient, slackLogger)
     await slackLogger.closeAndSend()
   },
 })
@@ -33,51 +32,7 @@ function getAIClient() {
   })
 }
 
-async function fillDescriptionWhereEmpty(
-  db: Database,
-  openAIClient: OpenAI,
-  slackLogger: SlackLogger,
-) {
-  const revisionsWithEmptyDescription: {
-    revisionId: number
-    content: string
-  }[] = await db.runSql(`
-      SELECT entity_revision_id as revisionId, value as content FROM entity_revision_field
-      WHERE field = "content"
-      AND entity_revision_id IN
-      (
-        SELECT current_revision_id FROM entity 
-          JOIN entity_revision_field ON entity_revision_field.entity_revision_id = current_revision_id 
-          JOIN uuid ON uuid.id = entity.id 
-          JOIN type ON type.id = type_id
-          WHERE trashed = 0 
-          AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
-          AND field = 'meta_description'
-          AND instance_id = 1
-          AND value = ''
-      )
-      `)
-
-  const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
-    revisionsWithEmptyDescription,
-    openAIClient,
-    slackLogger,
-  )
-
-  for (const revision of revisionsWithGeneratedDescription) {
-    await db.runSql(
-      `
-      UPDATE entity_revision_field
-      SET value = ?
-      WHERE entity_revision_id = ?
-        AND field = 'meta_description'
-    `,
-      [revision.description, revision.revisionId],
-    )
-  }
-}
-
-async function createDescriptionWhereMissing(
+async function createDescriptions(
   db: Database,
   openAIClient: OpenAI,
   slackLogger: SlackLogger,
@@ -85,26 +40,29 @@ async function createDescriptionWhereMissing(
   const revisionsWithoutDescription: {
     revisionId: number
     content: string
+    descriptionId: number | null
   }[] = await db.runSql(`
-      SELECT entity_revision_id as revisionId, value as content FROM entity_revision_field
-      WHERE field = "content"
-      AND entity_revision_id IN
-      (
-        SELECT current_revision_id FROM entity 
-        JOIN entity_revision_field ON entity_revision_field.entity_revision_id = current_revision_id 
-        JOIN uuid ON uuid.id = entity.id 
-        JOIN type ON type.id = type_id
-        WHERE trashed = 0 
-        AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
-        AND instance_id = 1
-        AND entity.id NOT IN (
-          SELECT distinct(entity.id) FROM entity_revision_field
-          JOIN entity_revision ON entity_revision_id = entity_revision.id
-          JOIN entity ON entity.id = entity_revision.repository_id 
-          WHERE field LIKE "meta_description"
-        )
-      )
-      `)
+      SELECT
+        entity_revision_id as revisionId,
+        value as content,
+        description_field.id as descriptionId
+      FROM entity_revision_field
+      LEFT JOIN entity_revision_field description_field on
+        entity_revision_field.entity_revision_id = description_field.entity_revision_id
+        AND description_field.field = "meta_description"
+      WHERE
+        field = "content"
+        AND entity_revision_id IN
+          (
+            SELECT current_revision_id FROM entity
+            JOIN uuid ON uuid.id = entity.id
+            JOIN type ON type.id = type_id
+            WHERE trashed = 0
+            AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
+            AND instance_id = 1
+          )
+       AND (description_field.value is null or description_field.value = "")
+    `)
 
   const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
     revisionsWithoutDescription,
@@ -113,21 +71,38 @@ async function createDescriptionWhereMissing(
   )
 
   for (const revision of revisionsWithGeneratedDescription) {
-    await db.runSql(
-      `
-      INSERT INTO entity_revision_field (field, entity_revision_id, value)
-      VALUES ('meta_description', ?, ?)
-    `,
-      [revision.revisionId, revision.description],
-    )
+    if (revision.descriptionId != null) {
+      await db.runSql(
+        `
+          UPDATE entity_revision_field
+          SET value = ?
+          WHERE entity_revision_id.id = ?
+        `,
+        [revision.description, revision.descriptionId],
+      )
+    } else {
+      await db.runSql(
+        `
+          INSERT INTO entity_revision_field (field, entity_revision_id, value)
+          VALUES ('meta_description', ?, ?)
+        `,
+        [revision.revisionId, revision.description],
+      )
+    }
   }
 }
 
 async function getRevisionsWithDescription(
-  revisionsWithJSONContent: { revisionId: number; content: string }[],
+  revisionsWithJSONContent: {
+    revisionId: number
+    content: string
+    descriptionId: number | null
+  }[],
   openAIClient: OpenAI,
   slackLogger: SlackLogger,
-): Promise<{ revisionId: number; description: string }[]> {
+): Promise<
+  { revisionId: number; description: string; descriptionId: number | null }[]
+> {
   let revisions = []
 
   for (const revision of revisionsWithJSONContent) {
@@ -161,7 +136,7 @@ async function getRevisionsWithDescription(
     })
 
     revisions.push({
-      revisionId: revision.revisionId,
+      ...revision,
       description: `${description} [KI generiert]`,
     })
   }
