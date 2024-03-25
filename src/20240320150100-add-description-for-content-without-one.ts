@@ -22,16 +22,6 @@ createMigration(exports, {
   },
 })
 
-function getAIClient() {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-  if (!OPENAI_API_KEY || OPENAI_API_KEY === '') {
-    throw new Error('Env `OPENAI_API_KEY` is not defined')
-  }
-  return new OpenAI({
-    apiKey: OPENAI_API_KEY,
-  })
-}
-
 async function createDescriptions(
   db: Database,
   openAIClient: OpenAI,
@@ -189,4 +179,14 @@ function getTextSnippets(object: any): string[] {
   return Object.entries(object).flatMap(([key, value]) =>
     key === 'text' ? [String(value)] : getTextSnippets(value),
   )
+}
+
+function getAIClient() {
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+  if (!OPENAI_API_KEY || OPENAI_API_KEY === '') {
+    throw new Error('Env `OPENAI_API_KEY` is not defined')
+  }
+  return new OpenAI({
+    apiKey: OPENAI_API_KEY,
+  })
 }
