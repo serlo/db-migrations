@@ -1,5 +1,6 @@
-import { createMigration, Database, SlackLogger } from './utils'
 import { OpenAI } from 'openai'
+
+import { createMigration, Database, SlackLogger } from './utils'
 
 createMigration(exports, {
   up: async function (db) {
