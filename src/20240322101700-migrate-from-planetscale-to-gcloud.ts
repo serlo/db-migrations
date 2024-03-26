@@ -3,6 +3,12 @@ import { Database, SlackLogger } from './utils'
 export async function up(db: Database) {
   const logger = new SlackLogger('20240323105100-delete-orphan-uuids')
 
+  // Uncomment if for some reason you need to delete the tables
+
+  // await db.runSql(
+  //   `DROP TABLE IF EXISTS exercise_submission, ab_testing_data, test_survey, quickbar_stats, prototype_thread_status, private_link_prototype, mitmach_woche, equations_app_stats`,
+  // )
+
   await db.runSql(`
   CREATE TABLE exercise_submission (
     id int NOT NULL AUTO_INCREMENT,
