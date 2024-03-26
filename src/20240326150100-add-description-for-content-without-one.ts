@@ -47,7 +47,8 @@ async function createDescriptions(
             AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
             AND instance_id = 1
           )
-       AND (description_field.value is null or description_field.value = "")
+        AND (description_field.value is null or description_field.value = "")
+        LIMIT 100
     `)
 
   const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
