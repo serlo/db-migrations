@@ -62,6 +62,50 @@ createMigration(exports, {
         KEY quickbar_stats_timestamp_idx (timestamp)
       )
     `)
+
+    // ------------------------------------------------------------------------------------
+    // Tables below this line are no longer actively used, but are kept for historical data
+    // ------------------------------------------------------------------------------------
+
+    await db.runSql(`
+      CREATE TABLE mitmach_woche (
+        id int NOT NULL AUTO_INCREMENT,
+        path varchar(1024) NOT NULL,
+        is_production tinyint(1) NOT NULL,
+        event varchar(24) NOT NULL,
+        timestamp datetime(3) NOT NULL DEFAULT current_timestamp(3),
+        PRIMARY KEY (id)
+      )
+    `)
+
+    await db.runSql(`
+      CREATE TABLE private_link_prototype (
+        link_key varchar(64) NOT NULL,
+        id int NOT NULL,
+        content text NOT NULL,
+        title varchar(128) NOT NULL,
+        timestamp datetime(3) NOT NULL DEFAULT current_timestamp(3),
+        UNIQUE KEY private_link_prototype_key_key (link_key)
+      )
+    `)
+
+    await db.runSql(`
+      CREATE TABLE prototype_thread_status (
+        thread_id varchar(24) NOT NULL,
+        status varchar(24) NOT NULL,
+        PRIMARY KEY (thread_id)
+      )`)
+
+    await db.runSql(`
+      CREATE TABLE test_survey (
+        id int NOT NULL AUTO_INCREMENT,
+        path varchar(1024) COLLATE utf8mb4_unicode_ci NOT NULL,
+        is_production tinyint(1) NOT NULL,
+        event varchar(24) COLLATE utf8mb4_unicode_ci NOT NULL,
+        timestamp datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        PRIMARY KEY (id)
+      )
+    `)
   },
   down: async (db) => {
     await db.runSql(
