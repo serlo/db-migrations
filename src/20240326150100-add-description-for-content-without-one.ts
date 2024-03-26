@@ -48,7 +48,6 @@ async function createDescriptions(
             AND instance_id = 1
           )
         AND (description_field.value is null or description_field.value = "")
-        LIMIT 100
     `)
 
   const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
