@@ -125,7 +125,7 @@ async function getRevisionsWithDescription(
 
     revisions.push({
       ...revision,
-      description: `${description} [KI generiert]`,
+      description,
     })
   }
 
