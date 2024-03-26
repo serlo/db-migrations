@@ -62,9 +62,8 @@ async function createDescriptions(
       await db.runSql(
         `
           UPDATE entity_revision_field
-          SET value = ?,
-          SET is_ai_generated = 1,
-          WHERE entity_revision_id.id = ?
+          SET value = ?, is_ai_generated = 1
+          WHERE entity_revision_field.id = ?
         `,
         [revision.description, revision.descriptionId],
       )
