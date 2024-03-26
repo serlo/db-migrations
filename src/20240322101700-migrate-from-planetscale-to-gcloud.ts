@@ -72,12 +72,13 @@ createMigration(exports, {
       )
     `)
 
-    await db.runSql(`
-      CREATE TABLE prototype_thread_status (
-        thread_id varchar(24) NOT NULL,
-        status varchar(24) NOT NULL,
-        PRIMARY KEY (thread_id)
-      )`)
+    // TODO: Remove prototype_thread_status
+    // await db.runSql(`
+    //   CREATE TABLE prototype_thread_status (
+    //     thread_id varchar(24) NOT NULL,
+    //     status varchar(24) NOT NULL,
+    //     PRIMARY KEY (thread_id)
+    //   )`)
 
     await db.runSql(`
       CREATE TABLE quickbar_stats (
