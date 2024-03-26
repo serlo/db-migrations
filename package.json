@@ -21,6 +21,7 @@
     "lint:prettier": "yarn _prettier --check",
     "lint:tsc": "tsc --noEmit --project tsconfig.json",
     "migrate:docker": "docker compose run --build --rm server-migrate",
+    "migrate:down": "yarn db-migrate -m migrations down",
     "migrate:run": "scripts/run_migrations.sh",
     "migrate:all": "npm-run-all build:all migrate:up",
     "migrate:up": "yarn db-migrate -m migrations up",
