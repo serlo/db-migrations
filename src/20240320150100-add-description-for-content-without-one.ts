@@ -1,26 +1,22 @@
 import { OpenAI } from 'openai'
 
-import { createMigration, Database, SlackLogger } from './utils'
+import { Database, SlackLogger } from './utils'
 
-createMigration(exports, {
-  up: async function (db) {
-    if (
-      process.env.CI === 'true' ||
-      process.env.OPENAI_API_KEY === 'sk-whatever'
-    ) {
-      console.log(
-        'It is running in a CI environment or you are operating with invalid openai key. Skipping...',
-      )
-      return
-    }
-    const openAIClient = getAIClient()
-    const slackLogger = new SlackLogger(
-      'add-description-for-content-without-one',
+export async function up(db: Database) {
+  if (
+    process.env.CI === 'true' ||
+    process.env.OPENAI_API_KEY === 'sk-whatever'
+  ) {
+    console.log(
+      'It is running in a CI environment or you are operating with invalid openai key. Skipping...',
     )
-    await createDescriptions(db, openAIClient, slackLogger)
-    await slackLogger.closeAndSend()
-  },
-})
+    return
+  }
+  const openAIClient = getAIClient()
+  const slackLogger = new SlackLogger('add-description-for-content-without-one')
+  await createDescriptions(db, openAIClient, slackLogger)
+  await slackLogger.closeAndSend()
+}
 
 async function createDescriptions(
   db: Database,
