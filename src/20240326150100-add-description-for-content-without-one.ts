@@ -138,7 +138,7 @@ async function generateDescription(
     {
       // Regarding `as const` see https://github.com/openai/openai-node/issues/639
       role: 'system' as const,
-      content: `Antworte mit einer 60 bis 160 Zeichen langen Inhaltsbeschreibung des folgenden Textes: ${plainTextContent}`,
+      content: `Antworte mit einer 60 bis maximal 160 Zeichen langen Inhaltsbeschreibung des folgenden Textes: ${plainTextContent}`,
     },
   ]
 
