@@ -33,21 +33,21 @@ async function createDescriptions(
         erf.value as content,
         description_field.id as descriptionId
       FROM entity_revision_field erf
-      LEFT JOIN entity_revision_field description_field ON
-        erf.entity_revision_id = description_field.entity_revision_id
+      LEFT JOIN entity_revision_field description_field
+        ON erf.entity_revision_id = description_field.entity_revision_id
         AND description_field.field = "meta_description"
-      WHERE
-        erf.field = "content"
-        AND erf.entity_revision_id IN
-          (
-            SELECT current_revision_id FROM entity
-            JOIN uuid ON uuid.id = entity.id
-            JOIN type ON type.id = type_id
-            WHERE trashed = 0
-            AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
-            AND instance_id = 1
-          )
-        AND (description_field.value is null or description_field.value = "")
+      WHERE erf.field = "content"
+      AND erf.entity_revision_id IN
+      (
+        SELECT current_revision_id FROM entity
+        JOIN uuid ON uuid.id = entity.id
+        JOIN type ON type.id = type_id
+        WHERE trashed = 0
+        AND type.name IN ("applet", "article", "course", "text-exercise", "text-exercise-group")
+        AND instance_id = 1
+      )
+      AND (description_field.value is null or description_field.value = "")
+      LIMIT 100
     `)
 
   const revisionsWithGeneratedDescription = await getRevisionsWithDescription(
