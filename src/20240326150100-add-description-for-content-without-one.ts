@@ -29,16 +29,16 @@ async function createDescriptions(
     descriptionId: number | null
   }[] = await db.runSql(`
       SELECT
-        entity_revision_id as revisionId,
-        value as content,
+        erf.entity_revision_id as revisionId,
+        erf.value as content,
         description_field.id as descriptionId
-      FROM entity_revision_field
-      LEFT JOIN entity_revision_field description_field on
-        entity_revision_field.entity_revision_id = description_field.entity_revision_id
+      FROM entity_revision_field erf
+      LEFT JOIN entity_revision_field description_field ON
+        erf.entity_revision_id = description_field.entity_revision_id
         AND description_field.field = "meta_description"
       WHERE
-        field = "content"
-        AND entity_revision_id IN
+        erf.field = "content"
+        AND erf.entity_revision_id IN
           (
             SELECT current_revision_id FROM entity
             JOIN uuid ON uuid.id = entity.id
