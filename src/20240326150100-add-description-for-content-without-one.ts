@@ -61,7 +61,7 @@ async function createDescriptions(
       await db.runSql(
         `
           UPDATE entity_revision_field
-          SET value = ?, is_ai_generated = 1
+          SET value = ?, is_meta_description_ai_generated = 'true'
           WHERE entity_revision_field.id = ?
         `,
         [revision.description, revision.descriptionId],
@@ -69,8 +69,8 @@ async function createDescriptions(
     } else {
       await db.runSql(
         `
-          INSERT INTO entity_revision_field (field, entity_revision_id, value, is_ai_generated)
-          VALUES ('meta_description', ?, ?, 1)
+          INSERT INTO entity_revision_field (field, entity_revision_id, value, is_meta_description_ai_generated)
+          VALUES ('meta_description', ?, ?, 'true')
         `,
         [revision.revisionId, revision.description],
       )
