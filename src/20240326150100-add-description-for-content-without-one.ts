@@ -117,7 +117,7 @@ async function getRevisionsWithDescription(
 
     slackLogger.logEvent(`createDescription`, {
       revisionId: revision.revisionId,
-      originalContent: revision.content,
+      plainTextContent,
       newDescription: description,
     })
 
