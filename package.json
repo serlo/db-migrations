@@ -46,7 +46,7 @@
   "devDependencies": {
     "@jest/types": "^29.6.3",
     "@slack/web-api": "^7.0.2",
-    "@tsconfig/node18": "^18.2.3",
+    "@tsconfig/node18": "^18.2.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.19.26",
     "@types/ramda": "^0.29.11",
