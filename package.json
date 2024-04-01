@@ -48,7 +48,7 @@
     "@slack/web-api": "^7.0.2",
     "@tsconfig/node18": "^18.2.3",
     "@types/jest": "^29.5.12",
-    "@types/node": "^18.19.26",
+    "@types/node": "^18.19.28",
     "@types/ramda": "^0.29.11",
     "@types/semver": "^7.5.8",
     "depcheck": "^1.4.7",
