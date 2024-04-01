@@ -49,7 +49,7 @@
     "@tsconfig/node18": "^18.2.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.19.28",
-    "@types/ramda": "^0.29.11",
+    "@types/ramda": "^0.29.12",
     "@types/semver": "^7.5.8",
     "depcheck": "^1.4.7",
     "dotenv": "^16.4.5",
