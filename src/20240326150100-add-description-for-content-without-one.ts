@@ -138,7 +138,7 @@ async function generateDescription(
     {
       // Regarding `as const` see https://github.com/openai/openai-node/issues/639
       role: 'system' as const,
-      content: `Given the following German-language content, generate an SEO-optimized meta description. The description should be concise, accurately summarize the key points and topics covered, and include relevant keywords to enhance searchability. Aim for a length of around 130 characters to ensure it fits within search engine snippet limits. : ${plainTextContent}`,
+      content: `Given the following German-language content, generate an SEO-optimized meta description. The description should be concise, accurately summarize the key points and topics covered, and include relevant keywords to enhance searchability. Please use the informal 'Du' form to align with the audience of school students Aim for a length of around 100 characters to ensure it fits within search engine snippet limits. : ${plainTextContent}`,
     },
   ]
 
