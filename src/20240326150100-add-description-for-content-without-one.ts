@@ -1,4 +1,5 @@
 import { OpenAI } from 'openai'
+import Redis from 'ioredis'
 
 import { Database, SlackLogger } from './utils'
 
@@ -27,12 +28,15 @@ async function createDescriptions(
     revisionId: number
     content: string
     descriptionId: number | null
+    entityId: number
   }[] = await db.runSql(`
       SELECT
         erf.entity_revision_id as revisionId,
         erf.value as content,
-        description_field.id as descriptionId
+        description_field.id as descriptionId,
+        entity.current_revision_id
       FROM entity_revision_field erf
+      JOIN entity ON erf.entity_revision_id = entity.current_revision_id
       LEFT JOIN entity_revision_field description_field
         ON erf.entity_revision_id = description_field.entity_revision_id
         AND description_field.field = "meta_description"
@@ -76,6 +80,20 @@ async function createDescriptions(
       )
     }
   }
+  deleteCacheKeys(
+    revisionsWithoutDescription.map(
+      (item) => `de.serlo.org/api/uuid/${item.entityId}`,
+    ),
+  )
+}
+
+function deleteCacheKeys(keys: string[]) {
+  if (typeof process.env.REDIS_URL !== 'string') {
+    throw new Error('Env `REDIS_URL` is not defined')
+  }
+  const redis = new Redis(process.env.REDIS_URL)
+  redis.del(keys)
+  redis.quit()
 }
 
 async function getRevisionsWithDescription(
