@@ -1183,7 +1183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.30":
+"@types/node@npm:^18.11.18, @types/node@npm:^18.19.30":
   version: 18.19.30
   resolution: "@types/node@npm:18.19.30"
   dependencies:
