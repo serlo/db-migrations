@@ -34,7 +34,7 @@ async function createDescriptions(
         erf.entity_revision_id as revisionId,
         erf.value as content,
         description_field.id as descriptionId,
-        entity.current_revision_id
+        entity.id as entityId
       FROM entity_revision_field erf
       JOIN entity ON erf.entity_revision_id = entity.current_revision_id
       LEFT JOIN entity_revision_field description_field
