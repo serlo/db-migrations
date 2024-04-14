@@ -1,6 +1,6 @@
 {
   "include": ["src", "__tests__", "scripts"],
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "declaration": false,
     "esModuleInterop": true,
