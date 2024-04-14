@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base_image
+FROM node:20-alpine AS base_image
 WORKDIR /app
 
 FROM base_image as build_node_modules
