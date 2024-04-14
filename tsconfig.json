@@ -7,8 +7,5 @@
     "module": "esnext",
     "moduleResolution": "node",
     "sourceMap": false
-  },
-  "ts-node": {
-    "esm": true
   }
 }

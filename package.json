@@ -7,7 +7,7 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "_prettier": "prettier .",
-    "build": "ts-node -T --experimental-specifier-resolution=node scripts/build",
+    "build": "tsx scripts/build.ts",
     "build:all": "yarn build src/*ts",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json",
@@ -67,6 +67,7 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "ts-unused-exports": "^10.0.1",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.4"
   },
   "packageManager": "yarn@3.6.1",
