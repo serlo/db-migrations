@@ -7,7 +7,7 @@
   "author": "Serlo Education e.V.",
   "scripts": {
     "_prettier": "prettier .",
-    "build": "ts-node -T --experimental-specifier-resolution=node scripts/build",
+    "build": "tsx scripts/build.ts",
     "build:all": "yarn build src/*ts",
     "check:unused-dependencies": "depcheck",
     "check:unused-exports": "ts-unused-exports tsconfig.json",
@@ -32,7 +32,7 @@
     "mysql:list-migrations": "yarn mysql --execute 'SELECT * FROM migrations'",
     "mysql:rollback": "docker compose exec mysql sh -c \"pv /docker-entrypoint-initdb.d/001-init.sql | serlo-mysql\"",
     "new": "./scripts/touch_file.sh",
-    "push-image": "ts-node -T --experimental-specifier-resolution=node scripts/push-image",
+    "push-image": "tsx scripts/push-image.ts",
     "redis": "docker compose exec redis redis-cli",
     "start": "yarn start:docker",
     "start:docker": "docker compose up mysql redis --detach",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@jest/types": "^29.6.3",
     "@slack/web-api": "^7.0.2",
-    "@tsconfig/node18": "^18.2.4",
+    "@tsconfig/node20": "^20.1.4",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.19.31",
     "@types/ramda": "^0.29.12",
@@ -67,6 +67,7 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "ts-unused-exports": "^10.0.1",
+    "tsx": "^4.7.2",
     "typescript": "^5.4.5"
   },
   "packageManager": "yarn@3.6.1",

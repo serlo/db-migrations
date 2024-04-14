@@ -30,7 +30,7 @@ async function main() {
       bundle: true,
       platform: 'node',
       format: 'cjs',
-      target: 'node18',
+      target: 'node20',
       outfile,
     })
   }
