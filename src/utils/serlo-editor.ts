@@ -63,7 +63,9 @@ export function transformPlugins(transformations: {
 }) {
   return transformLists((value) => {
     if (isPlugin(value)) {
-      const transformFunc = transformations[value.plugin]
+      const transformFunc = transformations.allPlugins
+        ? transformations.allPlugins
+        : transformations[value.plugin]
 
       if (typeof transformFunc === 'function') {
         return transformFunc(value)
@@ -125,6 +127,7 @@ export type Transformation = (value: unknown) => unknown
 export interface Plugin {
   plugin: string
   state: unknown
+  id?: string
 }
 
 const SlateNodeDecoder = t.type({ type: t.string })

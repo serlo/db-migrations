@@ -16,10 +16,9 @@ Note: Also make sure you have `cmake` installed on your machine (e.g.
 
 ## Add a new migration
 
-1. Go to [`src`](./src) and add a new file. It's name needs to be
-   `YYYYMMDDHHMMSS-xyz.ts` (The prefix of the number for the date when you have
-   added the file are important). It is a good idea to copy and paste one of the
-   current migration as a template for the new one. Example:
+1. Run `yarn new` to create a new file with the migration timestamp. You can copy and paste one of the existing migrations as a template for the new one.
+
+Example:
 
 - [`src/20220614111600-make-subjects-in-construction-a-subject.ts`](./src/20220614111600-make-subjects-in-construction-a-subject.ts)
   when you just want to execute SQL statements.
@@ -27,8 +26,7 @@ Note: Also make sure you have `cmake` installed on your machine (e.g.
   when you want to migrate edtr-io plugins
 
 2. You need to build a migration by running
-`yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
-new file in `migrations`. Both files in `migrations` and `src` need to be added
+`yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a new file in `migrations`. Both files in `migrations` and `src` need to be added
 in the PR. _Notice that any changes in other directories that are imported by
 the file will be built together!_
 <!-- TODO: in conception still in the new infrastructure.
