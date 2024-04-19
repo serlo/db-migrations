@@ -16,7 +16,8 @@ Note: Also make sure you have `cmake` installed on your machine (e.g.
 
 ## Add a new migration
 
-1. Run `yarn new` to create a new file with the migration timestamp. You can copy and paste one of the existing migrations as a template for the new one.
+1. Run `yarn new` to create a new file with the migration timestamp. You can
+   copy and paste one of the existing migrations as a template for the new one.
 
 Example:
 
@@ -26,7 +27,8 @@ Example:
   when you want to migrate edtr-io plugins
 
 2. You need to build a migration by running
-`yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a new file in `migrations`. Both files in `migrations` and `src` need to be added
+`yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
+new file in `migrations`. Both files in `migrations` and `src` need to be added
 in the PR. _Notice that any changes in other directories that are imported by
 the file will be built together!_
 <!-- TODO: in conception still in the new infrastructure.
