@@ -1110,6 +1110,7 @@ __metadata:
     "@types/node": ^18.19.31
     "@types/ramda": ^0.29.12
     "@types/semver": ^7.5.8
+    "@types/uuid": ^9.0.8
     db-migrate: ^0.11.14
     db-migrate-mysql: ^2.3.2
     depcheck: ^1.4.7
@@ -1389,6 +1390,13 @@ __metadata:
   version: 2.0.3
   resolution: "@types/stack-utils@npm:2.0.3"
   checksum: 72576cc1522090fe497337c2b99d9838e320659ac57fa5560fcbdcbafcf5d0216c6b3a0a8a4ee4fdb3b1f5e3420aa4f6223ab57b82fef3578bec3206425c6cf5
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^9.0.8":
+  version: 9.0.8
+  resolution: "@types/uuid@npm:9.0.8"
+  checksum: b8c60b7ba8250356b5088302583d1704a4e1a13558d143c549c408bf8920535602ffc12394ede77f8a8083511b023704bc66d1345792714002bfa261b17c5275
   languageName: node
   linkType: hard
 
