@@ -2,10 +2,12 @@
 
 set -e
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 main() {
   clear_build_outdir
   build_migrations_into_build_outdir "$@"
-  ./wait-for-mysql.sh
+  "$DIR/mysql/wait-for-mysql.sh"
   delete_migrations_in_mysql "$@"
   run_migrations_in_build_outdir
 }
