@@ -2,7 +2,7 @@
 
 set -e
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+DIR="$(dirname "$0")"
 
 main() {
   clear_build_outdir
