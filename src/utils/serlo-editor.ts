@@ -58,14 +58,20 @@ function updatePlugins(
   return applyChangeToChildren
 }
 
+export function transformAllPlugins(transformFunc: ListTransformation<Plugin>) {
+  return transformLists((value) => {
+    if (isPlugin(value)) {
+      return transformFunc(value)
+    }
+  })
+}
+
 export function transformPlugins(transformations: {
   [key in string]?: ListTransformation<Plugin>
 }) {
   return transformLists((value) => {
     if (isPlugin(value)) {
-      const transformFunc = transformations.allPlugins
-        ? transformations.allPlugins
-        : transformations[value.plugin]
+      const transformFunc = transformations[value.plugin]
 
       if (typeof transformFunc === 'function') {
         return transformFunc(value)

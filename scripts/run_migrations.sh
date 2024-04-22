@@ -5,6 +5,7 @@ set -e
 main() {
   clear_build_outdir
   build_migrations_into_build_outdir "$@"
+  ./wait-for-mysql.sh
   delete_migrations_in_mysql "$@"
   run_migrations_in_build_outdir
 }
@@ -35,6 +36,7 @@ delete_migrations_in_mysql() {
 
   yarn mysql --execute "DELETE FROM migrations WHERE name IN ($MIGRATIONS)"
 }
+
 
 run_migrations_in_build_outdir() {
   yarn migrate:up
