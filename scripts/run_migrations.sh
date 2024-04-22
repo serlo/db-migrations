@@ -7,9 +7,15 @@ DIR="$(dirname "$0")"
 main() {
   clear_build_outdir
   build_migrations_into_build_outdir "$@"
-  "$DIR/mysql/wait-for-mysql.sh"
+  wait_for_mysql
   delete_migrations_in_mysql "$@"
   run_migrations_in_build_outdir
+}
+
+wait_for_mysql() {
+  if docker compose ps | grep -q "mysql"; then
+    "$DIR/mysql/wait-for-mysql.sh"
+  end
 }
 
 clear_build_outdir() {
