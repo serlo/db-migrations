@@ -15,7 +15,7 @@ main() {
 wait_for_mysql() {
   if docker compose ps | grep -q "mysql"; then
     "$DIR/mysql/wait-for-mysql.sh"
-  end
+  fi
 }
 
 clear_build_outdir() {
