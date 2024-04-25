@@ -61,14 +61,3 @@ then be run every night after the new anonymous data import. If you then find an
 error and want to deploy a fixed version of the migration, run the `dbsetup` job
 on the staging cluster to undo the changes of the erroneous migration first
 before deploying the fixed version of `db-migrations`.
-
-### Run migration with the mysql database running in another docker container
-
-If you already have the database running from the container in the
-database-layer, or with `make up` inside the
-[database-repo](https://github.com/serlo/serlo-mysql-database), you can simply
-replace the mysql script in package.json with following command:
-`"mysql --password=secret --user=root --protocol=tcp serlo"`
-
-You may also need to comment out the line that executes `wait-for-mysql.sh` in
-the `run_migration.sh` file.
