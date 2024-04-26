@@ -61,3 +61,8 @@ then be run every night after the new anonymous data import. If you then find an
 error and want to deploy a fixed version of the migration, run the `dbsetup` job
 on the staging cluster to undo the changes of the erroneous migration first
 before deploying the fixed version of `db-migrations`.
+
+### Deployment
+
+Before running `yarn push-image`, make sure that you are authenticated with
+gcloud and have run `gcloud auth configure-docker`.

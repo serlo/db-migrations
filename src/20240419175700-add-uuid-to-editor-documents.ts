@@ -9,8 +9,6 @@ import {
 
 export async function up(db: Database) {
   const apiCache = new ApiCache()
-  const logger = new SlackLogger('20240419175700-add-uuid-to-editor-documents')
-
   await migrateSerloEditorContent({
     apiCache,
     db,
@@ -30,8 +28,6 @@ export async function up(db: Database) {
       return [plugin]
     }),
   })
-
-  await logger.closeAndSend()
 
   await apiCache.deleteKeysAndQuit()
 }
