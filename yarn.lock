@@ -1120,14 +1120,14 @@ __metadata:
     ioredis: ^5.4.1
     jest: ^29.7.0
     npm-run-all: ^4.1.5
-    openai: ^4.38.2
+    openai: ^4.38.5
     prettier: ^3.2.5
-    ramda: ^0.29.1
+    ramda: ^0.30.0
     semver: ^7.6.0
     ts-jest: ^29.1.2
     ts-node: ^10.9.2
     ts-unused-exports: ^10.0.1
-    tsx: ^4.7.2
+    tsx: ^4.7.3
     typescript: ^5.4.5
   languageName: unknown
   linkType: soft
@@ -4965,9 +4965,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.38.2":
-  version: 4.38.2
-  resolution: "openai@npm:4.38.2"
+"openai@npm:^4.38.5":
+  version: 4.38.5
+  resolution: "openai@npm:4.38.5"
   dependencies:
     "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.4
@@ -4979,7 +4979,7 @@ __metadata:
     web-streams-polyfill: ^3.2.1
   bin:
     openai: bin/cli
-  checksum: 5f21e3ddded38f0bdaa62abb8300aa64f16156bebbab54b1fbcda559853ac9bfa65ea01bb04581104d9884e618a2aec212f18eddbe00e5af0bfaca548078aa85
+  checksum: 4b8331df1cf5667fa36b7b7fc1cd7a4385613be3a4bc55f280b662a4d711bfddb5f21589d4eb80468cbe6cc37635d4ba9f3eaf3b48744f3a0929b83b4c84f490
   languageName: node
   linkType: hard
 
@@ -5317,10 +5317,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ramda@npm:^0.29.1":
-  version: 0.29.1
-  resolution: "ramda@npm:0.29.1"
-  checksum: df7c627597a66d5f317f6ba77ad17d7ba818efc9c2c4a638440bc23f2c651e823970ea05b05a28895738c0e4b738fadbdc17b2c97b3ad922826febc09c859c44
+"ramda@npm:^0.30.0":
+  version: 0.30.0
+  resolution: "ramda@npm:0.30.0"
+  checksum: a2b0bfc3d505193a759e5d3a25f617fbfb0dfa4d30ee6917d1975142dbcc1bc92e8465467cc3ccf9260e4d2011aba639db7a915eb376ca485191aff51bad03d8
   languageName: node
   linkType: hard
 
@@ -6185,9 +6185,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.7.2":
-  version: 4.7.2
-  resolution: "tsx@npm:4.7.2"
+"tsx@npm:^4.7.3":
+  version: 4.7.3
+  resolution: "tsx@npm:4.7.3"
   dependencies:
     esbuild: ~0.19.10
     fsevents: ~2.3.3
@@ -6197,7 +6197,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 34c4fbbfb96848e05e39d5c55da51815f0856386428ad781a6df79e88ad62d83e9a071a3997a230ea7b45654cb215262267ac1202c31b67056359d386f6a9f65
+  checksum: aa0476760f387bdb1bcac038edb2b8b6d852558a947fd6698ba32c160842c8d9705d96caa7a719acc1e7b102a2b79a2ad97df9c54a9b6dc2fba6e26f607b34e3
   languageName: node
   linkType: hard
 
