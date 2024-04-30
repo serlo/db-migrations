@@ -58,6 +58,15 @@ function updatePlugins(
   return applyChangeToChildren
 }
 
+export function transformAllPlugins(transformFunc: ListTransformation<Plugin>) {
+  return transformRecursively((value) => {
+    if (isPlugin(value)) {
+      const transformedPlugin = transformFunc(value)
+      return transformedPlugin
+    }
+  })
+}
+
 export function transformPlugins(transformations: {
   [key in string]?: ListTransformation<Plugin>
 }) {
@@ -86,6 +95,41 @@ export function transformSlateTypes(transformations: {
   })
 }
 
+/**
+ * Transforms objects and arrays recursively
+ */
+function transformRecursively(
+  transform: ListTransformation<unknown>,
+): Transformation {
+  function applyTransformation(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      const newValue = value.flatMap((element) => {
+        const transformation = transform(element)
+
+        return transformation !== undefined ? transformation : [element]
+      })
+
+      return newValue.map(applyTransformation)
+    }
+
+    if (typeof value === 'object' && value !== null) {
+      const newValue = transform(value)
+      if (newValue && newValue[0]) {
+        return R.mapObjIndexed(applyTransformation, newValue[0])
+      }
+
+      return R.mapObjIndexed(applyTransformation, value)
+    }
+
+    return value
+  }
+
+  return applyTransformation
+}
+
+/**
+ * Only transforms lists, not objects.
+ */
 function transformLists(
   transform: ListTransformation<unknown>,
 ): Transformation {
@@ -125,6 +169,7 @@ export type Transformation = (value: unknown) => unknown
 export interface Plugin {
   plugin: string
   state: unknown
+  id?: string
 }
 
 const SlateNodeDecoder = t.type({ type: t.string })

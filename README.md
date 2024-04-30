@@ -16,10 +16,10 @@ Note: Also make sure you have `cmake` installed on your machine (e.g.
 
 ## Add a new migration
 
-1. Go to [`src`](./src) and add a new file. It's name needs to be
-   `YYYYMMDDHHMMSS-xyz.ts` (The prefix of the number for the date when you have
-   added the file are important). It is a good idea to copy and paste one of the
-   current migration as a template for the new one. Example:
+1. Run `yarn new` to create a new file with the migration timestamp. You can
+   copy and paste one of the existing migrations as a template for the new one.
+
+Example:
 
 - [`src/20220614111600-make-subjects-in-construction-a-subject.ts`](./src/20220614111600-make-subjects-in-construction-a-subject.ts)
   when you just want to execute SQL statements.
@@ -61,3 +61,8 @@ then be run every night after the new anonymous data import. If you then find an
 error and want to deploy a fixed version of the migration, run the `dbsetup` job
 on the staging cluster to undo the changes of the erroneous migration first
 before deploying the fixed version of `db-migrations`.
+
+### Deployment
+
+Before running `yarn push-image`, make sure that you are authenticated with
+gcloud and have run `gcloud auth configure-docker`.
