@@ -53,7 +53,7 @@ const ChildContentDecoder = t.type({
         plugin: t.literal('rows'),
       }),
     }),
-    //t.partial({ licenseId: t.number }),
+    t.partial({ title: t.string }),
   ]),
   id: t.string,
 })
