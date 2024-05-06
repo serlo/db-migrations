@@ -53,7 +53,7 @@ const ChildContentDecoder = t.type({
         plugin: t.literal('rows'),
       }),
     }),
-    t.partial({ licenseId: t.number }),
+    //t.partial({ licenseId: t.number }),
   ]),
   id: t.string,
 })
@@ -185,6 +185,27 @@ async function updateExerciseGroup(
       let content = JSON.parse(value.revision.content)
       const id = `${value.id}-course-page`
 
+      if ('cells' in content) {
+        console.warn(
+          `Splish content found for child ${value.id} with current revision ${value.revision.id}`,
+        )
+
+        content = {
+          plugin: 'rows',
+          state: [
+            {
+              plugin: 'unsupported',
+              state: {
+                plugin: 'splishContent',
+                state: content,
+              },
+              id: uuidv4(),
+            },
+          ],
+          id: uuidv4(),
+        }
+      }
+
       if (RowPluginDecoder.is(content)) {
         content = {
           plugin: 'coursePage',
@@ -193,7 +214,6 @@ async function updateExerciseGroup(
       }
 
       content.id = id
-      content.state.title = value.revision.title ?? `Course page ${value.id}`
 
       if (!ChildContentDecoder.is(content)) {
         console.log({ content: JSON.stringify(content, undefined, 2) })
@@ -202,6 +222,7 @@ async function updateExerciseGroup(
         )
       }
 
+      content.state.title = value.revision.title ?? `Course page ${value.id}`
       // Uncomment when license need to be updated as well
       /*
       if (currentParent.licenseId !== value.licenseId) {
