@@ -45,18 +45,17 @@ export async function up(db: Database) {
   }
 }
 
-const ChildContentDecoder = t.type({
-  plugin: t.literal('coursePage'),
-  state: t.intersection([
-    t.type({
-      content: t.type({
-        plugin: t.literal('rows'),
-      }),
+const ChildContentDecoder = t.intersection([
+  t.type({
+    content: t.type({
+      plugin: t.literal('rows'),
     }),
-    t.partial({ title: t.string }),
-  ]),
-  id: t.string,
-})
+  }),
+  t.partial({
+    title: t.string,
+    id: t.string,
+  }),
+])
 const ParentContentDecoder = t.type({
   plugin: t.literal('course'),
   state: t.record(t.string, t.unknown),
@@ -207,10 +206,7 @@ async function updateExerciseGroup(
       }
 
       if (RowPluginDecoder.is(content)) {
-        content = {
-          plugin: 'coursePage',
-          state: { content },
-        }
+        content = { content }
       }
 
       content.id = id
@@ -222,7 +218,7 @@ async function updateExerciseGroup(
         )
       }
 
-      content.state.title = value.revision.title ?? `Course page ${value.id}`
+      content.title = value.revision.title ?? `Course page ${value.id}`
       // Uncomment when license need to be updated as well
       /*
       if (currentParent.licenseId !== value.licenseId) {
