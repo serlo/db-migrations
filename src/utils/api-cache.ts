@@ -9,6 +9,22 @@ export class ApiCache {
 
     if (typeof process.env.REDIS_URL === 'string') {
       this.redis = new Redis(process.env.REDIS_URL)
+
+      this.redis.on('error', (err) => {
+        console.error(err)
+
+        // In a local environment we sometimes want to run a migration
+        // without redis beeing set up => in this situation we close the
+        // connection
+        if (
+          err.message.includes('ECONNREFUSED') &&
+          process.env.ENVIRONMENT === 'local'
+        ) {
+          console.log('INFO: Close redis connection in local environment')
+
+          this.redis.quit()
+        }
+      })
     } else {
       throw new Error('Env `REDIS_URL` is not defined')
     }
@@ -43,10 +59,12 @@ export class ApiCache {
   }
 
   public async deleteKeysAndQuit() {
-    if (this.keys.size > 0) {
-      await this.redis.del(Array.from(this.keys))
+    if (process.env.ENVIRONMENT !== 'local' || this.redis.status === 'ready') {
+      if (this.keys.size > 0) {
+        await this.redis.del(Array.from(this.keys))
+      }
+      await this.redis.quit()
     }
-    await this.redis.quit()
   }
 
   private markKey(key: string) {
