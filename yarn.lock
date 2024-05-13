@@ -1128,7 +1128,7 @@ __metadata:
     ts-jest: ^29.1.2
     ts-node: ^10.9.2
     ts-unused-exports: ^10.0.1
-    tsx: ^4.9.3
+    tsx: ^4.10.1
     typescript: ^5.4.5
     uuid: ^9.0.1
   languageName: unknown
@@ -6203,9 +6203,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.9.3":
-  version: 4.9.3
-  resolution: "tsx@npm:4.9.3"
+"tsx@npm:^4.10.1":
+  version: 4.10.1
+  resolution: "tsx@npm:4.10.1"
   dependencies:
     esbuild: ~0.20.2
     fsevents: ~2.3.3
@@ -6215,7 +6215,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 92e595a3f4fe7e14bca087fe26d91117ff7951523b3d19028d4b33429b168bd58c8ae4585d666f267861ceaf2b7d82514cbd9a2a370563fce1a1339c1f3a7920
+  checksum: b3ec6ecc50461cfb4881d074b2b83e5ed87848d2bab1c4dbdea75829ac76dbf45371f4003715aab2837cb2837dc6eaf2fbe5fbcc0c85332f443393fa6afbccbb
   languageName: node
   linkType: hard
 
