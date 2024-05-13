@@ -960,7 +960,7 @@ __metadata:
     ioredis: ^5.4.1
     jest: ^29.7.0
     npm-run-all: ^4.1.5
-    openai: ^4.41.0
+    openai: ^4.45.0
     prettier: ^3.2.5
     ramda: ^0.30.0
     semver: ^7.6.0
@@ -4733,9 +4733,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.41.0":
-  version: 4.41.0
-  resolution: "openai@npm:4.41.0"
+"openai@npm:^4.45.0":
+  version: 4.45.0
+  resolution: "openai@npm:4.45.0"
   dependencies:
     "@types/node": ^18.11.18
     "@types/node-fetch": ^2.6.4
@@ -4747,7 +4747,7 @@ __metadata:
     web-streams-polyfill: ^3.2.1
   bin:
     openai: bin/cli
-  checksum: 5e052b485813403ae51e8345ff86734012190d9c3d97fbc3e9714a298581387208eb3fec81030f8536a55da9eb8145230999d948d878aa6ea8b715d166bfc963
+  checksum: 24c491f5bf859b1b135a6966f86cde09d9f02f5d4749c3390cbfd3809f01bed9c7d209de3279780b83a17a55c3dd98ae8215a6089acaf07b2338758281b7e45b
   languageName: node
   linkType: hard
 
