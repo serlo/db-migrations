@@ -268,6 +268,36 @@ async function updateExerciseGroup(
         revisionToOvertake.revision.id,
       )
 
+      if (currentParent.revision.title != null) {
+        const { affectedRows } = await db.runSql<{ affectedRows: number }>(
+          `
+          update entity_revision_field set value = ?
+          where entity_revision_id = ? and field = "title"`,
+          currentParent.revision.title,
+          revisionToOvertake.revision.id,
+        )
+
+        if (affectedRows === 0) {
+          await db.runSql(
+            `insert into entity_revision_field
+            (entity_revision_id, field, value)
+            values (?, "title", ?)`,
+            revisionToOvertake.revision.id,
+            currentParent.revision.title,
+          )
+        }
+      }
+
+      if (currentParent.revision.description != null) {
+        await db.runSql(
+          `insert into entity_revision_field
+          (entity_revision_id, field, value)
+          values (?, "meta_description", ?)`,
+          revisionToOvertake.revision.id,
+          currentParent.revision.description,
+        )
+      }
+
       for (const child of parentNode.children) {
         // We need to update the current revision of the child -> Otherwise
         // staging would try to load the revision which results in an error
@@ -561,14 +591,21 @@ async function loadRevisions(
           entity_revision.id,
           entity_revision.date,
           entity_revision_field.value as content,
-          title.value as title
+          title.value as title,
+          COALESCE(meta_description.value, description.value) as description
       from entity_revision
       left join entity_revision_field on
           entity_revision_field.entity_revision_id = entity_revision.id
           and entity_revision_field.field = "content"
       left join entity_revision_field title on
           title.entity_revision_id = entity_revision.id
-          and entity_revision_field.field = "title"
+          and title.field = "title"
+      left join entity_revision_field description on
+          description.entity_revision_id = entity_revision.id
+          and description.field = "description"
+      left join entity_revision_field meta_description on
+          meta_description.entity_revision_id = entity_revision.id
+          and meta_description.field = "meta_description"
       where entity_revision.repository_id = ?
       order by entity_revision.date`,
     entityId,
@@ -649,6 +686,7 @@ interface Revision {
   date: Date
   content: string
   title: string | null
+  description: string | null
 }
 
 interface EntityBase {
