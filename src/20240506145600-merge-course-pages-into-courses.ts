@@ -328,13 +328,22 @@ async function updateExerciseGroup(
         }
       }
 
-      await migrate(
-        db,
+      const { affectedRows } = await db.runSql<{ affectedRows: number }>(
         ` update entity_revision_field set value = ?
           where entity_revision_id = ? and field = "content"`,
         newContent,
         revisionToOvertake.revision.id,
       )
+
+      if (affectedRows === 0) {
+        await db.runSql(
+          `insert into entity_revision_field
+            (entity_revision_id, field, value)
+            values (?, "content", ?)`,
+          revisionToOvertake.revision.id,
+          newContent,
+        )
+      }
 
       logger.logEvent('overtakeChildContent', {
         revisionToOvertake,
@@ -711,10 +720,6 @@ function isNotNull<A>(value: A | null): value is A {
 
 // I added this function so that I can easily outcomment all mutations in order
 // to avoid a rollback of the DB. -- Kulla
-async function migrate(
-  db: Database,
-  sql: string,
-  ...args: unknown[]
-): Promise<void> {
+async function migrate(db: Database, sql: string, ...args: unknown[]) {
   await db.runSql(sql, ...args)
 }
