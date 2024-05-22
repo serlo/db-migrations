@@ -236,13 +236,13 @@ async function updateExerciseGroup(
     if (edit.value != null) {
       // In this edit a parent revision was added -> We can change the
       // content of it
-      await migrate(
+
+      await updateEntityRevisionField({
         db,
-        ` update entity_revision_field set value = ?
-          where entity_revision_id = ? and field = "content"`,
-        newContent,
-        edit.value.revision.id,
-      )
+        revisionId: edit.value.revision.id,
+        field: 'content',
+        value: newContent,
+      })
 
       logger.logEvent('changeParentContent', {
         entityId: edit.value.id,
@@ -269,33 +269,21 @@ async function updateExerciseGroup(
       )
 
       if (currentParent.revision.title != null) {
-        const { affectedRows } = await db.runSql<{ affectedRows: number }>(
-          `
-          update entity_revision_field set value = ?
-          where entity_revision_id = ? and field = "title"`,
-          currentParent.revision.title,
-          revisionToOvertake.revision.id,
-        )
-
-        if (affectedRows === 0) {
-          await db.runSql(
-            `insert into entity_revision_field
-            (entity_revision_id, field, value)
-            values (?, "title", ?)`,
-            revisionToOvertake.revision.id,
-            currentParent.revision.title,
-          )
-        }
+        await updateEntityRevisionField({
+          db,
+          revisionId: revisionToOvertake.revision.id,
+          field: 'title',
+          value: currentParent.revision.title,
+        })
       }
 
       if (currentParent.revision.description != null) {
-        await db.runSql(
-          `insert into entity_revision_field
-          (entity_revision_id, field, value)
-          values (?, "meta_description", ?)`,
-          revisionToOvertake.revision.id,
-          currentParent.revision.description,
-        )
+        await updateEntityRevisionField({
+          db,
+          revisionId: revisionToOvertake.revision.id,
+          field: 'meta_description',
+          value: currentParent.revision.description,
+        })
       }
 
       for (const child of parentNode.children) {
@@ -328,22 +316,12 @@ async function updateExerciseGroup(
         }
       }
 
-      const { affectedRows } = await db.runSql<{ affectedRows: number }>(
-        ` update entity_revision_field set value = ?
-          where entity_revision_id = ? and field = "content"`,
-        newContent,
-        revisionToOvertake.revision.id,
-      )
-
-      if (affectedRows === 0) {
-        await db.runSql(
-          `insert into entity_revision_field
-            (entity_revision_id, field, value)
-            values (?, "content", ?)`,
-          revisionToOvertake.revision.id,
-          newContent,
-        )
-      }
+      await updateEntityRevisionField({
+        db,
+        revisionId: revisionToOvertake.revision.id,
+        field: 'content',
+        value: newContent,
+      })
 
       logger.logEvent('overtakeChildContent', {
         revisionToOvertake,
@@ -365,6 +343,37 @@ async function updateExerciseGroup(
     })
 
     apiCache.markUuid(child.value.id)
+  }
+}
+
+async function updateEntityRevisionField({
+  db,
+  revisionId,
+  field,
+  value,
+}: {
+  db: Database
+  revisionId: number
+  field: string
+  value: string
+}) {
+  const { affectedRows } = await db.runSql<{ affectedRows: number }>(
+    ` update entity_revision_field set value = ?
+          where entity_revision_id = ? and field = ?`,
+    value,
+    revisionId,
+    field,
+  )
+
+  if (affectedRows === 0) {
+    await db.runSql(
+      `insert into entity_revision_field
+            (entity_revision_id, field, value)
+            values (?, ?, ?)`,
+      revisionId,
+      field,
+      value,
+    )
   }
 }
 
