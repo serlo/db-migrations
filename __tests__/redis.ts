@@ -20,6 +20,8 @@ describe('deleteUuid', () => {
     apiCache.markUuid(1)
     await apiCache.deleteKeysAndQuit()
 
+    await wait(100) // wait for redis to delete the key
+
     expect(await redis.get('de.serlo.org/api/uuid/1')).toBeNull()
   })
 
@@ -30,3 +32,9 @@ describe('deleteUuid', () => {
     expect(await redis.get('de.serlo.org/api/uuid/42')).toBeNull()
   })
 })
+
+async function wait(duration: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration)
+  })
+}
