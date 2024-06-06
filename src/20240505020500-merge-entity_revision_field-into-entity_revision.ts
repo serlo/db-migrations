@@ -87,9 +87,19 @@ async function logTable({
 
   logger.logEvent('logTable', { tableName, definition })
 
-  const rows = await db.runSql<{ id: number }[]>(
-    `select * from ${tableName} where id > ? order by id limit 1000`,
-    lastId,
-  )
-  logger.logEvent('logTable', { tableName, rows })
+  while (true) {
+    const rows = await db.runSql<{ id: number }[]>(
+      `select * from ${tableName} where id > ? order by id limit 1000`,
+      lastId,
+    )
+
+    const lastRow = rows.at(-1)
+
+    logger.logEvent('logTable', { tableName, rows })
+
+    if (lastRow == null) break
+    lastId = lastRow.id
+
+    console.log({ lastId })
+  }
 }
