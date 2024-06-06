@@ -358,9 +358,8 @@ async function updateEntityRevisionField({
   value: string
 }) {
   const { affectedRows } = await db.runSql<{ affectedRows: number }>(
-    ` update entity_revision set ? = ?
+    ` update entity_revision set ${field} = ?
           where id = ?`,
-    field,
     value,
     revisionId,
   )
@@ -368,8 +367,8 @@ async function updateEntityRevisionField({
   if (affectedRows === 0) {
     await db.runSql(
       `insert into entity_revision
-            (entity_revision_id, ?)
-            values (?, ?)`,
+          (entity_revision_id, ?)
+          values (?, ?)`,
       field,
       revisionId,
       value,
@@ -610,7 +609,7 @@ async function loadRevisions(
           entity_revision.date,
           content,
           title,
-          COALESCE(meta_description, description) as description
+          meta_description as description
       from entity_revision
       where entity_revision.repository_id = ?
       order by entity_revision.date`,
