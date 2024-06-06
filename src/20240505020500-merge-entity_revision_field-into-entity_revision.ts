@@ -25,6 +25,7 @@ export async function up(db: Database) {
       params: Record<string, string | null>
     }
 
+    console.log({ count })
     const rows = await db.runSql<Row[]>(
       `
         select
@@ -62,6 +63,7 @@ export async function up(db: Database) {
     count += rows.length
   }
 
+  console.log('logging table')
   await logTable({ db, logger, tableName: 'entity_revision_field' })
 
   await db.dropTable('entity_revision_field')
