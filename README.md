@@ -27,10 +27,10 @@ Example:
   when you want to migrate edtr-io plugins
 
 2. You need to build a migration by running
-`yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
-new file in `migrations`. Both files in `migrations` and `src` need to be added
-in the PR. _Notice that any changes in other directories that are imported by
-the file will be built together!_
+   `yarn build src/YYYYMMDDHHMMSS-xyz.ts` in the `src` directory. This creates a
+   new file in `migrations`. Both files in `migrations` and `src` need to be
+   added in the PR. _Notice that any changes in other directories that are
+   imported by the file will be built together!_
 
 ## Test a new migration
 
