@@ -31,10 +31,6 @@ Example:
 new file in `migrations`. Both files in `migrations` and `src` need to be added
 in the PR. _Notice that any changes in other directories that are imported by
 the file will be built together!_
-<!-- TODO: in conception still in the new infrastructure.
-   3. Update the version of the `serlo.org` server at
-   `packages/public/server/package.json`. Deploy this version with the changes
-   in the `migrations` package and the database migrations should take effect. -->
 
 ## Test a new migration
 
