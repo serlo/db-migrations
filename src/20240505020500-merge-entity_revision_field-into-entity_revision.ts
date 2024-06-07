@@ -63,45 +63,11 @@ export async function up(db: Database) {
     count += rows.length
   }
 
-  console.log('logging table')
-  await logTable({ db, logger, tableName: 'entity_revision_field' })
-
+  console.log('dropping entity_revision_field table')
   await db.dropTable('entity_revision_field')
 
   await logger.closeAndSend()
   // To reduce the time between deleting the keys and finishing the DB
   // transaction, this should be the last command
   await apiCache.deleteKeysAndQuit()
-}
-
-async function logTable({
-  db,
-  logger,
-  tableName,
-}: {
-  db: Database
-  logger: SlackLogger
-  tableName: string
-}) {
-  let lastId = 0
-
-  const definition = await db.runSql(`describe ${tableName}`)
-
-  logger.logEvent('logTable', { tableName, definition })
-
-  while (true) {
-    const rows = await db.runSql<{ id: number }[]>(
-      `select * from ${tableName} where id > ? order by id limit 1000`,
-      lastId,
-    )
-
-    const lastRow = rows.at(-1)
-
-    logger.logEvent('logTable', { tableName, rows })
-
-    if (lastRow == null) break
-    lastId = lastRow.id
-
-    console.log({ lastId })
-  }
 }
