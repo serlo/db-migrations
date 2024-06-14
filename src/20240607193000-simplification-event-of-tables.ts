@@ -22,7 +22,7 @@ export async function up(db: Database) {
       ADD CONSTRAINT fk_event_${columnName}
       FOREIGN KEY (${columnName})
       REFERENCES uuid(id)
-      ON DELETE CASCADE;
+      ON DELETE CASCADE ON UPDATE CASCADE;
     `)
     console.log(`Column ${columnName} added to event_log`)
   }
