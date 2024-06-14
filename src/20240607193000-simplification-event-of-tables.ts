@@ -258,11 +258,9 @@ async function updateEventTable(db: Database, logger: SlackLogger) {
           row.id,
         )
       } else {
-        // This event is malformed => we should delete it
-        await db.runSql('delete from event_log where id = ?', row.id)
-        logger.logEvent('deleteEvent', { event: row })
-        console.log(`event ${row.id} deleted because it is malformed`)
-        console.log(row)
+        // This event is malformed => let's ignore it
+        logger.logEvent('malformedEventFound', { event: row })
+        console.log('Malformed event found', row)
       }
     }
 
