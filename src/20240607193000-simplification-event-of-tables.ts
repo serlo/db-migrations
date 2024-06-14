@@ -260,8 +260,9 @@ async function updateEventTable(db: Database, logger: SlackLogger) {
       } else {
         // This event is malformed => we should delete it
         await db.runSql('delete from event_log where id = ?', row.id)
-        logger.logEvent('deleteEvent', { id: row.id })
+        logger.logEvent('deleteEvent', { event: row })
         console.log(`event ${row.id} deleted because it is malformed`)
+        console.log(row)
       }
     }
 
@@ -285,17 +286,18 @@ function toNewData(row: DatabaseEventRepresentation) {
 
   switch (row.type) {
     case EventType.ArchiveThread:
-      return { ...base }
     case EventType.RestoreThread:
-      return { ...base }
+    case EventType.CreateEntity:
+    case EventType.SetLicense:
+    case EventType.CreateTaxonomyTerm:
+    case EventType.SetTaxonomyTerm:
+    case EventType.TrashUuid:
+    case EventType.RestoreUuid:
+      return base
     case EventType.CreateComment:
       return { ...base, uuidParameter: row.uuidParameters.discussion }
     case EventType.CreateThread:
       return { ...base, uuidParameter: row.uuidParameters.on }
-    case EventType.CreateEntity:
-      return { ...base }
-    case EventType.SetLicense:
-      return { ...base }
     case EventType.CreateEntityLink:
       return { ...base, uuidParameter: row.uuidParameters.parent }
     case EventType.RemoveEntityLink:
@@ -318,20 +320,12 @@ function toNewData(row: DatabaseEventRepresentation) {
       return { ...base, uuidParameter: row.uuidParameters.object }
     case EventType.RemoveTaxonomyLink:
       return { ...base, uuidParameter: row.uuidParameters.object }
-    case EventType.CreateTaxonomyTerm:
-      return { ...base }
-    case EventType.SetTaxonomyTerm:
-      return { ...base }
     case EventType.SetTaxonomyParent:
       return {
         ...base,
         uuidParameter: row.uuidParameters.from,
         uuidParameter2: row.uuidParameters.to,
       }
-    case EventType.TrashUuid:
-      return { ...base }
-    case EventType.RestoreUuid:
-      return { ...base }
   }
 }
 
