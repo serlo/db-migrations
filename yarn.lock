@@ -943,7 +943,7 @@ __metadata:
   resolution: "@serlo/server-migrate@workspace:."
   dependencies:
     "@jest/types": ^29.6.3
-    "@slack/web-api": ^7.0.4
+    "@slack/web-api": ^7.1.0
     "@tsconfig/node20": ^20.1.4
     "@types/jest": ^29.5.12
     "@types/node": ^18.19.34
@@ -1014,9 +1014,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slack/web-api@npm:^7.0.4":
-  version: 7.0.4
-  resolution: "@slack/web-api@npm:7.0.4"
+"@slack/web-api@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@slack/web-api@npm:7.1.0"
   dependencies:
     "@slack/logger": ^4.0.0
     "@slack/types": ^2.9.0
@@ -1030,7 +1030,7 @@ __metadata:
     p-queue: ^6
     p-retry: ^4
     retry: ^0.13.1
-  checksum: fd80e80bf073d4ae4f2144d48e80c145584a3965e46bd8e366cdeca05f28ddc8ee2bcf27cf4c765272986e7ab9719a9f43a829dbfa5c601eac95fd3440301e49
+  checksum: 2f21c0a05666e3f444cc5fbd36ea9e37463e4f28b3a0e0ade84f3d619474cbb336a80dce0f0b00b55fbd8748e91cb32efa582858d073d04d9bc567ae6c3c4aea
   languageName: node
   linkType: hard
 
