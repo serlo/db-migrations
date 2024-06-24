@@ -63,6 +63,29 @@ export async function up(db: Database) {
     count += rows.length
   }
 
+  console.log('fixing the video revisions')
+  // see https://github.com/serlo/api.serlo.org/issues/1610
+  await db.runSql(
+    `
+    update entity_revision
+      set url = content, content = meta_description
+      where id in (
+        select er.id from (select * from entity_revision) as er
+          join entity on repository_id = entity.id
+          where type_id = 6
+      )
+    `,
+  )
+
+  await db.runSql(
+    `
+    update entity_revision
+      set content =  '{"plugin":"rows","state":[{"plugin":"text"}]}'
+      where url is not null
+        and (content is null or content = '');
+    `,
+  )
+
   console.log('dropping entity_revision_field table')
   await db.dropTable('entity_revision_field')
 
