@@ -946,7 +946,7 @@ __metadata:
     "@slack/web-api": ^7.1.0
     "@tsconfig/node20": ^20.1.4
     "@types/jest": ^29.5.12
-    "@types/node": ^18.19.34
+    "@types/node": ^18.19.39
     "@types/ramda": ^0.30.0
     "@types/semver": ^7.5.8
     "@types/uuid": ^10.0.0
@@ -1196,12 +1196,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.19.34":
-  version: 18.19.34
-  resolution: "@types/node@npm:18.19.34"
+"@types/node@npm:^18.19.39":
+  version: 18.19.39
+  resolution: "@types/node@npm:18.19.39"
   dependencies:
     undici-types: ~5.26.4
-  checksum: ae6369baa1529ec3564da29611ec7eb8ccb219080d717292151b6b899820d25290243d01c9240f11a63d1a42e47198cd6310fab67b6d17bea723221fea07b644
+  checksum: d1de755983127b405458c427ae2cf77c89d120a617ca70999086a75fb0b6c6dbc1bdddfe1a8a7374c9ae55ed0589a2bd023ffb3b09ee25440c013afc6502dfe6
   languageName: node
   linkType: hard
 
