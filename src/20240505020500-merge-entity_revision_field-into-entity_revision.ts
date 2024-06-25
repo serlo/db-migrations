@@ -51,8 +51,16 @@ export async function up(db: Database) {
           params['content'] ?? null,
           params['meta_title'] ?? null,
           params['title'] ?? null,
-          params['meta_description'] ? params['meta_description'] : params['description'] ? params['description'] : null,
-          params['changes'] ? params['changes'] : params['reasoning'] ? params['reasoning'] : null,
+          params['meta_description']
+            ? params['meta_description']
+            : params['description']
+              ? params['description']
+              : null,
+          params['changes']
+            ? params['changes']
+            : params['reasoning']
+              ? params['reasoning']
+              : null,
           params['url'] ?? null,
           revisionId,
         ],
