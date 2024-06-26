@@ -17,6 +17,11 @@ export async function up(db: Database) {
   await db.runSql(`ALTER TABLE entity_revision ADD changes TEXT NULL;`)
   console.log('end altering table')
 
+  // we have to normalize fields due to mysql's case insensitiveness
+  await db.runSql(
+    `update entity_revision_field set field = 'changes' where field = 'Changes'`,
+  )
+
   let count = 0
 
   while (true) {
@@ -48,17 +53,17 @@ export async function up(db: Database) {
             where id = ?
         `,
         [
-          params['content'] ?? null,
-          params['meta_title'] ?? null,
-          params['title'] ?? null,
-          params['meta_description'] ?? params['description'] ?? null,
-          params['reasoning'] ?? params['Changes'] ?? null,
-          params['url'] ?? null,
+          params['content'] || null,
+          params['meta_title'] || null,
+          params['title'] || null,
+          params['meta_description'] || params['description'] || null,
+          params['changes'] || params['reasoning'] || null,
+          params['url'] || null,
           revisionId,
         ],
       )
+      apiCache.markUuid(revisionId)
     }
-
     if (rows.length === 0) break
     count += rows.length
   }
