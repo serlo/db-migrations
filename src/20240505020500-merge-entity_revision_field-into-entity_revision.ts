@@ -62,8 +62,8 @@ export async function up(db: Database) {
           revisionId,
         ],
       )
+      apiCache.markUuid(revisionId)
     }
-
     if (rows.length === 0) break
     count += rows.length
   }
