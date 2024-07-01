@@ -1,3 +1,5 @@
+Repo deprecated: code was moved to `serlo/api.serlo.org`
+
 <img width="688" alt="image" src="https://github.com/serlo/db-migrations/assets/1258870/e19d4bc1-977c-4327-ab06-7b187e4dc8ab">
 
 # DB migrations
